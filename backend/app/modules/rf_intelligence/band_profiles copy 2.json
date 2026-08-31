@@ -1,0 +1,156 @@
+{
+  "fm_broadcast_europe": {
+    "label": "WFM Broadcast (Europe)",
+    "family": "broadcast_fm",
+    "frequency_min_hz": 87500000,
+    "frequency_max_hz": 108000000,
+    "expected_bandwidth_hz": [120000, 200000],
+    "temporal_pattern": "continuous",
+    "modulation": ["WFM"]
+  },
+  "airband_civil_vhf": {
+    "label": "Civil Aviation Voice",
+    "family": "aviation_vhf",
+    "frequency_min_hz": 108000000,
+    "frequency_max_hz": 137000000,
+    "expected_bandwidth_hz": [8330, 25000],
+    "temporal_pattern": "bursty_voice",
+    "modulation": ["AM"]
+  },
+  "noaa_weather_sat": {
+    "label": "NOAA APT Weather Sat",
+    "family": "satellite_leo",
+    "frequency_min_hz": 137000000,
+    "frequency_max_hz": 138000000,
+    "expected_bandwidth_hz": [34000, 40000],
+    "temporal_pattern": "continuous_during_pass",
+    "modulation": ["WFM", "AM_Subcarrier"]
+  },
+  "remote_433_ism": {
+    "label": "SRD/ISM Remote",
+    "family": "ism_remote",
+    "frequency_min_hz": 433050000,
+    "frequency_max_hz": 434790000,
+    "expected_bandwidth_hz": [10000, 100000],
+    "temporal_pattern": "bursty",
+    "modulation": ["ASK", "OOK", "FSK"]
+  },
+  "ism_868": {
+    "label": "IoT/LPWAN (Europe)",
+    "family": "ism_iot",
+    "frequency_min_hz": 863000000,
+    "frequency_max_hz": 870000000,
+    "expected_bandwidth_hz": [125000, 500000],
+    "temporal_pattern": "bursty",
+    "modulation": ["FSK", "LoRa"]
+  },
+  "adsb_aircraft_tracking": {
+    "label": "ADS-B Transponder",
+    "family": "aviation_adsb",
+    "frequency_min_hz": 1089000000,
+    "frequency_max_hz": 1091000000,
+    "expected_bandwidth_hz": [2000000],
+    "temporal_pattern": "short_pulse_ppm",
+    "modulation": ["PPM"]
+  },
+  "satellite_l_band": {
+    "label": "Inmarsat / Iridium Satcom",
+    "family": "satellite_l_band",
+    "frequency_min_hz": 1525000000,
+    "frequency_max_hz": 1660500000,
+    "expected_bandwidth_hz": [5000, 50000],
+    "temporal_pattern": "bursty_or_continuous",
+    "modulation": ["QPSK", "BPSK"]
+  },
+  "gps_l1_signal": {
+    "label": "GPS L1 / Galileo E1",
+    "family": "gnss",
+    "frequency_min_hz": 1574420000,
+    "frequency_max_hz": 1576420000,
+    "expected_bandwidth_hz": [2046000, 4000000],
+    "temporal_pattern": "continuous_ds_ss",
+    "modulation": ["BPSK", "BOC"]
+  },
+  "wifi_24g": {
+    "label": "Wi-Fi 802.11 b/g/n",
+    "family": "wifi",
+    "frequency_min_hz": 2400000000,
+    "frequency_max_hz": 2483500000,
+    "expected_bandwidth_hz": [20000000, 40000000],
+    "temporal_pattern": "bursty_ofdm",
+    "modulation": ["DSSS", "OFDM"]
+  },
+  "bluetooth_le": {
+    "label": "Bluetooth Low Energy",
+    "family": "pan_personal_area",
+    "frequency_min_hz": 2402000000,
+    "frequency_max_hz": 2480000000,
+    "expected_bandwidth_hz": [1000000, 2000000],
+    "temporal_pattern": "hop_bursts",
+    "modulation": ["GFSK"]
+  },
+  "cc2540_ble": {
+    "label": "TI CC2540 BLE 4.0",
+    "family": "pan_personal_area_Jesus",
+    "frequency_min_hz": 2402000000,
+    "frequency_max_hz": 2480000000,
+    "expected_bandwidth_hz": [1000000],
+    "temporal_pattern": "hop_bursts",
+    "modulation": ["GFSK"]
+  }
+  ,
+  "zigbee_24g": {
+    "label": "ZigBee / IEEE 802.15.4",
+    "family": "zigbee_802154",
+    "frequency_min_hz": 2405000000,
+    "frequency_max_hz": 2480000000,
+    "expected_bandwidth_hz": [2000000, 3000000],
+    "temporal_pattern": "short_packet_bursts",
+    "modulation": ["O-QPSK"]
+  },
+  "lte_b7_2600": {
+    "label": "LTE Band 7 (Downlink)",
+    "family": "cellular_lte",
+    "frequency_min_hz": 2620000000,
+    "frequency_max_hz": 2690000000,
+    "expected_bandwidth_hz": [5000000, 10000000, 20000000],
+    "temporal_pattern": "ofdm_full_duplex",
+    "modulation": ["QAM"]
+  },
+  "radar_s_band": {
+    "label": "S-Band Radar (ATC/Weather)",
+    "family": "radar_pulse",
+    "frequency_min_hz": 2700000000,
+    "frequency_max_hz": 2900000000,
+    "expected_bandwidth_hz": [1000000, 10000000],
+    "temporal_pattern": "periodic_pulse_train",
+    "modulation": ["Pulse", "Chirp"]
+  },
+  "nr_n78_sub6": {
+    "label": "5G NR n78",
+    "family": "cellular_5g",
+    "frequency_min_hz": 3400000000,
+    "frequency_max_hz": 3800000000,
+    "expected_bandwidth_hz": [20000000, 100000000],
+    "temporal_pattern": "tdd_ofdm",
+    "modulation": ["QAM"]
+  },
+  "radar_c_band": {
+    "label": "C-Band Weather Radar",
+    "family": "radar_pulse",
+    "frequency_min_hz": 5600000000,
+    "frequency_max_hz": 5650000000,
+    "expected_bandwidth_hz": [5000000, 20000000],
+    "temporal_pattern": "scanning_pulse",
+    "modulation": ["Pulse"]
+  },
+  "wifi_5g": {
+    "label": "Wi-Fi 5 GHz (UNII)",
+    "family": "wifi",
+    "frequency_min_hz": 5150000000,
+    "frequency_max_hz": 5850000000,
+    "expected_bandwidth_hz": [20000000, 40000000, 80000000, 160000000],
+    "temporal_pattern": "bursty_ofdm",
+    "modulation": ["OFDM"]
+  }
+}

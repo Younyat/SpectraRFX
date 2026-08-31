@@ -1,0 +1,17 @@
+{
+  "analysis_code_commit": "b345017b016edeb8c1b5ead59317bf2ea7c8745a",
+  "analysis_environment_hash": "8f5ed87725a4bee0961da39d8ae8799a54aacf2ed3fe8ddf35cd7f96ce19107c",
+  "campaign_id": "GUIDED-VALIDATION",
+  "created_at": "2026-08-13T12:12:14.083961Z",
+  "dataset_fingerprint": "e5ada7081f60c6f25a764734c2c3be02c84224ce0530879a0576b27a52a6f00a",
+  "dataset_id": "keyfobdemo 02-AUTO-TVB",
+  "dataset_version": "20260801T185405.391780Z",
+  "model_set_fingerprint": null,
+  "paper_run_id": "paper-run-acce65e04e8e74773e1cea25578e965b",
+  "protocol_id": "protocol-d0d9464e8ccaee069dc9cd7be774d392",
+  "protocol_version": 1,
+  "schema_version": "ble-scientific-results-paper-run-v1",
+  "scientific_task": "TARGET_VS_BACKGROUND",
+  "split_fingerprint": "5d5233cea1d99f0f72f08ad6f668d360820f8a012edfb43e6cab4ea6f774a202",
+  "storage_path": "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\scientific_reports\\ble\\paper-run-acce65e04e8e74773e1cea25578e965b"
+}

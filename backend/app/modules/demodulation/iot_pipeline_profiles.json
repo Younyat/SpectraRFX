@@ -1,0 +1,66 @@
+{
+  "ble_advertising_iot": {
+    "user_label": "BLE Advertising IoT",
+    "iot_family": "bluetooth_low_energy",
+    "physical_demodulator": "gfsk",
+    "protocol_decoder": "ble_advertising_decoder",
+    "default_channels": [37, 38, 39],
+    "success_criteria": ["access_address_detected", "crc_valid"],
+    "fingerprint_fields": ["advertiser_addresses", "tx_power_dbm", "frequency_offset_hz", "timing_offset_samples"]
+  },
+  "ti_sensortag_cc2650stk_ble": {
+    "user_label": "TI SensorTag CC2650STK BLE Advertising",
+    "iot_family": "bluetooth_low_energy",
+    "physical_demodulator": "gfsk",
+    "protocol_decoder": "ble_advertising_decoder",
+    "device_profile": "ti_sensortag_cc2650stk",
+    "manufacturer_id": "004C",
+    "default_channels": [37, 38, 39],
+    "success_criteria": ["access_address_detected", "crc_valid"],
+    "known_service_uuids": ["180A", "180B"]
+  },
+  "zigbee_ieee802154_iot": {
+    "user_label": "Zigbee / IEEE 802.15.4 IoT",
+    "iot_family": "ieee802154",
+    "physical_demodulator": "oqpsk_dsss",
+    "protocol_decoder": "ieee802154_frame_decoder",
+    "default_channels": [11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26],
+    "success_criteria": ["frames_decoded", "fcs_crc"],
+    "chip_rate_mcps": 2,
+    "symbol_rate_ksps": 62.5
+  },
+  "generic_gfsk_iot": {
+    "user_label": "Generic GFSK IoT Telemetry",
+    "iot_family": "generic_iot",
+    "physical_demodulator": "gfsk",
+    "protocol_decoder": null,
+    "success_criteria": ["bitstream_recovered"],
+    "auto_estimate": ["symbol_rate", "frequency_deviation"]
+  },
+  "ook_ask_iot_sensor": {
+    "user_label": "OOK / ASK IoT Sensor (315/433/868/915 MHz)",
+    "iot_family": "generic_iot_sensor",
+    "physical_demodulator": "ook_ask",
+    "protocol_decoder": null,
+    "success_criteria": ["bitstream_recovered"],
+    "auto_estimate": ["symbol_rate", "burst_pattern"],
+    "fingerprint_fields": ["burst_count", "repetition_interval_ms", "on_time_mean_ms", "off_time_mean_ms", "duty_cycle_percent"]
+  },
+  "generic_fsk_iot": {
+    "user_label": "Generic FSK IoT Telemetry",
+    "iot_family": "generic_iot",
+    "physical_demodulator": "fsk",
+    "protocol_decoder": null,
+    "success_criteria": ["bitstream_recovered"],
+    "auto_estimate": ["frequency_deviation", "symbol_rate"]
+  },
+  "lora_iot": {
+    "user_label": "LoRa IoT (CSS)",
+    "iot_family": "lora",
+    "physical_demodulator": "css",
+    "protocol_decoder": "lora_packet_decoder",
+    "success_criteria": ["payload_extractable", "crc_if_available"],
+    "auto_estimate": ["spreading_factor"],
+    "configurable_params": ["spreading_factor", "bandwidth_hz", "coding_rate"]
+  }
+}

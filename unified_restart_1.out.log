@@ -1,0 +1,138 @@
+
+==> Checking tools
+
+==> Preparing backend
+Requirement already satisfied: pip in .\backend\venv\Lib\site-packages (26.1.2)
+Requirement already satisfied: wheel in .\backend\venv\Lib\site-packages (0.47.0)
+Requirement already satisfied: setuptools<82 in .\backend\venv\Lib\site-packages (81.0.0)
+Requirement already satisfied: packaging>=24.0 in .\backend\venv\Lib\site-packages (from wheel) (26.1)
+Modo desarrollo Windows: se omiten gnuradio, uhd y pyrtlsdr. Usa -FullBackendDeps $true si tienes SDR/hardware configurado.
+Requirement already satisfied: fastapi>=0.115.0 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 2)) (0.136.0)
+Requirement already satisfied: uvicorn>=0.30.0 in .\backend\venv\Lib\site-packages (from uvicorn[standard]>=0.30.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 3)) (0.44.0)
+Requirement already satisfied: pydantic>=2.8.0 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 4)) (2.13.2)
+Requirement already satisfied: python-multipart>=0.0.6 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 5)) (0.0.26)
+Requirement already satisfied: numpy>=1.26.0 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 8)) (2.4.4)
+Requirement already satisfied: scipy>=1.13.0 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 9)) (1.17.1)
+Requirement already satisfied: torch>=2.2.0 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 10)) (2.11.0)
+Requirement already satisfied: librosa>=0.10.0 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 17)) (0.11.0)
+Requirement already satisfied: soundfile>=0.12.0 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 18)) (0.13.1)
+Requirement already satisfied: python-json-logger>=2.0.7 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 21)) (4.1.0)
+Requirement already satisfied: msgpack>=1.0.7 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 22)) (1.1.2)
+Requirement already satisfied: python-dateutil>=2.8.2 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 25)) (2.9.0.post0)
+Requirement already satisfied: pytz>=2024.1 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 26)) (2026.1.post1)
+Requirement already satisfied: python-dotenv>=1.0.0 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 29)) (1.2.2)
+Requirement already satisfied: click>=8.1.7 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 30)) (8.3.2)
+Requirement already satisfied: bleak==0.22.3 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 31)) (0.22.3)
+Requirement already satisfied: pytest>=7.4.4 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 34)) (9.0.3)
+Requirement already satisfied: pytest-asyncio>=0.23.3 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 35)) (1.3.0)
+Requirement already satisfied: pytest-cov>=4.1.0 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 36)) (7.1.0)
+Requirement already satisfied: black>=24.1.0 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 39)) (26.3.1)
+Requirement already satisfied: flake8>=7.0.0 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 40)) (7.3.0)
+Requirement already satisfied: mypy>=1.8.0 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 41)) (1.20.1)
+Requirement already satisfied: isort>=5.13.0 in .\backend\venv\Lib\site-packages (from -r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 42)) (8.0.1)
+Requirement already satisfied: winrt-Windows.Devices.Bluetooth<3,>=2 in .\backend\venv\Lib\site-packages (from bleak==0.22.3->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 31)) (2.3.0)
+Requirement already satisfied: winrt-Windows.Devices.Bluetooth.Advertisement<3,>=2 in .\backend\venv\Lib\site-packages (from bleak==0.22.3->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 31)) (2.3.0)
+Requirement already satisfied: winrt-Windows.Devices.Bluetooth.GenericAttributeProfile<3,>=2 in .\backend\venv\Lib\site-packages (from bleak==0.22.3->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 31)) (2.3.0)
+Requirement already satisfied: winrt-Windows.Devices.Enumeration<3,>=2 in .\backend\venv\Lib\site-packages (from bleak==0.22.3->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 31)) (2.3.0)
+Requirement already satisfied: winrt-Windows.Foundation<3,>=2 in .\backend\venv\Lib\site-packages (from bleak==0.22.3->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 31)) (2.3.0)
+Requirement already satisfied: winrt-Windows.Foundation.Collections<3,>=2 in .\backend\venv\Lib\site-packages (from bleak==0.22.3->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 31)) (2.3.0)
+Requirement already satisfied: winrt-Windows.Storage.Streams<3,>=2 in .\backend\venv\Lib\site-packages (from bleak==0.22.3->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 31)) (2.3.0)
+Requirement already satisfied: winrt-runtime<3,>=2 in .\backend\venv\Lib\site-packages (from bleak==0.22.3->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 31)) (2.3.0)
+Requirement already satisfied: starlette>=0.46.0 in .\backend\venv\Lib\site-packages (from fastapi>=0.115.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 2)) (1.0.0)
+Requirement already satisfied: typing-extensions>=4.8.0 in .\backend\venv\Lib\site-packages (from fastapi>=0.115.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 2)) (4.15.0)
+Requirement already satisfied: typing-inspection>=0.4.2 in .\backend\venv\Lib\site-packages (from fastapi>=0.115.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 2)) (0.4.2)
+Requirement already satisfied: annotated-doc>=0.0.2 in .\backend\venv\Lib\site-packages (from fastapi>=0.115.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 2)) (0.0.4)
+Requirement already satisfied: h11>=0.8 in .\backend\venv\Lib\site-packages (from uvicorn>=0.30.0->uvicorn[standard]>=0.30.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 3)) (0.16.0)
+Requirement already satisfied: annotated-types>=0.6.0 in .\backend\venv\Lib\site-packages (from pydantic>=2.8.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 4)) (0.7.0)
+Requirement already satisfied: pydantic-core==2.46.2 in .\backend\venv\Lib\site-packages (from pydantic>=2.8.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 4)) (2.46.2)
+Requirement already satisfied: filelock in .\backend\venv\Lib\site-packages (from torch>=2.2.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 10)) (3.29.0)
+Requirement already satisfied: setuptools<82 in .\backend\venv\Lib\site-packages (from torch>=2.2.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 10)) (81.0.0)
+Requirement already satisfied: sympy>=1.13.3 in .\backend\venv\Lib\site-packages (from torch>=2.2.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 10)) (1.14.0)
+Requirement already satisfied: networkx>=2.5.1 in .\backend\venv\Lib\site-packages (from torch>=2.2.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 10)) (3.6.1)
+Requirement already satisfied: jinja2 in .\backend\venv\Lib\site-packages (from torch>=2.2.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 10)) (3.1.6)
+Requirement already satisfied: fsspec>=0.8.5 in .\backend\venv\Lib\site-packages (from torch>=2.2.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 10)) (2026.3.0)
+Requirement already satisfied: audioread>=2.1.9 in .\backend\venv\Lib\site-packages (from librosa>=0.10.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 17)) (3.1.0)
+Requirement already satisfied: numba>=0.51.0 in .\backend\venv\Lib\site-packages (from librosa>=0.10.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 17)) (0.65.0)
+Requirement already satisfied: scikit-learn>=1.1.0 in .\backend\venv\Lib\site-packages (from librosa>=0.10.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 17)) (1.8.0)
+Requirement already satisfied: joblib>=1.0 in .\backend\venv\Lib\site-packages (from librosa>=0.10.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 17)) (1.5.3)
+Requirement already satisfied: decorator>=4.3.0 in .\backend\venv\Lib\site-packages (from librosa>=0.10.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 17)) (5.2.1)
+Requirement already satisfied: pooch>=1.1 in .\backend\venv\Lib\site-packages (from librosa>=0.10.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 17)) (1.9.0)
+Requirement already satisfied: soxr>=0.3.2 in .\backend\venv\Lib\site-packages (from librosa>=0.10.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 17)) (1.0.0)
+Requirement already satisfied: lazy_loader>=0.1 in .\backend\venv\Lib\site-packages (from librosa>=0.10.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 17)) (0.5)
+Requirement already satisfied: cffi>=1.0 in .\backend\venv\Lib\site-packages (from soundfile>=0.12.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 18)) (2.0.0)
+Requirement already satisfied: six>=1.5 in .\backend\venv\Lib\site-packages (from python-dateutil>=2.8.2->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 25)) (1.17.0)
+Requirement already satisfied: colorama in .\backend\venv\Lib\site-packages (from click>=8.1.7->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 30)) (0.4.6)
+Requirement already satisfied: iniconfig>=1.0.1 in .\backend\venv\Lib\site-packages (from pytest>=7.4.4->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 34)) (2.3.0)
+Requirement already satisfied: packaging>=22 in .\backend\venv\Lib\site-packages (from pytest>=7.4.4->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 34)) (26.1)
+Requirement already satisfied: pluggy<2,>=1.5 in .\backend\venv\Lib\site-packages (from pytest>=7.4.4->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 34)) (1.6.0)
+Requirement already satisfied: pygments>=2.7.2 in .\backend\venv\Lib\site-packages (from pytest>=7.4.4->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 34)) (2.20.0)
+Requirement already satisfied: coverage>=7.10.6 in .\backend\venv\Lib\site-packages (from coverage[toml]>=7.10.6->pytest-cov>=4.1.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 36)) (7.13.5)
+Requirement already satisfied: mypy-extensions>=0.4.3 in .\backend\venv\Lib\site-packages (from black>=24.1.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 39)) (1.1.0)
+Requirement already satisfied: pathspec>=1.0.0 in .\backend\venv\Lib\site-packages (from black>=24.1.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 39)) (1.0.4)
+Requirement already satisfied: platformdirs>=2 in .\backend\venv\Lib\site-packages (from black>=24.1.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 39)) (4.9.6)
+Requirement already satisfied: pytokens~=0.4.0 in .\backend\venv\Lib\site-packages (from black>=24.1.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 39)) (0.4.1)
+Requirement already satisfied: mccabe<0.8.0,>=0.7.0 in .\backend\venv\Lib\site-packages (from flake8>=7.0.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 40)) (0.7.0)
+Requirement already satisfied: pycodestyle<2.15.0,>=2.14.0 in .\backend\venv\Lib\site-packages (from flake8>=7.0.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 40)) (2.14.0)
+Requirement already satisfied: pyflakes<3.5.0,>=3.4.0 in .\backend\venv\Lib\site-packages (from flake8>=7.0.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 40)) (3.4.0)
+Requirement already satisfied: librt>=0.8.0 in .\backend\venv\Lib\site-packages (from mypy>=1.8.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 41)) (0.9.0)
+Requirement already satisfied: pycparser in .\backend\venv\Lib\site-packages (from cffi>=1.0->soundfile>=0.12.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 18)) (3.0)
+Requirement already satisfied: llvmlite<0.48,>=0.47.0dev0 in .\backend\venv\Lib\site-packages (from numba>=0.51.0->librosa>=0.10.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 17)) (0.47.0)
+Requirement already satisfied: requests>=2.19.0 in .\backend\venv\Lib\site-packages (from pooch>=1.1->librosa>=0.10.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 17)) (2.33.1)
+Requirement already satisfied: charset_normalizer<4,>=2 in .\backend\venv\Lib\site-packages (from requests>=2.19.0->pooch>=1.1->librosa>=0.10.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 17)) (3.4.7)
+Requirement already satisfied: idna<4,>=2.5 in .\backend\venv\Lib\site-packages (from requests>=2.19.0->pooch>=1.1->librosa>=0.10.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 17)) (3.11)
+Requirement already satisfied: urllib3<3,>=1.26 in .\backend\venv\Lib\site-packages (from requests>=2.19.0->pooch>=1.1->librosa>=0.10.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 17)) (2.6.3)
+Requirement already satisfied: certifi>=2023.5.7 in .\backend\venv\Lib\site-packages (from requests>=2.19.0->pooch>=1.1->librosa>=0.10.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 17)) (2026.2.25)
+Requirement already satisfied: threadpoolctl>=3.2.0 in .\backend\venv\Lib\site-packages (from scikit-learn>=1.1.0->librosa>=0.10.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 17)) (3.6.0)
+Requirement already satisfied: anyio<5,>=3.6.2 in .\backend\venv\Lib\site-packages (from starlette>=0.46.0->fastapi>=0.115.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 2)) (4.13.0)
+Requirement already satisfied: mpmath<1.4,>=1.1.0 in .\backend\venv\Lib\site-packages (from sympy>=1.13.3->torch>=2.2.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 10)) (1.3.0)
+Requirement already satisfied: httptools>=0.6.3 in .\backend\venv\Lib\site-packages (from uvicorn[standard]>=0.30.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 3)) (0.7.1)
+Requirement already satisfied: pyyaml>=5.1 in .\backend\venv\Lib\site-packages (from uvicorn[standard]>=0.30.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 3)) (6.0.3)
+Requirement already satisfied: watchfiles>=0.20 in .\backend\venv\Lib\site-packages (from uvicorn[standard]>=0.30.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 3)) (1.1.1)
+Requirement already satisfied: websockets>=10.4 in .\backend\venv\Lib\site-packages (from uvicorn[standard]>=0.30.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 3)) (16.0)
+Requirement already satisfied: MarkupSafe>=2.0 in .\backend\venv\Lib\site-packages (from jinja2->torch>=2.2.0->-r C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\requirements.dev-windows.txt (line 10)) (3.0.3)
+
+==> Preparing frontend
+
+up to date, audited 320 packages in 3s
+
+63 packages are looking for funding
+  run `npm fund` for details
+
+14 vulnerabilities (1 low, 4 moderate, 9 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+==> Starting backend on http://localhost:8000
+INFO:     127.0.0.1:64650 - "GET /api/ble/dataset-studio/definitions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64650 - "GET /api/ble/capture/devices HTTP/1.1" 200 OK
+BLE Lab SDR verified: B200 E3R04Z1B2
+
+==> Starting frontend on http://localhost:5173
+
+Backend API: http://localhost:8000
+API docs:    http://localhost:8000/docs
+Frontend:    http://localhost:5173
+Remote train target: assouyat@192.168.193.49
+App sync interval:       5000 ms
+Spectrum poll interval:  100 ms
+Waterfall poll interval: 100 ms
+
+Pulsa Ctrl+C para parar ambos servicios.
+
+> spectrum-lab-frontend@1.0.0 dev
+> vite --host 127.0.0.1 --strictPort
+
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m274[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m5173[22m/[39m
+INFO:     127.0.0.1:56701 - "GET /api/ble/dataset-studio/definitions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65266 - "GET /openapi.json HTTP/1.1" 200 OK
+
+==> Stopping services

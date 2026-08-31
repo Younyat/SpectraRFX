@@ -1,0 +1,5 @@
+export const PRIORITY_SENSOR_TAG_ADDRESSES = ['B0:B4:48:C0:36:06', 'BC:6A:29:AB:DE:13'];
+export function orderTargetDevices(devices, scanSession) { return [...devices].sort((a, b) => { const ap = PRIORITY_SENSOR_TAG_ADDRESSES.indexOf(a.address.toUpperCase()), bp = PRIORITY_SENSOR_TAG_ADDRESSES.indexOf(b.address.toUpperCase()); if (ap >= 0 || bp >= 0)
+    return (ap < 0 ? 99 : ap) - (bp < 0 ? 99 : bp); const ac = a.scan_session_id === scanSession ? 0 : 1, bc = b.scan_session_id === scanSession ? 0 : 1; return ac - bc || b.last_seen_utc.localeCompare(a.last_seen_utc); }); }
+export function preserveSelectedTarget(current, devices) { return current === 'any' || current === 'manual' || devices.some(item => item.device_id === current) ? current : current; }
+export function freezeTarget(device, scanSession) { return { kind: 'device', device_id: device.device_id, address: device.address, label: device.local_name || device.profile_label || device.address, selection_source: device.scan_session_id === scanSession ? 'native_current_scan' : 'native_registry_history' }; }

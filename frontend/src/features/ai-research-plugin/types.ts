@@ -1,0 +1,126 @@
+// Mirrors backend/app/modules/ai_research_plugin/contracts.py exactly --
+// field names are snake_case because that is genuinely what the FastAPI/
+// Pydantic JSON response contains (no alias layer exists on the backend),
+// not a stylistic choice made independently on this side.
+
+export type ModelFramework = 'onnx' | 'torchscript' | 'tensorflow';
+
+export type RFTask =
+  | 'modulation_classification' | 'signal_classification' | 'fingerprinting'
+  | 'anomaly_detection' | 'emitter_identification' | 'other';
+
+export type InputRepresentation = 'raw_iq' | 'iq_tensor' | 'spectrogram' | 'psd' | 'features' | 'unknown';
+
+export type OutputType = 'class_logits' | 'class_probabilities' | 'embedding' | 'reconstruction' | 'detector' | 'unknown';
+
+export interface RFModelInputFields {
+  representation: InputRepresentation | null;
+  tensor_shape: (number | null)[] | null;
+  dtype: string | null;
+  input_name: string | null;
+  sample_rate_hz: number | null;
+  bandwidth_hz: number | null;
+  center_frequency_dependency: boolean | null;
+  window_samples: number | null;
+  overlap: number | null;
+}
+
+export interface RFModelPreprocessing {
+  normalization: string | null;
+  fft_size: number | null;
+  stft_window: string | null;
+  stft_hop: number | null;
+  scaling: string | null;
+}
+
+export interface RFModelOutputFields {
+  output_type: OutputType | null;
+  tensor_shape: (number | null)[] | null;
+  output_name: string | null;
+  classes: string[] | null;
+}
+
+export interface RFModelProvenance {
+  paper: string | null;
+  authors: string | null;
+  repository: string | null;
+  dataset: string | null;
+  model_version: string | null;
+  notes: string | null;
+}
+
+export interface RFModelManifest {
+  model_id: string;
+  model_name: string;
+  framework: ModelFramework;
+  model_file: string;
+  model_sha256: string;
+  imported_at_utc: string;
+  task: RFTask;
+  input_discovered: RFModelInputFields;
+  input_overrides: RFModelInputFields;
+  preprocessing: RFModelPreprocessing;
+  output_discovered: RFModelOutputFields;
+  output_overrides: RFModelOutputFields;
+  provenance: RFModelProvenance;
+}
+
+export type CompatibilityVerdict = 'COMPATIBLE' | 'PARTIALLY_COMPATIBLE' | 'INCOMPATIBLE' | 'UNKNOWN';
+
+export interface CompatibilityCheck {
+  field: string;
+  capture_value: unknown;
+  model_value: unknown;
+  matched: boolean | null;
+  note: string;
+}
+
+export interface CompatibilityResult {
+  verdict: CompatibilityVerdict;
+  checks: CompatibilityCheck[];
+}
+
+export interface InferenceRecord {
+  record_id: string;
+  model_id: string;
+  model_sha256: string;
+  model_manifest_snapshot: RFModelManifest;
+  capture_id: string;
+  capture_data_sha256: string;
+  selected_time_seconds: [number, number];
+  selected_frequency_hz: [number, number] | null;
+  input_transformation: InputRepresentation;
+  input_tensor_shape: number[];
+  input_dtype: string;
+  normalization_applied: string;
+  inference_timestamp_utc: string;
+  software_backend: string;
+  raw_output: number[];
+  raw_output_shape: number[];
+  interpretation: {
+    kind: 'classification' | 'embedding' | 'not_automatically_interpretable';
+    predicted_class?: string;
+    score?: number;
+    score_type?: 'logit' | 'probability';
+    class_scores?: Record<string, number>;
+    known_classes?: string[];
+    dimensionality?: number;
+    l2_norm?: number;
+    warning?: string;
+  };
+  compatibility: CompatibilityResult;
+}
+
+// Real fields from ble_capture_job_manager.list_captures() -- the
+// same manifest shape RF Terrain's Offline Reconstruction already reads.
+export interface AiPluginCaptureSummary {
+  capture_id: string;
+  data_sha256?: string;
+  sample_rate_sps?: number;
+  center_frequency_hz?: number;
+  bandwidth_hz?: number;
+  sample_format?: string;
+  actual_samples?: number;
+  device_serial?: string;
+  created_at_utc?: string;
+}

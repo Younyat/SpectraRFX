@@ -1,0 +1,379 @@
+{
+  "decision_windows": {
+    "TEST": {
+      "accuracy_among_identified": 1.0,
+      "argmax_accuracy_ignoring_threshold": 0.9166666666666666,
+      "ba": 0.875,
+      "n_correct_rejected": 1,
+      "n_errors_accepted": 0,
+      "n_errors_rejected": 1,
+      "n_identified": 10,
+      "n_insufficient_evidence": 0,
+      "n_unknown_below_threshold": 2,
+      "operational_coverage": 0.8333333333333334,
+      "total_admissible_windows": 12
+    },
+    "VALIDATION": {
+      "accuracy_among_identified": 0.9,
+      "accuracy_argmax": 0.75,
+      "argmax_accuracy_ignoring_threshold": 0.8333333333333334,
+      "ba": 0.75,
+      "n_correct_rejected": 1,
+      "n_errors_accepted": 1,
+      "n_errors_rejected": 1,
+      "n_identified": 10,
+      "n_insufficient_evidence": 0,
+      "n_unknown_below_threshold": 2,
+      "operational_coverage": 0.8333333333333334,
+      "total_admissible_windows": 12
+    },
+    "artifact": "06_statistics/coverage_analysis_report.json"
+  },
+  "generated_at": "2026-08-22T06:35:54.742801Z",
+  "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+  "rq1": {
+    "artifact": "06_statistics/rq1_acquisition_dependence_report.json",
+    "ba_capture_dependent": 0.9578781766067187,
+    "ba_capture_dependent_ci": {
+      "ci_high": 0.9751987706077437,
+      "ci_low": 0.9389651703995975
+    },
+    "ba_capture_disjoint_validation": 0.6338138990398197,
+    "ba_capture_disjoint_validation_ci": {
+      "ci_high": 0.6850857789866278,
+      "ci_low": 0.5912219610540254
+    },
+    "delta_dependence": 0.32406427756689904,
+    "delta_dependence_ci": {
+      "ci_high": 0.3706519487491247,
+      "ci_low": 0.2686419390410907,
+      "method": "independent_domain_bootstrap_delta_ci (independent, class-stratified resample of each domain, per-replicate difference; NOT paired -- no physical pairing exists between capture-dependent and capture-disjoint sessions; NOT ci_window - ci_capture)"
+    },
+    "method": {
+      "ci_type": "percentile",
+      "cluster_unit": "session_id",
+      "delta_method": "independent-domain bootstrap: the capture-dependent and capture-disjoint domains are resampled independently (never paired -- there is no physical pairing between their sessions), and the difference is computed per replicate across the resulting distributions.",
+      "n_resamples": 2000,
+      "stratification": "physical_unit_id (class-preserving -- no bootstrap replicate can drop a class from the balanced-accuracy estimand)"
+    },
+    "model_bundle_id": "CLOSED-SET-4DEVICES-random_forest-bundle",
+    "model_bundle_sha256": "36c9ef76a859b9fecacf8da8eeee78dbe6f7b768ec924b6c5066a5d874eab9be",
+    "n_examples_capture_dependent": 1790,
+    "n_examples_capture_disjoint": 2203,
+    "n_sessions_capture_dependent": 34,
+    "n_sessions_capture_disjoint": 12
+  },
+  "rq2": {
+    "artifact": "06_statistics/rq2_representation_comparison_report.json",
+    "branches": {
+      "coarse_morphology": {
+        "analysis_role": "UNSELECTED",
+        "balanced_accuracy": 0.27722602530013735,
+        "candidate_model_families": 1,
+        "candidates": [
+          "frozen_morphological_baseline"
+        ],
+        "hyperparameter_search_count": 0,
+        "macro_f1": 0.1280526288155485,
+        "model": "frozen_morphological_baseline",
+        "model_type": "frozen_morphological_baseline",
+        "n_examples": 2203,
+        "n_sessions": 12
+      },
+      "engineered_rf": {
+        "analysis_role": "PRIMARY",
+        "balanced_accuracy": 0.6338138990398197,
+        "candidate_model_families": 3,
+        "candidates": [
+          "logistic_regression",
+          "svm_rbf",
+          "random_forest"
+        ],
+        "hyperparameter_search_count": 0,
+        "macro_f1": 0.5864106215528908,
+        "model": "random_forest",
+        "model_type": "random_forest",
+        "n_examples": 2203,
+        "n_sessions": 12
+      },
+      "raw_iq": {
+        "analysis_role": "UNSELECTED",
+        "balanced_accuracy": 0.24807692307692308,
+        "candidate_model_families": 1,
+        "candidates": [
+          "cnn1d"
+        ],
+        "hyperparameter_search_count": 0,
+        "macro_f1": 0.22643802322441264,
+        "model": "cnn1d",
+        "model_type": "cnn1d",
+        "n_examples": 2203,
+        "n_sessions": 12
+      },
+      "stft": {
+        "analysis_role": "UNSELECTED",
+        "balanced_accuracy": 0.5368629979844066,
+        "candidate_model_families": 1,
+        "candidates": [
+          "cnn2d"
+        ],
+        "hyperparameter_search_count": 0,
+        "macro_f1": 0.4981031304046958,
+        "model": "cnn2d",
+        "model_type": "cnn2d",
+        "n_examples": 2203,
+        "n_sessions": 12
+      }
+    }
+  },
+  "rq4_exploratory_analytical_region": {
+    "artifact": "06_statistics/rq4_full_burst_vs_pre_pdu_exploratory_report.json",
+    "confirmations": {
+      "iq_never_modified": {
+        "evidence": "PRE_PDU is a derived VIEW (region_restricted_provider_and_eligible_ids calling packet_content field_mapping derive_packet_content_variants), never a write to the original sigmf-data capture file. source_iq_sha256 and iq_start_sample on each real ExampleRecord are unchanged; only the sample window actually read at training or inference time is restricted to the first 40-bit-equivalent samples.",
+        "value": true
+      },
+      "matched_validation_sets_verified": {
+        "n_examples_excluded_from_intersection": 0,
+        "n_examples_full_burst": 2203,
+        "n_examples_pre_pdu": 2203,
+        "n_sessions_full_burst": 12,
+        "n_sessions_pre_pdu": 12,
+        "same_4_classes": true,
+        "same_example_id_set": true,
+        "same_order": true,
+        "same_sessions": true,
+        "value": true
+      },
+      "no_tuning_no_model_selection": {
+        "evidence": "variant_run = base_run.model_copy(update=...) with ONLY training_run_id, status, timestamps, and contract fields overridden -- model_type, hyperparameters, random_seed, representation_profile_id, base_preprocessing_profile_id are inherited UNCHANGED from PRIMARY. No GridSearchCV, no RandomizedSearchCV, no candidate comparison anywhere in this path.",
+        "value": true
+      },
+      "primary_byte_identical_after": {
+        "bundle_files_sha256_after": [
+          "acceptance_criteria.json e3566b3a06430868d71e9287dfd6c6c520a3da027aabea01951d407ee131dc2f",
+          "bundle_manifest.json ea857cafdb4ab38c643d7de1d4c2c881ed1dab0f95a1e74739500d64886bfa9c",
+          "calibration_report.json 1899d0c8dff099cfeb85dab4111b5a7c556e77f219f6927b3f5dbf1261e719d4",
+          "code_reference.json 807614f093140fd17e996d263638faef587fdc9a4edc02cb78764e61e476eddb",
+          "dataset_reference.json 5c8b594bd8c16962c642caa4a3d70384ef948233b80676376cfb23834e651dd5",
+          "evaluation_report.json cacc0d259f7c73b7d86774773c3cc69ca511fd9510e5c728546d632eee6fb865",
+          "feature_config.json d3a173f10babb395aa212e083bf306526e337db17d766b763c92aee90db2f713",
+          "input_contract.json 4f5508ac63f1c0786977f27df34cf30a6daf4939ebc9864cbae3f6882e5bb6d7",
+          "label_map.json b70fbc9f2806c577e9ab7f50a4925d403513623f63d2dddc6284b3f6e778a1d0",
+          "model.joblib 3b17a7066d92633d5b746db6494d5312ed75015324f0f661984d0d6dca6b175b",
+          "model_card.md d676bfb9c8c2694f791c302fdfc4614ae14e815a9599da50f5c27c78fe167a65",
+          "model_manifest.json 44f004c63874572891d418c5bea8f7e53939f889e449628212e0159bfe5b1c59",
+          "preprocessing_config.json 75b3d4c39e972dcd3908d5e7792a7b9a89334ccb751b1d200763525c4cbf0c11",
+          "runtime_requirements.json 7fc3198f21c43c137966431429b62513788538657401f414db4b134e65192e8b",
+          "scaler.joblib 94e29f17dabf402ad7a0df79cdd6b914f95dad46b182c0b3ead01343adfd094a",
+          "scientific_basis.json 3eeae5c6047828a9f42fa8f88c7031006734d2dfe756155308d391eaf8d0da1c",
+          "split_reference.json e43608ca9ac942e2c2dcd9c54fac3b6ff1681a3dd0ab1a45036e44581e7bb9d8",
+          "thresholds.json 1899d0c8dff099cfeb85dab4111b5a7c556e77f219f6927b3f5dbf1261e719d4"
+        ],
+        "bundle_files_sha256_before": [
+          "acceptance_criteria.json e3566b3a06430868d71e9287dfd6c6c520a3da027aabea01951d407ee131dc2f",
+          "bundle_manifest.json ea857cafdb4ab38c643d7de1d4c2c881ed1dab0f95a1e74739500d64886bfa9c",
+          "calibration_report.json 1899d0c8dff099cfeb85dab4111b5a7c556e77f219f6927b3f5dbf1261e719d4",
+          "code_reference.json 807614f093140fd17e996d263638faef587fdc9a4edc02cb78764e61e476eddb",
+          "dataset_reference.json 5c8b594bd8c16962c642caa4a3d70384ef948233b80676376cfb23834e651dd5",
+          "evaluation_report.json cacc0d259f7c73b7d86774773c3cc69ca511fd9510e5c728546d632eee6fb865",
+          "feature_config.json d3a173f10babb395aa212e083bf306526e337db17d766b763c92aee90db2f713",
+          "input_contract.json 4f5508ac63f1c0786977f27df34cf30a6daf4939ebc9864cbae3f6882e5bb6d7",
+          "label_map.json b70fbc9f2806c577e9ab7f50a4925d403513623f63d2dddc6284b3f6e778a1d0",
+          "model.joblib 3b17a7066d92633d5b746db6494d5312ed75015324f0f661984d0d6dca6b175b",
+          "model_card.md d676bfb9c8c2694f791c302fdfc4614ae14e815a9599da50f5c27c78fe167a65",
+          "model_manifest.json 44f004c63874572891d418c5bea8f7e53939f889e449628212e0159bfe5b1c59",
+          "preprocessing_config.json 75b3d4c39e972dcd3908d5e7792a7b9a89334ccb751b1d200763525c4cbf0c11",
+          "runtime_requirements.json 7fc3198f21c43c137966431429b62513788538657401f414db4b134e65192e8b",
+          "scaler.joblib 94e29f17dabf402ad7a0df79cdd6b914f95dad46b182c0b3ead01343adfd094a",
+          "scientific_basis.json 3eeae5c6047828a9f42fa8f88c7031006734d2dfe756155308d391eaf8d0da1c",
+          "split_reference.json e43608ca9ac942e2c2dcd9c54fac3b6ff1681a3dd0ab1a45036e44581e7bb9d8",
+          "thresholds.json 1899d0c8dff099cfeb85dab4111b5a7c556e77f219f6927b3f5dbf1261e719d4"
+        ],
+        "training_run_files_sha256_after": [
+          "calibration.json 1899d0c8dff099cfeb85dab4111b5a7c556e77f219f6927b3f5dbf1261e719d4",
+          "evaluation_provenance.json 31bb19a6992c611bf376f3a3552f1059001b44694320b63cc9e7a4bdf046cabf",
+          "evaluation_report.json cacc0d259f7c73b7d86774773c3cc69ca511fd9510e5c728546d632eee6fb865",
+          "feature_names.json f567f8dcd2abac9067cb827d0c9a0c878f8e16430e9f098f5b34bf95cf150ca9",
+          "label_classes.json b70fbc9f2806c577e9ab7f50a4925d403513623f63d2dddc6284b3f6e778a1d0",
+          "latency.json 727d76e5034360b3053eaa28d1984d33b98714dc121ef133d67f1aa15263c7dd",
+          "metrics.json 36c3836fd5356a42c3366870d073ad7e32979e46da191bc7944c29dca30af69e",
+          "model.joblib eb56d9d7f0071b262e0ce822fa698d7a95da1b1592ac1097764b831a8cce80b6",
+          "predictions.json d07546b21f275decfdc2fafe0b8cad905086b0517770fab4957f9a2277645a7f",
+          "scaler.joblib 4d9b07f551defec4ced0caf8bd938b265de914c6a8280fcb7c6fad119d99e368",
+          "training_run.json 2875bd308da4831ec7cde0a73831a2a6e4def3652316a2839bf28f2410558ca5"
+        ],
+        "training_run_files_sha256_before": [
+          "calibration.json 1899d0c8dff099cfeb85dab4111b5a7c556e77f219f6927b3f5dbf1261e719d4",
+          "evaluation_provenance.json 31bb19a6992c611bf376f3a3552f1059001b44694320b63cc9e7a4bdf046cabf",
+          "evaluation_report.json cacc0d259f7c73b7d86774773c3cc69ca511fd9510e5c728546d632eee6fb865",
+          "feature_names.json f567f8dcd2abac9067cb827d0c9a0c878f8e16430e9f098f5b34bf95cf150ca9",
+          "label_classes.json b70fbc9f2806c577e9ab7f50a4925d403513623f63d2dddc6284b3f6e778a1d0",
+          "latency.json 727d76e5034360b3053eaa28d1984d33b98714dc121ef133d67f1aa15263c7dd",
+          "metrics.json 36c3836fd5356a42c3366870d073ad7e32979e46da191bc7944c29dca30af69e",
+          "model.joblib eb56d9d7f0071b262e0ce822fa698d7a95da1b1592ac1097764b831a8cce80b6",
+          "predictions.json d07546b21f275decfdc2fafe0b8cad905086b0517770fab4957f9a2277645a7f",
+          "scaler.joblib 4d9b07f551defec4ced0caf8bd938b265de914c6a8280fcb7c6fad119d99e368",
+          "training_run.json 2875bd308da4831ec7cde0a73831a2a6e4def3652316a2839bf28f2410558ca5"
+        ],
+        "value": true
+      },
+      "scaler_fit_train_only_no_leakage": {
+        "evidence": "training_service.py run_baseline: a fresh TrainOnlyScaler is fit exclusively on PRE_PDU-TRAIN features (split=TRAIN); VALIDATION and TEST features are only ever transformed, never seen by fit(). Same code path PRIMARY itself used.",
+        "value": true
+      },
+      "test_never_opened": {
+        "evidence": "train_region_specific_variant() calls evaluate_training_run(include_test=False); the exported bundle approval_status is TEST_NOT_EXECUTED with gate_reason TEST_NOT_EXECUTED: this training_run_id has no TEST evaluation yet -- confirmed directly from the real export_bundle() gate output, not asserted.",
+        "pre_pdu_bundle_approval_status": "TEST_NOT_EXECUTED",
+        "value": true
+      }
+    },
+    "delta": {
+      "ci_high": 0.09975261870737617,
+      "ci_low": 0.04633805792574756,
+      "confidence_level": 0.95,
+      "definition": "BA_FULL_BURST minus BA_PRE_PDU",
+      "method": "matched_stratified_bootstrap_delta_ci -- genuinely matched and joint bootstrap: cluster (session_id) resample indices are drawn ONCE per stratum (physical_unit_id) per replicate and applied identically to both FULL_BURST and PRE_PDU populations, never two independent draws, since both are the SAME real evidence (same example_ids and sessions) scored under two analytical regions. Class-stratified: no class can ever be dropped from a replicate. n_resamples=2000, seed=12345 default, never overridden.",
+      "n_resamples": 2000,
+      "no_confirmatory_significance_test_performed": true,
+      "point_estimate": 0.07775189293070772,
+      "recall_delta_per_class": {
+        "CC2541SensorTag": 0.10160427807486627,
+        "CC2650-UNIT-01": 0.09638554216867468,
+        "keyfobdemo 01": 0.11301775147928994,
+        "keyfobdemo 02": 0.0
+      }
+    },
+    "evidence_status": "DEVELOPMENT_EXPLORATORY",
+    "full_burst": {
+      "accuracy": 0.7494325919201089,
+      "balanced_accuracy": 0.6338138990398197,
+      "balanced_accuracy_ci": {
+        "ci_high": 0.6850857789866278,
+        "ci_low": 0.5912219610540254,
+        "n_resamples": 2000
+      },
+      "confusion_matrix": {
+        "CC2541SensorTag": {
+          "CC2541SensorTag": 146,
+          "CC2650-UNIT-01": 0,
+          "keyfobdemo 01": 15,
+          "keyfobdemo 02": 26
+        },
+        "CC2650-UNIT-01": {
+          "CC2541SensorTag": 0,
+          "CC2650-UNIT-01": 158,
+          "keyfobdemo 01": 1,
+          "keyfobdemo 02": 7
+        },
+        "keyfobdemo 01": {
+          "CC2541SensorTag": 185,
+          "CC2650-UNIT-01": 13,
+          "keyfobdemo 01": 1346,
+          "keyfobdemo 02": 146
+        },
+        "keyfobdemo 02": {
+          "CC2541SensorTag": 0,
+          "CC2650-UNIT-01": 0,
+          "keyfobdemo 01": 159,
+          "keyfobdemo 02": 1
+        }
+      },
+      "label": "FULL_BURST",
+      "macro_f1": 0.5864106215528908,
+      "n_examples": 2203,
+      "n_sessions": 12,
+      "per_unit": {
+        "CC2541SensorTag": {
+          "n_examples": 187,
+          "n_sessions": 2
+        },
+        "CC2650-UNIT-01": {
+          "n_examples": 166,
+          "n_sessions": 3
+        },
+        "keyfobdemo 01": {
+          "n_examples": 1690,
+          "n_sessions": 5
+        },
+        "keyfobdemo 02": {
+          "n_examples": 160,
+          "n_sessions": 2
+        }
+      },
+      "recall_per_class": {
+        "CC2541SensorTag": 0.7807486631016043,
+        "CC2650-UNIT-01": 0.9518072289156626,
+        "keyfobdemo 01": 0.7964497041420119,
+        "keyfobdemo 02": 0.00625
+      },
+      "training_run_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd"
+    },
+    "pre_pdu": {
+      "accuracy": 0.6468452110758057,
+      "balanced_accuracy": 0.556062006109112,
+      "balanced_accuracy_ci": {
+        "ci_high": 0.6281322273718891,
+        "ci_low": 0.5026723884198467,
+        "n_resamples": 2000
+      },
+      "confusion_matrix": {
+        "CC2541SensorTag": {
+          "CC2541SensorTag": 127,
+          "CC2650-UNIT-01": 0,
+          "keyfobdemo 01": 14,
+          "keyfobdemo 02": 46
+        },
+        "CC2650-UNIT-01": {
+          "CC2541SensorTag": 5,
+          "CC2650-UNIT-01": 142,
+          "keyfobdemo 01": 1,
+          "keyfobdemo 02": 18
+        },
+        "keyfobdemo 01": {
+          "CC2541SensorTag": 29,
+          "CC2650-UNIT-01": 281,
+          "keyfobdemo 01": 1155,
+          "keyfobdemo 02": 225
+        },
+        "keyfobdemo 02": {
+          "CC2541SensorTag": 0,
+          "CC2650-UNIT-01": 2,
+          "keyfobdemo 01": 157,
+          "keyfobdemo 02": 1
+        }
+      },
+      "label": "PRE_PDU",
+      "macro_f1": 0.49513305249417133,
+      "n_examples": 2203,
+      "n_sessions": 12,
+      "per_unit": {
+        "CC2541SensorTag": {
+          "n_examples": 187,
+          "n_sessions": 2
+        },
+        "CC2650-UNIT-01": {
+          "n_examples": 166,
+          "n_sessions": 3
+        },
+        "keyfobdemo 01": {
+          "n_examples": 1690,
+          "n_sessions": 5
+        },
+        "keyfobdemo 02": {
+          "n_examples": 160,
+          "n_sessions": 2
+        }
+      },
+      "recall_per_class": {
+        "CC2541SensorTag": 0.679144385026738,
+        "CC2650-UNIT-01": 0.8554216867469879,
+        "keyfobdemo 01": 0.6834319526627219,
+        "keyfobdemo 02": 0.00625
+      },
+      "training_run_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd-region-pre-pdu"
+    }
+  },
+  "schema_version": "ble-paper-ready-values-v1",
+  "source": "Pure aggregation of already-persisted canonical artifacts. No retraining. TEST never reopened beyond its existing evaluation_report.json (already computed, never re-evaluated here)."
+}

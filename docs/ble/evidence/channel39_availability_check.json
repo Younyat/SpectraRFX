@@ -1,0 +1,22 @@
+{
+  "captures_by_center_frequency_hz": {
+    "2402000000": 133,
+    "2426000000": 22,
+    "2480000000": 1
+  },
+  "ch39_captures": [
+    {
+      "campaign_id": "SHELLY-RF-VISIBILITY-DIAGNOSTIC",
+      "capture_id": "BLE-IQ-0af07d179681",
+      "capture_purpose": "TARGET_DEVICE_ON",
+      "session_id": "BLE-HYBRID-20260813T144512Z-44e28f",
+      "unit": "SHELLY-PLUG-01"
+    }
+  ],
+  "ch39_captures_for_four_enrolled_units": 0,
+  "generated_at": "2026-08-23T13:30:17.888110Z",
+  "purpose": "Independent check of CH39 (2480 MHz) availability for the four closed-set enrolled units, across the entire capture store (not scoped to IDENTITY-c52850a953).",
+  "schema_version": "ble-technical-evidence-audit-snapshot-v1",
+  "source_function": "ScientificResultsRepository._load_all_captures (backend/app/modules/ble_scientific_results/api/scientific_results_repository.py), grouped by CaptureRecord.center_frequency_hz",
+  "total_captures_in_store": 156
+}

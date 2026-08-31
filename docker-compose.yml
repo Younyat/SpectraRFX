@@ -1,0 +1,16 @@
+version: '3.9'
+
+# Docker Compose is intentionally not used for the active USRP-B200 workflow on
+# Windows. Local SDR access depends on USB, UHD/GNU Radio, and the RadioConda
+# Python environment on the host. Use scripts/run_dev.ps1 for real hardware.
+services:
+  hardware-runtime-not-containerized:
+    image: alpine:3.20
+    profiles:
+      - documentation-only
+    command:
+      - sh
+      - -c
+      - >
+        echo "SpectraEase real USRP-B200 development runs on the Windows host with
+        RadioConda. Use scripts/run_dev.ps1 instead of Docker Compose." && exit 1

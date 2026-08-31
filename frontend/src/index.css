@@ -1,0 +1,166 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+    --app-shell: #f6f7fb;
+    --app-sidebar: #0f172a;
+    --app-sidebar-border: rgba(148, 163, 184, 0.18);
+    --app-sidebar-text: #e2e8f0;
+    --app-sidebar-muted: #94a3b8;
+    --app-accent: #f59e0b;
+    --app-accent-foreground: #111827;
+    --app-surface: rgba(255, 255, 255, 0.88);
+    --app-surface-strong: #ffffff;
+    --app-surface-muted: #f8fafc;
+    --app-border: rgba(148, 163, 184, 0.25);
+    --app-text: #0f172a;
+    --app-text-muted: #475569;
+    --app-overlay: rgba(15, 23, 42, 0.62);
+  }
+
+  [data-theme="dark"] {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 94.1%;
+    --app-shell: #020617;
+    --app-sidebar: #020617;
+    --app-sidebar-border: rgba(71, 85, 105, 0.38);
+    --app-sidebar-text: #e5eef9;
+    --app-sidebar-muted: #94a3b8;
+    --app-accent: #67e8f9;
+    --app-accent-foreground: #082f49;
+    --app-surface: rgba(15, 23, 42, 0.85);
+    --app-surface-strong: #0f172a;
+    --app-surface-muted: #111827;
+    --app-border: rgba(71, 85, 105, 0.42);
+    --app-text: #e5eef9;
+    --app-text-muted: #94a3b8;
+    --app-overlay: rgba(2, 6, 23, 0.55);
+  }
+
+  [data-theme="laboratory"] {
+    --background: 38 33% 96%;
+    --foreground: 24 24% 15%;
+    --card: 38 33% 98%;
+    --card-foreground: 24 24% 15%;
+    --popover: 38 33% 98%;
+    --popover-foreground: 24 24% 15%;
+    --primary: 21 77% 44%;
+    --primary-foreground: 36 55% 96%;
+    --secondary: 40 36% 92%;
+    --secondary-foreground: 24 24% 15%;
+    --muted: 40 36% 92%;
+    --muted-foreground: 28 15% 38%;
+    --accent: 182 46% 36%;
+    --accent-foreground: 37 40% 96%;
+    --destructive: 0 68% 48%;
+    --destructive-foreground: 36 55% 96%;
+    --border: 28 22% 82%;
+    --input: 28 22% 82%;
+    --ring: 21 77% 44%;
+    --app-shell: #f3ece2;
+    --app-sidebar: #31221b;
+    --app-sidebar-border: rgba(214, 211, 209, 0.16);
+    --app-sidebar-text: #f8f2eb;
+    --app-sidebar-muted: #c7b8a5;
+    --app-accent: #0f766e;
+    --app-accent-foreground: #f0fdfa;
+    --app-surface: rgba(255, 250, 245, 0.88);
+    --app-surface-strong: #fffaf5;
+    --app-surface-muted: #f7f0e7;
+    --app-border: rgba(120, 113, 108, 0.25);
+    --app-text: #292524;
+    --app-text-muted: #57534e;
+    --app-overlay: rgba(41, 37, 36, 0.48);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .app-shell {
+    background: var(--app-shell);
+    color: var(--app-text);
+  }
+
+  .app-sidebar {
+    background: var(--app-sidebar);
+    border-color: var(--app-sidebar-border);
+    color: var(--app-sidebar-text);
+  }
+
+  .app-surface {
+    background: var(--app-surface);
+    border: 1px solid var(--app-border);
+    color: var(--app-text);
+    backdrop-filter: blur(10px);
+  }
+
+  .app-surface-strong {
+    background: var(--app-surface-strong);
+    border: 1px solid var(--app-border);
+    color: var(--app-text);
+  }
+
+  .app-surface-muted {
+    background: var(--app-surface-muted);
+    border: 1px solid var(--app-border);
+    color: var(--app-text);
+  }
+
+  .app-muted-text {
+    color: var(--app-text-muted);
+  }
+
+  .app-page {
+    min-height: 100%;
+    background:
+      radial-gradient(circle at top left, color-mix(in srgb, var(--app-accent) 18%, transparent), transparent 28%),
+      linear-gradient(180deg, color-mix(in srgb, var(--app-shell) 84%, white), var(--app-shell));
+  }
+}

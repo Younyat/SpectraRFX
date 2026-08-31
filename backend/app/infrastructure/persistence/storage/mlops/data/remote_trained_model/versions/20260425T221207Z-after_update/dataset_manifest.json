@@ -1,0 +1,34 @@
+{
+  "manifest_hash": "26d347b09aae6cf73a748ddee0ee2b62f3fb1ad7ad36592b0f56fd38765ac780",
+  "num_records": 2,
+  "records": [
+    {
+      "iq_file": "/tmp/rf_train_job/rf_dataset/remote_001\\session_001\\iq_remote_001_5999cd57.cfile",
+      "metadata_file": "/tmp/rf_train_job/rf_dataset/remote_001\\session_001\\iq_remote_001_5999cd57.json",
+      "emitter_device_id": "remote_001",
+      "session_id": "session_001",
+      "receiver_id": "unknown",
+      "environment_id": "indoor_lab_los",
+      "sample_rate_hz": 2500000.0,
+      "center_frequency_hz": 89400000.0,
+      "duration_seconds": 5.0,
+      "sha256": "9055d72e6cb5acdf3be25027a608b11a96d707b3c37d46a351ea1c046d5e993b",
+      "label": "garage_remote",
+      "modulation_hint": "unknown"
+    },
+    {
+      "iq_file": "/tmp/rf_train_job/rf_dataset/remote_002\\session_001\\iq_remote_002_dff31f58.cfile",
+      "metadata_file": "/tmp/rf_train_job/rf_dataset/remote_002\\session_001\\iq_remote_002_dff31f58.json",
+      "emitter_device_id": "remote_002",
+      "session_id": "session_001",
+      "receiver_id": "unknown",
+      "environment_id": "indoor_lab_los",
+      "sample_rate_hz": 2500000.0,
+      "center_frequency_hz": 89400000.0,
+      "duration_seconds": 5.0,
+      "sha256": "70b4a892a16340c2bd96e74390be437784507df314028f53c3076ae751147653",
+      "label": "garage_remote",
+      "modulation_hint": "unknown"
+    }
+  ]
+}

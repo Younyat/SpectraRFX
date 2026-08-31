@@ -1,0 +1,94 @@
+{
+  "figures": [
+    {
+      "evaluation_unit": "EXAMPLE_RECORD",
+      "evidence_status": "DEVELOPMENT",
+      "figure_path": "figures/rq1_acquisition_dependence.png",
+      "generated_at": "2026-08-23T20:12:13.602603Z",
+      "generator": "figures/paper_figures.py::bar_with_ci_figure",
+      "generator_commit": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+      "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+      "source_artifact": "paper-run-2805869e6282778ad729a26d022ec9b0/06_statistics/rq1_acquisition_dependence_report.json",
+      "source_artifact_sha256": "22b540da50bb09c746a1ded8869ed425dc09e3c44ea38d21a4c729d2b2849828"
+    },
+    {
+      "evaluation_unit": "EXAMPLE_RECORD",
+      "evidence_status": "DEVELOPMENT",
+      "figure_path": "figures/rq1_acquisition_dependence_publication.png",
+      "generated_at": "2026-08-23T20:12:13.867703Z",
+      "generator": "figures/paper_figures.py::bar_with_ci_figure",
+      "generator_commit": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+      "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+      "source_artifact": "paper-run-2805869e6282778ad729a26d022ec9b0/06_statistics/rq1_acquisition_dependence_report.json",
+      "source_artifact_sha256": "22b540da50bb09c746a1ded8869ed425dc09e3c44ea38d21a4c729d2b2849828"
+    },
+    {
+      "evaluation_unit": "EXAMPLE_RECORD",
+      "evidence_status": "DEVELOPMENT",
+      "figure_path": "figures/rq2_representation_comparison.png",
+      "generated_at": "2026-08-23T20:12:14.369438Z",
+      "generator": "figures/paper_figures.py::bar_with_ci_figure",
+      "generator_commit": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+      "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+      "source_artifact": "paper-run-2805869e6282778ad729a26d022ec9b0/06_statistics/rq2_representation_comparison_report.json",
+      "source_artifact_sha256": "1cb5aadfd4064128eaa05902bf7c686e2f42d514745a2dae970e3a77134f6596"
+    },
+    {
+      "evaluation_unit": "EXAMPLE_RECORD",
+      "evidence_status": "DEVELOPMENT",
+      "figure_path": "figures/rq2_representation_comparison_publication.png",
+      "generated_at": "2026-08-23T20:12:14.623135Z",
+      "generator": "figures/paper_figures.py::bar_with_ci_figure",
+      "generator_commit": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+      "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+      "source_artifact": "paper-run-2805869e6282778ad729a26d022ec9b0/06_statistics/rq2_representation_comparison_report.json",
+      "source_artifact_sha256": "1cb5aadfd4064128eaa05902bf7c686e2f42d514745a2dae970e3a77134f6596"
+    },
+    {
+      "evaluation_unit": "EXAMPLE_RECORD",
+      "evidence_status": "DEVELOPMENT_EXPLORATORY",
+      "figure_path": "figures/rq4_full_burst_vs_pre_pdu.png",
+      "generated_at": "2026-08-23T20:12:14.909298Z",
+      "generator": "figures/paper_figures.py::bar_with_ci_figure",
+      "generator_commit": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+      "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+      "source_artifact": "paper-run-2805869e6282778ad729a26d022ec9b0/06_statistics/rq4_full_burst_vs_pre_pdu_exploratory_report.json",
+      "source_artifact_sha256": "7eeffd3f240cbc7ecc8e3bce2385a8a492c41ce7d6cdc56f05a51fd250efcbf8"
+    },
+    {
+      "evaluation_unit": "EXAMPLE_RECORD",
+      "evidence_status": "DEVELOPMENT_EXPLORATORY",
+      "figure_path": "figures/rq4_per_unit_recall.png",
+      "generated_at": "2026-08-23T20:12:15.267102Z",
+      "generator": "figures/paper_figures.py::grouped_bar_figure",
+      "generator_commit": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+      "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+      "source_artifact": "paper-run-2805869e6282778ad729a26d022ec9b0/06_statistics/rq4_full_burst_vs_pre_pdu_exploratory_report.json",
+      "source_artifact_sha256": "7eeffd3f240cbc7ecc8e3bce2385a8a492c41ce7d6cdc56f05a51fd250efcbf8"
+    },
+    {
+      "evaluation_unit": "EXAMPLE_RECORD",
+      "evidence_status": "DEVELOPMENT_EXPLORATORY",
+      "figure_path": "figures/feature_group_ablation.png",
+      "generated_at": "2026-08-23T20:12:15.632060Z",
+      "generator": "figures/paper_figures.py::bar_with_ci_figure",
+      "generator_commit": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+      "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+      "source_artifact": "paper-run-2805869e6282778ad729a26d022ec9b0/06_statistics/feature_group_ablation_exploratory_report.json",
+      "source_artifact_sha256": "a93987ebddb2235b01bcaed86e3810b9530ae9b4fbddbd4075b95ab9fe6964e3"
+    },
+    {
+      "evaluation_unit": "EXAMPLE_RECORD",
+      "evidence_status": "DEVELOPMENT_EXPLORATORY",
+      "figure_path": "figures/session_stability.png",
+      "generated_at": "2026-08-23T20:12:15.918434Z",
+      "generator": "figures/paper_figures.py::strip_plot_figure",
+      "generator_commit": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+      "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+      "source_artifact": "paper-run-2805869e6282778ad729a26d022ec9b0/06_statistics/session_stability_analysis_report.json",
+      "source_artifact_sha256": "6c8a7502a9ed1a4974fcc4714f33220a192ecb93de10391b20b2d2f620c3cb9c"
+    }
+  ],
+  "generated_at": "2026-08-23T20:12:18.490491Z",
+  "schema_version": "ble-scientific-results-figure-manifest-v1"
+}

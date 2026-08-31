@@ -1,0 +1,830 @@
+[
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-02d5d29ec622",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-3f68fa24ba01",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-45eb6599efb3",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-4aff7572c347",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-6200ab39019c",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-6db3f8559c73",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-6f0868e3396d",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-7844fdad6001",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-7f1f43344cdc",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-80e4f30ab362",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-88535ea7870d",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-8892eb606635",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-8d973676c922",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-907423300c7b",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-94691883d04e",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-9e525d4bd290",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-9f17d1880d5b",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-a14d490664e7",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-b19a317bff1a",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-b19e005e4f5a",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-cc8786d5a77a",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-f66490e0b0d3",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-f8d434bcd18f",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "CC2541SensorTag",
+    "capture_id": "BLE-IQ-fc2b4eeac0c6",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "SHELLY-PLUG-01",
+    "capture_id": "BLE-IQ-198c7bd0fc5b",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "SHELLY-PLUG-01",
+    "capture_id": "BLE-IQ-2de222e5a04c",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "SHELLY-PLUG-01",
+    "capture_id": "BLE-IQ-33763776961a",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "SHELLY-PLUG-01",
+    "capture_id": "BLE-IQ-35c76d0b70d1",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "SHELLY-PLUG-01",
+    "capture_id": "BLE-IQ-5937efc15f83",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "SHELLY-PLUG-01",
+    "capture_id": "BLE-IQ-66df6092ec05",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "SHELLY-PLUG-01",
+    "capture_id": "BLE-IQ-71529cd9fc5d",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "SHELLY-PLUG-01",
+    "capture_id": "BLE-IQ-9fcdc4573f39",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "SHELLY-PLUG-01",
+    "capture_id": "BLE-IQ-SCRUB-254847c072f0",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "SHELLY-PLUG-01",
+    "capture_id": "BLE-IQ-SCRUB-66688f84a614",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "SHELLY-PLUG-01",
+    "capture_id": "BLE-IQ-SCRUB-6a94a87adf78",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "SHELLY-PLUG-01",
+    "capture_id": "BLE-IQ-SCRUB-8f7e83af75ea",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "SHELLY-PLUG-01",
+    "capture_id": "BLE-IQ-SCRUB-8fee4f512b58",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "SHELLY-PLUG-01",
+    "capture_id": "BLE-IQ-SCRUB-c1d2e07e0c28",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "SHELLY-PLUG-01",
+    "capture_id": "BLE-IQ-SCRUB-ca46dbc19932",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "SHELLY-PLUG-01",
+    "capture_id": "BLE-IQ-SCRUB-fe33b20ad3b9",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "SHELLY-PLUG-01",
+    "capture_id": "BLE-IQ-a478d710d3be",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "SHELLY-PLUG-01",
+    "capture_id": "BLE-IQ-adc2823f5ccc",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "SHELLY-PLUG-01",
+    "capture_id": "BLE-IQ-dfdc2f4866a3",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-0ef2315db2b6",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-2dce171bfad5",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-2f58583a2800",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-34ea17e90523",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-4455f452717d",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-44f1cf57882e",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-4aff7572c347",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-56bd28663237",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-58b612105939",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-5c559e4b6901",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-6076ce92284f",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-6200ab39019c",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-67d4a6315f26",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-6be58cb10adb",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-7844fdad6001",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-7e17d7b4fe8b",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-7f1f43344cdc",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-80e4f30ab362",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-8a14fcc45a6d",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-8d973676c922",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-907423300c7b",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-98ba82ed706e",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-9e525d4bd290",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-a0e8f79f3d30",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-a7aeed27d93c",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-ae4ef898bdec",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-ba04aa2acb7f",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-ba2d9c0f6f78",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-bfc747fa3333",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-c77228bbfffc",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-d606aa540a05",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-d6d49892e716",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-e92e34919c88",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-ea3ede759930",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-f206b4f24414",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-f4bc64dca9fa",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-f66490e0b0d3",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-f85fc01f90b8",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-f86894c6a797",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 01",
+    "capture_id": "BLE-IQ-f8d434bcd18f",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-0b2c57ffeba2",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-0c21c534aa64",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-1bc792665700",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-1c807826ca1b",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-24d07299a976",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-25440dd44364",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-2f1141aa01db",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-3b50e0d037bf",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-4aff7572c347",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-4e640e6fe707",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-6200ab39019c",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-683d5a09b159",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-7577ae25b158",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-7844fdad6001",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-7f1f43344cdc",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-80e4f30ab362",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-896f762b01fd",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-8b3555873373",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-8d973676c922",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-907423300c7b",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-9e525d4bd290",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-b88942a33035",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-c55e073b572e",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-f66490e0b0d3",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "keyfobdemo 02",
+    "capture_id": "BLE-IQ-f8d434bcd18f",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-0dc7090bd405",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-20c7ae393747",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-22cd25e31f1d",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-2968224a35a2",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-29c22e016758",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-55b5025e232c",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-58e7b54446fe",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-5d4a2a7e454e",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-6274c9e82041",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-6b7b4586ae6a",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-7adc69bdefe6",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-7b003a34f9ae",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-88ff6ca3412e",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-8ade1f141f45",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-9c8a65846b76",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-aa9e327cee83",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-aae76c91c597",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-ac2d5dcf0501",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-b07c0ff4f11b",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-bf41b00049dc",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-c08616ecb1dd",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-c273afc4cdad",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-c7e03dc56c62",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-d60791d20ade",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-ef71157dd8e2",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-f0d523ed1e98",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-f3aa2e366ab8",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-f48380548b7d",
+    "active_windows": 1,
+    "eligible_windows": 0
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-fb8a59709fd6",
+    "active_windows": 1,
+    "eligible_windows": 1
+  },
+  {
+    "device_id": "CC2650-UNIT-01",
+    "capture_id": "BLE-IQ-fcb42b06955c",
+    "active_windows": 1,
+    "eligible_windows": 1
+  }
+]

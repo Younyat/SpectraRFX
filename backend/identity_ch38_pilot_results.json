@@ -1,0 +1,44 @@
+{
+  "BLE-IQ-f86894c6a797": {
+    "capture_id": "BLE-IQ-f86894c6a797",
+    "error": "RuntimeError: OFFLINE_REPLAY_ALREADY_RUNNING",
+    "job_id": "BLE-RFFI-STUDIO-JOB-20260731T105736Z-fcf08d",
+    "job_type": "REPLAY_AND_EVIDENCE",
+    "message": "Ejecutando replay resumible (puede tardar varios minutos)",
+    "overall_progress": 0.6,
+    "phase": "OFFLINE_REPLAY",
+    "phase_progress": 0.6,
+    "schema_version": "ble-rffi-studio-job-v1",
+    "started_at": "2026-07-31T10:57:36.131476Z",
+    "state": "failed",
+    "updated_at": "2026-07-31T10:57:36.169193Z"
+  },
+  "BLE-IQ-2dce171bfad5": {
+    "capture_id": "BLE-IQ-2dce171bfad5",
+    "error": "RuntimeError: OFFLINE_REPLAY_ALREADY_RUNNING",
+    "job_id": "BLE-RFFI-STUDIO-JOB-20260731T105740Z-221ec1",
+    "job_type": "REPLAY_AND_EVIDENCE",
+    "message": "Ejecutando replay resumible (puede tardar varios minutos)",
+    "overall_progress": 0.6,
+    "phase": "OFFLINE_REPLAY",
+    "phase_progress": 0.6,
+    "schema_version": "ble-rffi-studio-job-v1",
+    "started_at": "2026-07-31T10:57:40.327828Z",
+    "state": "failed",
+    "updated_at": "2026-07-31T10:57:40.372948Z"
+  },
+  "BLE-IQ-d6d49892e716": {
+    "capture_id": "BLE-IQ-d6d49892e716",
+    "error": "RuntimeError: OFFLINE_REPLAY_ALREADY_RUNNING",
+    "job_id": "BLE-RFFI-STUDIO-JOB-20260731T105744Z-8500eb",
+    "job_type": "REPLAY_AND_EVIDENCE",
+    "message": "Ejecutando replay resumible (puede tardar varios minutos)",
+    "overall_progress": 0.6,
+    "phase": "OFFLINE_REPLAY",
+    "phase_progress": 0.6,
+    "schema_version": "ble-rffi-studio-job-v1",
+    "started_at": "2026-07-31T10:57:44.552344Z",
+    "state": "failed",
+    "updated_at": "2026-07-31T10:57:44.590847Z"
+  }
+}

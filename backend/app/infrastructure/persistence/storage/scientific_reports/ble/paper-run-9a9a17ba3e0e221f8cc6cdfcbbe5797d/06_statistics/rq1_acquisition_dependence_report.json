@@ -1,0 +1,59 @@
+{
+  "ba_capture": 0.9969788519637462,
+  "ba_capture_n_comparable": 355,
+  "ba_future": null,
+  "ba_future_n_comparable": null,
+  "ba_future_status": "NOT_YET_AVAILABLE",
+  "ba_window": 0.9882075471698113,
+  "ba_window_n_comparable": 1581,
+  "confirmatory_split_manifest_id": "CC2650-UNIT-01-V2-TVB__20260814-v2b__TARGET_VS_BACKGROUND",
+  "confirmatory_split_manifest_sha256": "3bc5a543a30d4b3a655fc4d8802d2b405b19a38302a8e33da5bb49dfaccd64ff",
+  "confusion_matrix_capture": {
+    "BACKGROUND_ENVIRONMENT": {
+      "BACKGROUND_ENVIRONMENT": 329,
+      "TARGET_DEVICE": 2
+    },
+    "TARGET_DEVICE": {
+      "BACKGROUND_ENVIRONMENT": 0,
+      "TARGET_DEVICE": 24
+    }
+  },
+  "confusion_matrix_future": null,
+  "contract_sha256": "5aa011ed44cdde1c9a0020b4002dae69a6744c30d61eae10b552a23a9f4ffa5d",
+  "coverage": null,
+  "dataset_manifest_sha256": "44260188b21cf017af1a25d6e4d0302e4575d45cf0b3597fb9a4b4a285949d90",
+  "decision_window_cross_reference": null,
+  "delta_dependence": -0.008771304793934953,
+  "delta_future": null,
+  "diagnostic_split_manifest_id": "RQ1DIAG-CC2650-UNIT-01-V2-TVB-svm_rbf-4631577d",
+  "diagnostic_split_manifest_sha256": "78348d4b16342c9973680bdb870b537aeb9468ab50c25f089d8afebe8051192e",
+  "evaluation_unit": "EXAMPLE_RECORD",
+  "evidence_status": "DEVELOPMENT",
+  "generated_at": "2026-08-19T12:47:52.607105Z",
+  "git_sha": "cd28e518aac660ad81e1f212a980e21d73d6dc1b",
+  "model_bundle_id": null,
+  "model_bundle_sha256": null,
+  "per_unit_recall": null,
+  "protocol_id": "ble-rffi-studio-TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+  "protocol_version": 1,
+  "schema_version": "ble-scientific-results-rq1-acquisition-dependence-v1",
+  "source_evaluation_domains": {
+    "capture": "TARGET_VS_BACKGROUND:VALIDATION",
+    "window": "RQ1_ACQUISITION_DEPENDENCE_DIAGNOSTIC:VALIDATION"
+  },
+  "uncertainty_ci": {
+    "ba_capture_ci": {
+      "ci_high": 1.0,
+      "ci_low": 0.9939577039274925
+    },
+    "ba_window_ci": {
+      "ci_high": 0.9948462404560009,
+      "ci_low": 0.9823822814489761
+    },
+    "delta_dependence_ci": {
+      "ci_high": -0.0009590461310405664,
+      "ci_low": -0.01591046935468345,
+      "method": "paired_cluster_bootstrap_delta_ci (joint resample, session-clustered, NOT ci_window - ci_capture)"
+    }
+  }
+}

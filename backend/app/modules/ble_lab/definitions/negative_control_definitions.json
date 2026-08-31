@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0.0",
+  "results": {
+    "PASSED_SINGLE_RUN": "Cero atribuciones al objetivo en una única ejecución con condición negativa predeclarada.",
+    "FAILED_FALSE_ATTRIBUTION": "Se produjo al menos una atribución al objetivo bajo la condición negativa.",
+    "PENDING": "Falta ejecutar o reforzar el control."
+  },
+  "dimensions": {
+    "maximum_rf_evidence": "E0–E5 mide evidencia positiva recuperada y no sustituye el resultado del control.",
+    "basic_negative_control": "Comprueba cero atribuciones falsas al objetivo declarado.",
+    "reinforced_negative_control": "Además exige una referencia positiva E3 de otro dispositivo y captura limpia."
+  },
+  "limitations": [
+    "La condición física procede del operador y no de una inferencia RF.",
+    "El contrato negativo no identifica a los transmisores ambientales.",
+    "Una captura con pérdidas permanece fuera de entrenamiento y fingerprinting."
+  ]
+}

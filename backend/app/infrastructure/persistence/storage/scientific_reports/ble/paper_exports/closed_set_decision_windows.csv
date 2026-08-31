@@ -1,0 +1,185 @@
+abstention_reason,branch,burst_count,capture_id,class_probability,decision_window_id,evaluation_domain,final_decision,predicted_class,true_physical_unit_id,window_duration_s
+,engineered_rf,371,BLE-IQ-01c764a99574,0.9873417721518988,BLE-IQ-01c764a99574-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,85,BLE-IQ-02d5d29ec622,1.0,BLE-IQ-02d5d29ec622-decision-win-00000,TRAIN,IDENTIFIED,CC2541SensorTag,CC2541SensorTag,10.0
+,engineered_rf,367,BLE-IQ-02d5d29ec622,0.967391304347826,BLE-IQ-02d5d29ec622-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,120,BLE-IQ-0af07d179681,0.45549738219895286,BLE-IQ-0af07d179681-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,25,BLE-IQ-0af07d179681,0.4536082474226804,BLE-IQ-0af07d179681-decision-win-00001,,UNKNOWN,CC2541SensorTag,,10.0
+,engineered_rf,83,BLE-IQ-0b2c57ffeba2,0.9696969696969697,BLE-IQ-0b2c57ffeba2-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 02,keyfobdemo 02,10.0
+,engineered_rf,390,BLE-IQ-0b2c57ffeba2,0.89937106918239,BLE-IQ-0b2c57ffeba2-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,247,BLE-IQ-0c21c534aa64,0.5148514851485149,BLE-IQ-0c21c534aa64-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,123,BLE-IQ-0c21c534aa64,1.0,BLE-IQ-0c21c534aa64-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 02,keyfobdemo 02,10.0
+,engineered_rf,437,BLE-IQ-0dc7090bd405,0.967032967032967,BLE-IQ-0dc7090bd405-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,403,BLE-IQ-0eefc905375d,0.7678571428571428,BLE-IQ-0eefc905375d-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,359,BLE-IQ-0ef2315db2b6,0.9468085106382979,BLE-IQ-0ef2315db2b6-decision-win-00000,TEST,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,360,BLE-IQ-12d849d8cb18,0.859375,BLE-IQ-12d849d8cb18-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,110,BLE-IQ-198c7bd0fc5b,0.49729729729729727,BLE-IQ-198c7bd0fc5b-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,77,BLE-IQ-1bc792665700,0.65,BLE-IQ-1bc792665700-decision-win-00000,VALIDATION,UNKNOWN,keyfobdemo 01,keyfobdemo 02,10.0
+,engineered_rf,222,BLE-IQ-1bc792665700,0.9896907216494846,BLE-IQ-1bc792665700-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,279,BLE-IQ-1c807826ca1b,0.8734177215189873,BLE-IQ-1c807826ca1b-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,109,BLE-IQ-1c807826ca1b,1.0,BLE-IQ-1c807826ca1b-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 02,keyfobdemo 02,10.0
+,engineered_rf,103,BLE-IQ-20822a823295,0.3793103448275863,BLE-IQ-20822a823295-decision-win-00000,,UNKNOWN,CC2541SensorTag,SHELLY-PLUG-01,10.0
+,engineered_rf,109,BLE-IQ-20822a823295,0.3548387096774194,BLE-IQ-20822a823295-decision-win-00001,,UNKNOWN,CC2541SensorTag,SHELLY-PLUG-01,10.0
+,engineered_rf,107,BLE-IQ-20822a823295,0.37894736842105264,BLE-IQ-20822a823295-decision-win-00002,,UNKNOWN,CC2541SensorTag,SHELLY-PLUG-01,10.0
+,engineered_rf,349,BLE-IQ-22cd25e31f1d,0.9462365591397849,BLE-IQ-22cd25e31f1d-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,97,BLE-IQ-22cd25e31f1d,1.0,BLE-IQ-22cd25e31f1d-decision-win-00000,TRAIN,IDENTIFIED,CC2650-UNIT-01,CC2650-UNIT-01,10.0
+,engineered_rf,126,BLE-IQ-24d07299a976,1.0,BLE-IQ-24d07299a976-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 02,keyfobdemo 02,10.0
+,engineered_rf,276,BLE-IQ-24d07299a976,0.8875000000000001,BLE-IQ-24d07299a976-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,79,BLE-IQ-25440dd44364,1.0,BLE-IQ-25440dd44364-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 02,keyfobdemo 02,10.0
+,engineered_rf,575,BLE-IQ-25440dd44364,0.9176470588235294,BLE-IQ-25440dd44364-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,352,BLE-IQ-29c22e016758,0.9565217391304347,BLE-IQ-29c22e016758-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,104,BLE-IQ-29c22e016758,1.0,BLE-IQ-29c22e016758-decision-win-00000,TEST,IDENTIFIED,CC2650-UNIT-01,CC2650-UNIT-01,10.0
+,engineered_rf,462,BLE-IQ-2dce171bfad5,0.9268292682926829,BLE-IQ-2dce171bfad5-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,103,BLE-IQ-2de222e5a04c,0.4270833333333333,BLE-IQ-2de222e5a04c-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,258,BLE-IQ-2f1141aa01db,0.8650306748466258,BLE-IQ-2f1141aa01db-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,110,BLE-IQ-2f1141aa01db,1.0,BLE-IQ-2f1141aa01db-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 02,keyfobdemo 02,10.0
+,engineered_rf,339,BLE-IQ-2f58583a2800,0.8478260869565217,BLE-IQ-2f58583a2800-decision-win-00000,VALIDATION,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,107,BLE-IQ-33763776961a,0.4479166666666667,BLE-IQ-33763776961a-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,378,BLE-IQ-34ea17e90523,0.9690721649484536,BLE-IQ-34ea17e90523-decision-win-00000,TEST,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,261,BLE-IQ-35c76d0b70d1,0.9166666666666666,BLE-IQ-35c76d0b70d1-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,101,BLE-IQ-38c194c1c707,0.40625000000000006,BLE-IQ-38c194c1c707-decision-win-00000,,UNKNOWN,CC2541SensorTag,,10.0
+,engineered_rf,5,BLE-IQ-38c194c1c707,0.6210526315789474,BLE-IQ-38c194c1c707-decision-win-00001,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,637,BLE-IQ-3b50e0d037bf,0.989247311827957,BLE-IQ-3b50e0d037bf-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,202,BLE-IQ-3f68fa24ba01,0.5340314136125655,BLE-IQ-3f68fa24ba01-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,108,BLE-IQ-3f68fa24ba01,0.9696969696969697,BLE-IQ-3f68fa24ba01-decision-win-00000,TRAIN,IDENTIFIED,CC2541SensorTag,CC2541SensorTag,10.0
+,engineered_rf,308,BLE-IQ-4455f452717d,1.0,BLE-IQ-4455f452717d-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,90,BLE-IQ-4455f452717d,1.0,BLE-IQ-4455f452717d-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,66,BLE-IQ-44f1cf57882e,1.0,BLE-IQ-44f1cf57882e-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,517,BLE-IQ-44f1cf57882e,0.9418604651162791,BLE-IQ-44f1cf57882e-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,436,BLE-IQ-45eb6599efb3,0.9787234042553191,BLE-IQ-45eb6599efb3-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,83,BLE-IQ-4e640e6fe707,0.78,BLE-IQ-4e640e6fe707-decision-win-00000,VALIDATION,IDENTIFIED,keyfobdemo 01,keyfobdemo 02,10.0
+,engineered_rf,217,BLE-IQ-4e640e6fe707,1.0,BLE-IQ-4e640e6fe707-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,313,BLE-IQ-56bd28663237,0.6808510638297872,BLE-IQ-56bd28663237-decision-win-00000,VALIDATION,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,319,BLE-IQ-58b612105939,1.0,BLE-IQ-58b612105939-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,81,BLE-IQ-58b612105939,1.0,BLE-IQ-58b612105939-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,59,BLE-IQ-5925bbfea83b,0.8181818181818181,BLE-IQ-5925bbfea83b-decision-win-00000,,IDENTIFIED,keyfobdemo 01,SHELLY-PLUG-01,10.0
+,engineered_rf,231,BLE-IQ-5937efc15f83,0.9375,BLE-IQ-5937efc15f83-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,514,BLE-IQ-5c559e4b6901,0.96875,BLE-IQ-5c559e4b6901-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,66,BLE-IQ-5c559e4b6901,1.0,BLE-IQ-5c559e4b6901-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,394,BLE-IQ-6076ce92284f,1.0,BLE-IQ-6076ce92284f-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,396,BLE-IQ-60bf910d89f6,0.8432432432432432,BLE-IQ-60bf910d89f6-decision-win-00000,,IDENTIFIED,keyfobdemo 01,CC2650-UNIT-01,10.0
+,engineered_rf,458,BLE-IQ-61b86adc91bb,0.8690476190476191,BLE-IQ-61b86adc91bb-decision-win-00000,,IDENTIFIED,keyfobdemo 01,CC2650-UNIT-01,10.0
+,engineered_rf,116,BLE-IQ-66df6092ec05,0.416243654822335,BLE-IQ-66df6092ec05-decision-win-00000,,UNKNOWN,CC2541SensorTag,SHELLY-PLUG-01,10.0
+,engineered_rf,526,BLE-IQ-67d4a6315f26,0.9476439790575916,BLE-IQ-67d4a6315f26-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,25,BLE-IQ-67d4a6315f26,1.0,BLE-IQ-67d4a6315f26-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,265,BLE-IQ-683d5a09b159,0.7837837837837838,BLE-IQ-683d5a09b159-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,129,BLE-IQ-683d5a09b159,1.0,BLE-IQ-683d5a09b159-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 02,keyfobdemo 02,10.0
+,engineered_rf,397,BLE-IQ-6be58cb10adb,1.0,BLE-IQ-6be58cb10adb-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,440,BLE-IQ-6db3f8559c73,0.9779005524861878,BLE-IQ-6db3f8559c73-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,439,BLE-IQ-6f0868e3396d,0.978021978021978,BLE-IQ-6f0868e3396d-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,261,BLE-IQ-71529cd9fc5d,0.9240506329113923,BLE-IQ-71529cd9fc5d-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,477,BLE-IQ-74f39c2f56d5,0.8395061728395061,BLE-IQ-74f39c2f56d5-decision-win-00000,,IDENTIFIED,keyfobdemo 01,CC2650-UNIT-01,10.0
+,engineered_rf,88,BLE-IQ-7577ae25b158,1.0,BLE-IQ-7577ae25b158-decision-win-00000,TEST,IDENTIFIED,keyfobdemo 02,keyfobdemo 02,10.0
+,engineered_rf,245,BLE-IQ-7577ae25b158,0.8414634146341463,BLE-IQ-7577ae25b158-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,197,BLE-IQ-7adc69bdefe6,0.7105263157894737,BLE-IQ-7adc69bdefe6-decision-win-00000,,IDENTIFIED,CC2650-UNIT-01,,10.0
+,engineered_rf,86,BLE-IQ-7b003a34f9ae,1.0,BLE-IQ-7b003a34f9ae-decision-win-00000,TRAIN,IDENTIFIED,CC2650-UNIT-01,CC2650-UNIT-01,10.0
+,engineered_rf,118,BLE-IQ-7b003a34f9ae,0.6524064171122994,BLE-IQ-7b003a34f9ae-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,97,BLE-IQ-7ba400a4c482,0.7666666666666667,BLE-IQ-7ba400a4c482-decision-win-00000,,IDENTIFIED,keyfobdemo 01,SHELLY-PLUG-01,10.0
+,engineered_rf,106,BLE-IQ-7ba400a4c482,0.8045977011494253,BLE-IQ-7ba400a4c482-decision-win-00001,,IDENTIFIED,keyfobdemo 01,SHELLY-PLUG-01,10.0
+,engineered_rf,114,BLE-IQ-7ba400a4c482,0.7297297297297297,BLE-IQ-7ba400a4c482-decision-win-00002,,IDENTIFIED,keyfobdemo 01,SHELLY-PLUG-01,10.0
+,engineered_rf,111,BLE-IQ-7ba400a4c482,0.75,BLE-IQ-7ba400a4c482-decision-win-00003,,IDENTIFIED,keyfobdemo 01,SHELLY-PLUG-01,10.0
+,engineered_rf,100,BLE-IQ-7ba400a4c482,0.7391304347826088,BLE-IQ-7ba400a4c482-decision-win-00004,,IDENTIFIED,keyfobdemo 01,SHELLY-PLUG-01,10.0
+,engineered_rf,108,BLE-IQ-7ba400a4c482,0.75,BLE-IQ-7ba400a4c482-decision-win-00005,,IDENTIFIED,keyfobdemo 01,SHELLY-PLUG-01,10.0
+,engineered_rf,362,BLE-IQ-7e17d7b4fe8b,0.8125000000000001,BLE-IQ-7e17d7b4fe8b-decision-win-00000,TEST,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,446,BLE-IQ-803a1179a215,0.75,BLE-IQ-803a1179a215-decision-win-00000,,IDENTIFIED,keyfobdemo 01,CC2650-UNIT-01,10.0
+,engineered_rf,373,BLE-IQ-80a9276a6bff,0.7999999999999999,BLE-IQ-80a9276a6bff-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,374,BLE-IQ-88535ea7870d,0.9411764705882353,BLE-IQ-88535ea7870d-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,82,BLE-IQ-88535ea7870d,1.0,BLE-IQ-88535ea7870d-decision-win-00000,TRAIN,IDENTIFIED,CC2541SensorTag,CC2541SensorTag,10.0
+,engineered_rf,207,BLE-IQ-8892eb606635,0.9494949494949495,BLE-IQ-8892eb606635-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,96,BLE-IQ-8892eb606635,0.5524861878453039,BLE-IQ-8892eb606635-decision-win-00000,TEST,UNKNOWN,CC2541SensorTag,CC2541SensorTag,10.0
+,engineered_rf,348,BLE-IQ-88ff6ca3412e,0.9148936170212765,BLE-IQ-88ff6ca3412e-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,13,BLE-IQ-88ff6ca3412e,1.0,BLE-IQ-88ff6ca3412e-decision-win-00000,TRAIN,IDENTIFIED,CC2650-UNIT-01,CC2650-UNIT-01,10.0
+,engineered_rf,223,BLE-IQ-896f762b01fd,0.9789473684210526,BLE-IQ-896f762b01fd-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,78,BLE-IQ-896f762b01fd,0.64,BLE-IQ-896f762b01fd-decision-win-00000,TEST,UNKNOWN,keyfobdemo 01,keyfobdemo 02,10.0
+,engineered_rf,452,BLE-IQ-8a14fcc45a6d,0.978021978021978,BLE-IQ-8a14fcc45a6d-decision-win-00000,TEST,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,95,BLE-IQ-8ade1f141f45,0.89,BLE-IQ-8ade1f141f45-decision-win-00000,VALIDATION,IDENTIFIED,CC2650-UNIT-01,CC2650-UNIT-01,10.0
+,engineered_rf,256,BLE-IQ-8ade1f141f45,0.6494845360824743,BLE-IQ-8ade1f141f45-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,443,BLE-IQ-8b3555873373,0.9047619047619047,BLE-IQ-8b3555873373-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,428,BLE-IQ-94691883d04e,0.978494623655914,BLE-IQ-94691883d04e-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,461,BLE-IQ-959dade6f0df,0.7866666666666666,BLE-IQ-959dade6f0df-decision-win-00000,,IDENTIFIED,keyfobdemo 01,CC2650-UNIT-01,10.0
+,engineered_rf,440,BLE-IQ-98ba82ed706e,0.8230769230769232,BLE-IQ-98ba82ed706e-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,110,BLE-IQ-9b8b198e2cca,0.4895833333333333,BLE-IQ-9b8b198e2cca-decision-win-00000,,UNKNOWN,keyfobdemo 01,CC2541SensorTag,10.0
+,engineered_rf,115,BLE-IQ-9b8b198e2cca,0.4742268041237114,BLE-IQ-9b8b198e2cca-decision-win-00001,,UNKNOWN,keyfobdemo 01,CC2541SensorTag,10.0
+,engineered_rf,107,BLE-IQ-9b8b198e2cca,0.4787234042553191,BLE-IQ-9b8b198e2cca-decision-win-00002,,UNKNOWN,keyfobdemo 01,CC2541SensorTag,10.0
+,engineered_rf,110,BLE-IQ-9b8b198e2cca,0.4869109947643979,BLE-IQ-9b8b198e2cca-decision-win-00003,,UNKNOWN,keyfobdemo 01,CC2541SensorTag,10.0
+,engineered_rf,109,BLE-IQ-9b8b198e2cca,0.45744680851063824,BLE-IQ-9b8b198e2cca-decision-win-00004,,UNKNOWN,keyfobdemo 01,CC2541SensorTag,10.0
+,engineered_rf,106,BLE-IQ-9b8b198e2cca,0.3917525773195876,BLE-IQ-9b8b198e2cca-decision-win-00005,,UNKNOWN,keyfobdemo 01,CC2541SensorTag,10.0
+,engineered_rf,371,BLE-IQ-9c8a65846b76,0.9795918367346939,BLE-IQ-9c8a65846b76-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,82,BLE-IQ-9c8a65846b76,1.0,BLE-IQ-9c8a65846b76-decision-win-00000,TRAIN,IDENTIFIED,CC2650-UNIT-01,CC2650-UNIT-01,10.0
+,engineered_rf,106,BLE-IQ-9d7261468b62,0.40932642487046633,BLE-IQ-9d7261468b62-decision-win-00000,,UNKNOWN,keyfobdemo 01,HW-QUAL-PROBE-01,10.0
+,engineered_rf,106,BLE-IQ-9d7261468b62,0.3917525773195876,BLE-IQ-9d7261468b62-decision-win-00001,,UNKNOWN,CC2541SensorTag,HW-QUAL-PROBE-01,10.0
+,engineered_rf,109,BLE-IQ-9d7261468b62,0.40860215053763443,BLE-IQ-9d7261468b62-decision-win-00002,,UNKNOWN,CC2541SensorTag,HW-QUAL-PROBE-01,10.0
+,engineered_rf,81,BLE-IQ-9f17d1880d5b,1.0,BLE-IQ-9f17d1880d5b-decision-win-00000,TRAIN,IDENTIFIED,CC2541SensorTag,CC2541SensorTag,10.0
+,engineered_rf,365,BLE-IQ-9f17d1880d5b,0.9456521739130435,BLE-IQ-9f17d1880d5b-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,112,BLE-IQ-9fcdc4573f39,0.4468085106382979,BLE-IQ-9fcdc4573f39-decision-win-00000,,UNKNOWN,keyfobdemo 01,SHELLY-PLUG-01,10.0
+,engineered_rf,370,BLE-IQ-a0e8f79f3d30,0.7843137254901961,BLE-IQ-a0e8f79f3d30-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,97,BLE-IQ-a0e8f79f3d30,1.0,BLE-IQ-a0e8f79f3d30-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,100,BLE-IQ-a14d490664e7,0.8287292817679558,BLE-IQ-a14d490664e7-decision-win-00000,VALIDATION,IDENTIFIED,CC2541SensorTag,CC2541SensorTag,10.0
+,engineered_rf,251,BLE-IQ-a14d490664e7,0.9591836734693877,BLE-IQ-a14d490664e7-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,110,BLE-IQ-a478d710d3be,0.46808510638297873,BLE-IQ-a478d710d3be-decision-win-00000,,UNKNOWN,keyfobdemo 01,SHELLY-PLUG-01,10.0
+,engineered_rf,311,BLE-IQ-a7aeed27d93c,0.5978260869565217,BLE-IQ-a7aeed27d93c-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,345,BLE-IQ-a80270fbfdcf,0.7391304347826088,BLE-IQ-a80270fbfdcf-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,105,BLE-IQ-aa9e327cee83,0.5824175824175823,BLE-IQ-aa9e327cee83-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,63,BLE-IQ-aa9e327cee83,1.0,BLE-IQ-aa9e327cee83-decision-win-00000,TRAIN,IDENTIFIED,CC2650-UNIT-01,CC2650-UNIT-01,10.0
+,engineered_rf,261,BLE-IQ-aae76c91c597,0.6626506024096386,BLE-IQ-aae76c91c597-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,47,BLE-IQ-aae76c91c597,0.9191919191919192,BLE-IQ-aae76c91c597-decision-win-00000,VALIDATION,IDENTIFIED,CC2650-UNIT-01,CC2650-UNIT-01,10.0
+,engineered_rf,363,BLE-IQ-ac2d5dcf0501,0.945054945054945,BLE-IQ-ac2d5dcf0501-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,89,BLE-IQ-ac2d5dcf0501,1.0,BLE-IQ-ac2d5dcf0501-decision-win-00000,TRAIN,IDENTIFIED,CC2650-UNIT-01,CC2650-UNIT-01,10.0
+,engineered_rf,260,BLE-IQ-adc2823f5ccc,0.9189189189189189,BLE-IQ-adc2823f5ccc-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,212,BLE-IQ-ae4ef898bdec,0.4127906976744186,BLE-IQ-ae4ef898bdec-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,92,BLE-IQ-ae4ef898bdec,1.0,BLE-IQ-ae4ef898bdec-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,241,BLE-IQ-b07c0ff4f11b,0.8904109589041095,BLE-IQ-b07c0ff4f11b-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,77,BLE-IQ-b07c0ff4f11b,1.0,BLE-IQ-b07c0ff4f11b-decision-win-00000,TEST,IDENTIFIED,CC2650-UNIT-01,CC2650-UNIT-01,10.0
+,engineered_rf,87,BLE-IQ-b19a317bff1a,0.62,BLE-IQ-b19a317bff1a-decision-win-00000,VALIDATION,UNKNOWN,CC2541SensorTag,CC2541SensorTag,10.0
+,engineered_rf,202,BLE-IQ-b19a317bff1a,0.9365079365079364,BLE-IQ-b19a317bff1a-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,176,BLE-IQ-b19e005e4f5a,0.5925925925925926,BLE-IQ-b19e005e4f5a-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,120,BLE-IQ-b19e005e4f5a,0.7945945945945946,BLE-IQ-b19e005e4f5a-decision-win-00000,TEST,IDENTIFIED,CC2541SensorTag,CC2541SensorTag,10.0
+,engineered_rf,529,BLE-IQ-b88942a33035,0.9456521739130435,BLE-IQ-b88942a33035-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,103,BLE-IQ-b92343bf125b,0.44329896907216493,BLE-IQ-b92343bf125b-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,20,BLE-IQ-b92343bf125b,0.5051546391752577,BLE-IQ-b92343bf125b-decision-win-00001,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,304,BLE-IQ-ba04aa2acb7f,1.0,BLE-IQ-ba04aa2acb7f-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,84,BLE-IQ-ba04aa2acb7f,1.0,BLE-IQ-ba04aa2acb7f-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,302,BLE-IQ-ba2d9c0f6f78,1.0,BLE-IQ-ba2d9c0f6f78-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,93,BLE-IQ-ba2d9c0f6f78,1.0,BLE-IQ-ba2d9c0f6f78-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,263,BLE-IQ-bf41b00049dc,0.9166666666666666,BLE-IQ-bf41b00049dc-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,44,BLE-IQ-bf41b00049dc,0.93,BLE-IQ-bf41b00049dc-decision-win-00000,TEST,IDENTIFIED,CC2650-UNIT-01,CC2650-UNIT-01,10.0
+,engineered_rf,484,BLE-IQ-bfc747fa3333,0.9634146341463414,BLE-IQ-bfc747fa3333-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,441,BLE-IQ-c08616ecb1dd,0.9690721649484536,BLE-IQ-c08616ecb1dd-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,378,BLE-IQ-c273afc4cdad,0.9595959595959596,BLE-IQ-c273afc4cdad-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,92,BLE-IQ-c273afc4cdad,1.0,BLE-IQ-c273afc4cdad-decision-win-00000,TRAIN,IDENTIFIED,CC2650-UNIT-01,CC2650-UNIT-01,10.0
+,engineered_rf,90,BLE-IQ-c55e073b572e,1.0,BLE-IQ-c55e073b572e-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 02,keyfobdemo 02,10.0
+,engineered_rf,377,BLE-IQ-c55e073b572e,0.8815789473684211,BLE-IQ-c55e073b572e-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,351,BLE-IQ-c77228bbfffc,0.7227722772277227,BLE-IQ-c77228bbfffc-decision-win-00000,VALIDATION,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,263,BLE-IQ-c7e03dc56c62,0.7640449438202248,BLE-IQ-c7e03dc56c62-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,24,BLE-IQ-c7e03dc56c62,0.91,BLE-IQ-c7e03dc56c62-decision-win-00000,VALIDATION,IDENTIFIED,CC2650-UNIT-01,CC2650-UNIT-01,10.0
+,engineered_rf,339,BLE-IQ-cc8786d5a77a,0.875,BLE-IQ-cc8786d5a77a-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,672,BLE-IQ-d606aa540a05,0.9680851063829787,BLE-IQ-d606aa540a05-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,95,BLE-IQ-d606aa540a05,1.0,BLE-IQ-d606aa540a05-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,438,BLE-IQ-d60791d20ade,0.8848167539267016,BLE-IQ-d60791d20ade-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,516,BLE-IQ-d6d49892e716,0.9375,BLE-IQ-d6d49892e716-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,376,BLE-IQ-de7aa439a4a2,0.8268156424581006,BLE-IQ-de7aa439a4a2-decision-win-00000,,IDENTIFIED,keyfobdemo 01,CC2650-UNIT-01,10.0
+,engineered_rf,246,BLE-IQ-dfdc2f4866a3,0.8604651162790697,BLE-IQ-dfdc2f4866a3-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,476,BLE-IQ-e92e34919c88,0.9696969696969697,BLE-IQ-e92e34919c88-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,71,BLE-IQ-e92e34919c88,1.0,BLE-IQ-e92e34919c88-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,290,BLE-IQ-ea3ede759930,0.44,BLE-IQ-ea3ede759930-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,92,BLE-IQ-ea3ede759930,0.98989898989899,BLE-IQ-ea3ede759930-decision-win-00000,TRAIN,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,435,BLE-IQ-f0d523ed1e98,0.967391304347826,BLE-IQ-f0d523ed1e98-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,306,BLE-IQ-f206b4f24414,0.8102564102564103,BLE-IQ-f206b4f24414-decision-win-00000,TEST,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,309,BLE-IQ-f3aa2e366ab8,0.9523809523809523,BLE-IQ-f3aa2e366ab8-decision-win-00000,,IDENTIFIED,keyfobdemo 01,CC2650-UNIT-01,10.0
+,engineered_rf,340,BLE-IQ-f4bc64dca9fa,0.7676767676767677,BLE-IQ-f4bc64dca9fa-decision-win-00000,VALIDATION,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,347,BLE-IQ-f85fc01f90b8,0.7422680412371134,BLE-IQ-f85fc01f90b8-decision-win-00000,VALIDATION,IDENTIFIED,keyfobdemo 01,keyfobdemo 01,10.0
+,engineered_rf,644,BLE-IQ-f86894c6a797,0.9390243902439024,BLE-IQ-f86894c6a797-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,442,BLE-IQ-fb8a59709fd6,0.8947368421052632,BLE-IQ-fb8a59709fd6-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,91,BLE-IQ-fc2b4eeac0c6,0.9797979797979798,BLE-IQ-fc2b4eeac0c6-decision-win-00000,TRAIN,IDENTIFIED,CC2541SensorTag,CC2541SensorTag,10.0
+,engineered_rf,352,BLE-IQ-fc2b4eeac0c6,0.97,BLE-IQ-fc2b4eeac0c6-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,412,BLE-IQ-fcb42b06955c,0.9545454545454545,BLE-IQ-fcb42b06955c-decision-win-00000,,IDENTIFIED,keyfobdemo 01,,10.0
+,engineered_rf,106,BLE-IQ-SCRUB-11ff17c116e5,0.45161290322580644,BLE-IQ-SCRUB-11ff17c116e5-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,113,BLE-IQ-SCRUB-254847c072f0,0.4948453608247423,BLE-IQ-SCRUB-254847c072f0-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,113,BLE-IQ-SCRUB-4fdaf73c90b6,0.4948453608247423,BLE-IQ-SCRUB-4fdaf73c90b6-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,116,BLE-IQ-SCRUB-66688f84a614,0.4631578947368421,BLE-IQ-SCRUB-66688f84a614-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,108,BLE-IQ-SCRUB-6a94a87adf78,0.43386243386243384,BLE-IQ-SCRUB-6a94a87adf78-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,108,BLE-IQ-SCRUB-8f7e83af75ea,0.41884816753926707,BLE-IQ-SCRUB-8f7e83af75ea-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,106,BLE-IQ-SCRUB-8fee4f512b58,0.45161290322580644,BLE-IQ-SCRUB-8fee4f512b58-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,108,BLE-IQ-SCRUB-c1d2e07e0c28,0.41208791208791207,BLE-IQ-SCRUB-c1d2e07e0c28-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,106,BLE-IQ-SCRUB-ca46dbc19932,0.40740740740740744,BLE-IQ-SCRUB-ca46dbc19932-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,106,BLE-IQ-SCRUB-cef2b4645453,0.4842105263157895,BLE-IQ-SCRUB-cef2b4645453-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0
+,engineered_rf,106,BLE-IQ-SCRUB-fe33b20ad3b9,0.4842105263157895,BLE-IQ-SCRUB-fe33b20ad3b9-decision-win-00000,,UNKNOWN,keyfobdemo 01,,10.0

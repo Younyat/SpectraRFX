@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ES2020",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": ".validation-build",
+    "rootDir": "src/features/spectrum-tools/engine"
+  },
+  "include": ["src/features/spectrum-tools/engine/*.ts"]
+}

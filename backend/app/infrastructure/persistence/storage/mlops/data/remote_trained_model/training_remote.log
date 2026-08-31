@@ -1,0 +1,32 @@
+[WARN] These devices have less than 2 sessions and evaluation rigor will be weaker: ['Commercial FM Broadcast', 'Commercial FM Broadcast_2']
+[INFO] Device: cuda
+[INFO] Records discovered: 6
+[INFO] Current manifest hash: 97a074fb72ecb4cc011ed3d53c0cd3861ed53e9d2f0484bf429dae8ed132427b
+[INFO] Devices: 2
+[INFO] Train captures: 6
+[INFO] Test captures: 6
+[EPOCH 001] train_loss=0.512159 train_acc=0.7770 test_loss=0.481126 test_acc=0.7907
+[EPOCH 002] train_loss=0.431182 train_acc=0.8071 test_loss=0.519982 test_acc=0.7622
+[EPOCH 003] train_loss=0.357160 train_acc=0.8484 test_loss=0.324530 test_acc=0.8630
+[EPOCH 004] train_loss=0.318571 train_acc=0.8701 test_loss=0.247638 test_acc=0.9005
+[EPOCH 005] train_loss=0.292854 train_acc=0.8789 test_loss=0.269184 test_acc=0.8858
+[EPOCH 006] train_loss=0.272912 train_acc=0.8901 test_loss=0.252098 test_acc=0.8940
+[EPOCH 007] train_loss=0.268244 train_acc=0.8891 test_loss=0.224282 test_acc=0.9152
+[EPOCH 008] train_loss=0.246326 train_acc=0.9004 test_loss=0.281635 test_acc=0.8710
+[EPOCH 009] train_loss=0.243369 train_acc=0.8993 test_loss=0.384140 test_acc=0.8145
+[EPOCH 010] train_loss=0.228823 train_acc=0.9076 test_loss=0.167243 test_acc=0.9395
+[EPOCH 011] train_loss=0.221872 train_acc=0.9093 test_loss=0.181238 test_acc=0.9310
+[EPOCH 012] train_loss=0.212265 train_acc=0.9129 test_loss=0.153470 test_acc=0.9448
+[EPOCH 013] train_loss=0.210359 train_acc=0.9141 test_loss=0.148172 test_acc=0.9425
+[EPOCH 014] train_loss=0.199887 train_acc=0.9186 test_loss=0.164320 test_acc=0.9350
+[EPOCH 015] train_loss=0.192598 train_acc=0.9234 test_loss=0.300101 test_acc=0.8693
+[EPOCH 016] train_loss=0.190675 train_acc=0.9226 test_loss=0.131854 test_acc=0.9490
+[EPOCH 017] train_loss=0.181382 train_acc=0.9256 test_loss=0.198392 test_acc=0.9102
+[EPOCH 018] train_loss=0.191094 train_acc=0.9235 test_loss=0.293177 test_acc=0.8618
+[EPOCH 019] train_loss=0.170518 train_acc=0.9332 test_loss=0.139298 test_acc=0.9407
+[EPOCH 020] train_loss=0.169272 train_acc=0.9335 test_loss=0.360726 test_acc=0.8523
+[OK] Training complete
+[OK] Best model: /tmp/rf_train_job/rf_model_store/best_model.pt
+[OK] Enrollment profiles: /tmp/rf_train_job/rf_model_store/enrollment_profiles.json
+[OK] Manifest: /tmp/rf_train_job/rf_model_store/dataset_manifest.json
+[OK] Start mode: from_scratch

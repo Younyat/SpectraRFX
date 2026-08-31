@@ -1,0 +1,6 @@
+domain,ba,n_comparable
+capture-dependent (BA_window),0.9578781766067187,1790
+capture-disjoint (BA_capture),0.6338138990398197,2203
+protected future (NOT_YET_AVAILABLE),,
+delta_dependence,0.32406427756689904,
+delta_future,,

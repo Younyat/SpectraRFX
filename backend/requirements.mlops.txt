@@ -1,0 +1,3 @@
+# Minimal dependencies for remote RF fingerprint training, validation, and inference.
+numpy>=1.26.0
+torch>=2.2.0

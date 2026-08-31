@@ -1,0 +1,9 @@
+ERROR: Could not install packages due to an OSError: [WinError 206] El nombre del archivo o la extensión es demasiado largo: 'C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\venv\\Lib\\site-packages\\torch-2.13.0.dist-info\\licenses\\third_party\\kineto\\libkineto\\third_party\\dynolog\\third_party\\prometheus-cpp\\3rdparty\\civetweb\\src\\third_party\\duktape-1.5.2'
+
+No se pudieron instalar las dependencias del backend.
+En C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\scripts\run_dev.ps1: 127 Car cter: 9
++         throw $ErrorMessage
++         ~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : OperationStopped: (No se pudieron ...as del backend.:String) [], RuntimeException
+    + FullyQualifiedErrorId : No se pudieron instalar las dependencias del backend.
+ 

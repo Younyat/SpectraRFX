@@ -1,0 +1,12 @@
+{
+  "morphological": {
+    "threshold_percentile": 88.0,
+    "min_pixels": 8,
+    "closing_kernel": [3, 3]
+  },
+  "ml_detectors": {
+    "enabled": false,
+    "supported": ["ssd", "faster_rcnn"],
+    "optional_future": ["yolo"]
+  }
+}

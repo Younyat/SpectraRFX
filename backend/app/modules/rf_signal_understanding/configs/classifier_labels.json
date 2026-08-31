@@ -1,0 +1,20 @@
+{
+  "labels": [
+    "fm_broadcast_like",
+    "ook_like",
+    "fsk_like",
+    "psk_like",
+    "ofdm_like",
+    "frequency_hopping_like",
+    "spread_spectrum_like",
+    "narrowband_iot_like",
+    "wideband_noise_like",
+    "wifi_like",
+    "bluetooth_like",
+    "zigbee_like",
+    "lte_like",
+    "unknown",
+    "ambiguous"
+  ],
+  "policy": "Use protocol-like labels unless protocol-specific decoding, synchronization, or standard detection is implemented."
+}

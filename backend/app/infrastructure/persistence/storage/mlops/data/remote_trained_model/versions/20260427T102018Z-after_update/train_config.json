@@ -1,0 +1,28 @@
+{
+  "window_size": 1024,
+  "stride": 1024,
+  "batch_size": 128,
+  "epochs": 20,
+  "lr": 0.001,
+  "embedding_dim": 128,
+  "max_windows_per_file": 3000,
+  "max_complex_samples_per_file": null,
+  "seed": 42,
+  "start_mode": "from_scratch",
+  "device_used": "cuda",
+  "sample_rate_hz": 2000000.0,
+  "center_frequency_hz": 0.0,
+  "original_center_frequencies_hz": [
+    89333039.234,
+    89368750.0,
+    89379093.926,
+    89411718.5,
+    89450781.0
+  ],
+  "canonicalized": true,
+  "canonical_center_hz": 0.0,
+  "canonical_sample_rate_hz": 2000000.0,
+  "canonical_bandwidth_hz": 1800000.0,
+  "canonical_segment_length_samples": 1024,
+  "preprocessing_profile_id": "rff_v1_centered_filtered_resampled_iq_powernorm"
+}

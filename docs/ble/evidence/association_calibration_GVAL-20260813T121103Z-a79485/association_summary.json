@@ -1,0 +1,16 @@
+{
+  "by_status": {
+    "AMBIGUOUS": 1897,
+    "MATCHED_NON_TARGET": 723,
+    "MISMATCH": 9120,
+    "NO_CANDIDATE_IN_WINDOW": 22612
+  },
+  "by_status_percent": {
+    "AMBIGUOUS": 5.5,
+    "MATCHED_NON_TARGET": 2.1,
+    "MISMATCH": 26.5,
+    "NO_CANDIDATE_IN_WINDOW": 65.8
+  },
+  "matched_target_count": 0,
+  "total_calibration_events": 34352
+}

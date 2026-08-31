@@ -1,0 +1,10 @@
+{
+  "device_to_label": {
+    "Commercial FM Broadcast": 0,
+    "Commercial FM Broadcast_2": 1
+  },
+  "label_to_device": {
+    "0": "Commercial FM Broadcast",
+    "1": "Commercial FM Broadcast_2"
+  }
+}

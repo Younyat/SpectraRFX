@@ -1,0 +1,6 @@
+# Optional dependencies for the AI Model Research Plugin
+# (app/modules/ai_research_plugin/). Not required by any other module --
+# the plugin is entirely disabled (router not mounted) unless
+# AI_RESEARCH_PLUGIN_ENABLED=true, per its own isolation requirement.
+onnx>=1.16.0
+onnxruntime>=1.18.0

@@ -1,0 +1,52 @@
+{
+  "stft_waterfall": {
+    "papers": [
+      {
+        "title": "A Radio Frequency Signal Recognition Method Based on Spectrogram",
+        "technique": "STFT waterfall generation and spectrogram-based recognition",
+        "used_for": "I/Q to waterfall conversion"
+      },
+      {
+        "title": "RF Fingerprint Recognition Based on Spectrum Waterfall Diagram",
+        "technique": "DFT-based spectrum waterfall synthesis",
+        "used_for": "waterfall representation for RF fingerprint recognition"
+      }
+    ]
+  },
+  "region_detection": {
+    "papers": [
+      {
+        "title": "A Radio Frequency Signal Recognition Method Based on Spectrogram",
+        "technique": "HSV filtering, morphological processing, minimum bounding rectangle and Faster R-CNN",
+        "used_for": "time-frequency region localization"
+      }
+    ]
+  },
+  "object_detection": {
+    "papers": [
+      {
+        "title": "RF Fingerprint Recognition Based on Spectrum Waterfall Diagram",
+        "technique": "SSD object detection over waterfall diagrams",
+        "used_for": "waterfall signal region detection and recognition"
+      }
+    ]
+  },
+  "mlp_spectral_classifier": {
+    "papers": [
+      {
+        "title": "Simple Detection and Classification of Spectrogram RF Signals Using a Four-Layer Perceptron",
+        "technique": "MLP over spectrogram-derived amplitude-frequency rows",
+        "used_for": "lightweight signal classification"
+      }
+    ]
+  },
+  "bispectral_verification": {
+    "papers": [
+      {
+        "title": "Bispectrum-Based Signal Processing Using Waterfall Features",
+        "technique": "bispectrum-waterfall feature fusion",
+        "used_for": "nonlinear transmitter-specific feature verification"
+      }
+    ]
+  }
+}

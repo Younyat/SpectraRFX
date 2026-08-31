@@ -1,0 +1,96 @@
+{
+  "branches": [
+    {
+      "analysis_role": "UNSELECTED",
+      "balanced_accuracy": 0.27722602530013735,
+      "branch": "coarse_morphology",
+      "classwise_recall": {
+        "CC2541SensorTag": 0.3582887700534759,
+        "CC2650-UNIT-01": 0.6867469879518072,
+        "keyfobdemo 01": 0.020118343195266272,
+        "keyfobdemo 02": 0.04375
+      },
+      "evaluation_domain": "VALIDATION",
+      "inference_latency_ms": 0.023259874433279037,
+      "macro_f1": 0.1280526288155485,
+      "model_type": "frozen_morphological_baseline",
+      "serialized_model_size_bytes": 4531,
+      "training_run_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-frozen_morphological_baseline-c28278"
+    },
+    {
+      "analysis_role": "PRIMARY",
+      "balanced_accuracy": 0.6338138990398197,
+      "branch": "engineered_rf",
+      "classwise_recall": {
+        "CC2541SensorTag": 0.7807486631016043,
+        "CC2650-UNIT-01": 0.9518072289156626,
+        "keyfobdemo 01": 0.7964497041420119,
+        "keyfobdemo 02": 0.00625
+      },
+      "evaluation_domain": "VALIDATION",
+      "inference_latency_ms": 6.948689930140972,
+      "macro_f1": 0.5864106215528908,
+      "model_type": "random_forest",
+      "seed_variability": [
+        {
+          "seed": 137,
+          "training_run_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd-seed-137",
+          "validation_accuracy": 0.7421697684975034,
+          "validation_balanced_accuracy": 0.6288999706305525
+        },
+        {
+          "seed": 2024,
+          "training_run_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd-seed-2024",
+          "validation_accuracy": 0.7262823422605538,
+          "validation_balanced_accuracy": 0.6211189154300968
+        }
+      ],
+      "serialized_model_size_bytes": 2499113,
+      "training_run_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd"
+    },
+    {
+      "analysis_role": "UNSELECTED",
+      "balanced_accuracy": 0.24807692307692308,
+      "branch": "raw_iq",
+      "classwise_recall": {
+        "CC2541SensorTag": 0.0,
+        "CC2650-UNIT-01": 0.0,
+        "keyfobdemo 01": 0.9923076923076923,
+        "keyfobdemo 02": 0.0
+      },
+      "evaluation_domain": "VALIDATION",
+      "inference_latency_ms": 0.5535800475627184,
+      "macro_f1": 0.22643802322441264,
+      "model_type": "cnn1d",
+      "serialized_model_size_bytes": 16125,
+      "training_run_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-cnn1d-3e0511"
+    },
+    {
+      "analysis_role": "UNSELECTED",
+      "balanced_accuracy": 0.5368629979844066,
+      "branch": "stft",
+      "classwise_recall": {
+        "CC2541SensorTag": 0.45454545454545453,
+        "CC2650-UNIT-01": 0.9337349397590361,
+        "keyfobdemo 01": 0.7591715976331361,
+        "keyfobdemo 02": 0.0
+      },
+      "evaluation_domain": "VALIDATION",
+      "inference_latency_ms": 0.3643698990345001,
+      "macro_f1": 0.4981031304046958,
+      "model_type": "cnn2d",
+      "serialized_model_size_bytes": 9661,
+      "training_run_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-cnn2d-6b08d1"
+    }
+  ],
+  "contract_sha256": "5aa011ed44cdde1c9a0020b4002dae69a6744c30d61eae10b552a23a9f4ffa5d",
+  "dataset_id": "IDENTITY-c52850a953",
+  "dataset_version": "20260814T224525.782975Z",
+  "generated_at": "2026-08-14T22:50:20.338595Z",
+  "git_sha": "b345017b016edeb8c1b5ead59317bf2ea7c8745a",
+  "protocol_id": "ble-rffi-studio-TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+  "protocol_version": 1,
+  "schema_version": "ble-scientific-results-rq2-representation-comparison-v1",
+  "split_manifest_id": "IDENTITY-c52850a953__20260814T224525.782975Z__MULTI_DEVICE_CLASSIFICATION",
+  "split_manifest_sha256": "a9e11cba02ecf4db6dd1ca60b46bb7bf52cd73761e7dd64894c4f45b7c47495d"
+}

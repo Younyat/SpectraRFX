@@ -1,0 +1,88 @@
+{
+  "branches": [
+    {
+      "analysis_role": "UNSELECTED",
+      "balanced_accuracy": 0.9350453172205437,
+      "branch": "coarse_morphology",
+      "classwise_recall": {
+        "BACKGROUND_ENVIRONMENT": 0.8700906344410876,
+        "TARGET_DEVICE": 1.0
+      },
+      "evaluation_domain": "VALIDATION",
+      "inference_latency_ms": 0.028799986466765404,
+      "macro_f1": 0.7290028227023381,
+      "model_type": "frozen_morphological_baseline",
+      "serialized_model_size_bytes": 2451,
+      "training_run_id": "TRAIN-20260814T171308-CC2650-UNIT-01-frozen_morphological_baseline-1ed09f"
+    },
+    {
+      "analysis_role": "PRIMARY",
+      "balanced_accuracy": 0.9969788519637462,
+      "branch": "engineered_rf",
+      "classwise_recall": {
+        "BACKGROUND_ENVIRONMENT": 0.9939577039274925,
+        "TARGET_DEVICE": 1.0
+      },
+      "evaluation_domain": "VALIDATION",
+      "inference_latency_ms": 1.022710045799613,
+      "macro_f1": 0.9784848484848485,
+      "model_type": "svm_rbf",
+      "seed_variability": [
+        {
+          "seed": 137,
+          "training_run_id": "TRAIN-20260814T171308-CC2650-UNIT-01-svm_rbf-16d42d-seed-137",
+          "validation_accuracy": 0.9943661971830986,
+          "validation_balanced_accuracy": 0.9969788519637462
+        },
+        {
+          "seed": 2024,
+          "training_run_id": "TRAIN-20260814T171308-CC2650-UNIT-01-svm_rbf-16d42d-seed-2024",
+          "validation_accuracy": 0.9943661971830986,
+          "validation_balanced_accuracy": 0.9969788519637462
+        }
+      ],
+      "serialized_model_size_bytes": 15179,
+      "training_run_id": "TRAIN-20260814T171308-CC2650-UNIT-01-svm_rbf-16d42d"
+    },
+    {
+      "analysis_role": "UNSELECTED",
+      "balanced_accuracy": 0.9939577039274925,
+      "branch": "raw_iq",
+      "classwise_recall": {
+        "BACKGROUND_ENVIRONMENT": 0.9879154078549849,
+        "TARGET_DEVICE": 1.0
+      },
+      "evaluation_domain": "VALIDATION",
+      "inference_latency_ms": 4.688760032877326,
+      "macro_f1": 0.95849894786065,
+      "model_type": "cnn1d",
+      "serialized_model_size_bytes": 15869,
+      "training_run_id": "TRAIN-20260814T171308-CC2650-UNIT-01-cnn1d-38028e"
+    },
+    {
+      "analysis_role": "UNSELECTED",
+      "balanced_accuracy": 0.9924471299093656,
+      "branch": "stft",
+      "classwise_recall": {
+        "BACKGROUND_ENVIRONMENT": 0.9848942598187311,
+        "TARGET_DEVICE": 1.0
+      },
+      "evaluation_domain": "VALIDATION",
+      "inference_latency_ms": 3.109260043129325,
+      "macro_f1": 0.9490250136411935,
+      "model_type": "cnn2d",
+      "serialized_model_size_bytes": 9533,
+      "training_run_id": "TRAIN-20260814T171308-CC2650-UNIT-01-cnn2d-f336bd"
+    }
+  ],
+  "contract_sha256": "2fbe3b156a629485b7acee582916dda10e3dee2247abb907c7b946dca73786fb",
+  "dataset_id": "CC2650-UNIT-01-V2-TVB",
+  "dataset_version": "20260814-v2b",
+  "generated_at": "2026-08-14T17:40:12.296446Z",
+  "git_sha": "b345017b016edeb8c1b5ead59317bf2ea7c8745a",
+  "protocol_id": "ble-rffi-studio-TRAIN-20260814T171308-CC2650-UNIT-01-svm_rbf-16d42d",
+  "protocol_version": 1,
+  "schema_version": "ble-scientific-results-rq2-representation-comparison-v1",
+  "split_manifest_id": "CC2650-UNIT-01-V2-TVB__20260814-v2b__TARGET_VS_BACKGROUND",
+  "split_manifest_sha256": "3bc5a543a30d4b3a655fc4d8802d2b405b19a38302a8e33da5bb49dfaccd64ff"
+}

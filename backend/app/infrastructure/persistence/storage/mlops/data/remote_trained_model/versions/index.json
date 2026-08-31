@@ -1,0 +1,109 @@
+﻿{
+    "versions":  [
+                     {
+                         "created_at_utc":  "2026-04-25T22:12:08.0011979Z",
+                         "version_id":  "20260425T221207Z-after_update",
+                         "snapshot_dir":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260425T221207Z-after_update",
+                         "reason":  "after_update",
+                         "model_file":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260425T221207Z-after_update\\best_model.pt"
+                     },
+                     {
+                         "created_at_utc":  "2026-04-26T11:34:30.2749725Z",
+                         "version_id":  "20260426T113430Z-before_update",
+                         "snapshot_dir":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260426T113430Z-before_update",
+                         "reason":  "before_update",
+                         "model_file":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260426T113430Z-before_update\\best_model.pt"
+                     },
+                     {
+                         "created_at_utc":  "2026-04-26T11:36:04.3256426Z",
+                         "version_id":  "20260426T113604Z-after_update",
+                         "snapshot_dir":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260426T113604Z-after_update",
+                         "reason":  "after_update",
+                         "model_file":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260426T113604Z-after_update\\best_model.pt"
+                     },
+                     {
+                         "created_at_utc":  "2026-04-26T17:10:13.5910077Z",
+                         "version_id":  "20260426T171013Z-before_update",
+                         "snapshot_dir":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260426T171013Z-before_update",
+                         "reason":  "before_update",
+                         "model_file":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260426T171013Z-before_update\\best_model.pt"
+                     },
+                     {
+                         "created_at_utc":  "2026-04-26T17:11:56.5954131Z",
+                         "version_id":  "20260426T171156Z-after_update",
+                         "snapshot_dir":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260426T171156Z-after_update",
+                         "reason":  "after_update",
+                         "model_file":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260426T171156Z-after_update\\best_model.pt"
+                     },
+                     {
+                         "created_at_utc":  "2026-04-27T10:18:16.5667725Z",
+                         "version_id":  "20260427T101816Z-before_update",
+                         "snapshot_dir":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260427T101816Z-before_update",
+                         "reason":  "before_update",
+                         "model_file":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260427T101816Z-before_update\\best_model.pt"
+                     },
+                     {
+                         "created_at_utc":  "2026-04-27T10:20:18.7178451Z",
+                         "version_id":  "20260427T102018Z-after_update",
+                         "snapshot_dir":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260427T102018Z-after_update",
+                         "reason":  "after_update",
+                         "model_file":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260427T102018Z-after_update\\best_model.pt"
+                     },
+                     {
+                         "created_at_utc":  "2026-05-03T13:02:37.4489464Z",
+                         "version_id":  "20260503T130237Z-before_update",
+                         "snapshot_dir":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260503T130237Z-before_update",
+                         "reason":  "before_update",
+                         "model_file":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260503T130237Z-before_update\\best_model.pt"
+                     },
+                     {
+                         "created_at_utc":  "2026-05-03T13:03:53.5686669Z",
+                         "version_id":  "20260503T130353Z-after_update",
+                         "snapshot_dir":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260503T130353Z-after_update",
+                         "reason":  "after_update",
+                         "model_file":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260503T130353Z-after_update\\best_model.pt"
+                     },
+                     {
+                         "created_at_utc":  "2026-05-03T15:41:52.6299235Z",
+                         "version_id":  "20260503T154152Z-before_update",
+                         "snapshot_dir":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260503T154152Z-before_update",
+                         "reason":  "before_update",
+                         "model_file":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260503T154152Z-before_update\\best_model.pt"
+                     },
+                     {
+                         "created_at_utc":  "2026-05-03T15:43:03.0621833Z",
+                         "version_id":  "20260503T154303Z-after_update",
+                         "snapshot_dir":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260503T154303Z-after_update",
+                         "reason":  "after_update",
+                         "model_file":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260503T154303Z-after_update\\best_model.pt"
+                     },
+                     {
+                         "created_at_utc":  "2026-05-04T13:06:00.7713006Z",
+                         "version_id":  "20260504T130600Z-before_update",
+                         "snapshot_dir":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260504T130600Z-before_update",
+                         "reason":  "before_update",
+                         "model_file":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260504T130600Z-before_update\\best_model.pt"
+                     },
+                     {
+                         "created_at_utc":  "2026-05-04T14:06:13.2245637Z",
+                         "version_id":  "20260504T140613Z-before_update",
+                         "snapshot_dir":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260504T140613Z-before_update",
+                         "reason":  "before_update",
+                         "model_file":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260504T140613Z-before_update\\best_model.pt"
+                     },
+                     {
+                         "created_at_utc":  "2026-05-04T14:53:55.6246513Z",
+                         "version_id":  "20260504T145355Z-before_update",
+                         "snapshot_dir":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260504T145355Z-before_update",
+                         "reason":  "before_update",
+                         "model_file":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260504T145355Z-before_update\\best_model.pt"
+                     },
+                     {
+                         "created_at_utc":  "2026-05-04T14:55:54.7183578Z",
+                         "version_id":  "20260504T145554Z-after_update",
+                         "snapshot_dir":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260504T145554Z-after_update",
+                         "reason":  "after_update",
+                         "model_file":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model\\versions\\20260504T145554Z-after_update\\best_model.pt"
+                     }
+                 ]
+}

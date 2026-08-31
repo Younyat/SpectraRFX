@@ -1,0 +1,24 @@
+{
+  "schema_version": "ble-rffi-studio-technique-registry-v1",
+  "techniques": [
+    {
+      "technique_id": "ble-rffi-industry5-2026",
+      "authors": "Anonymous (preprint compartido por el usuario)",
+      "paper_title": "Controlled Same-Model BLE Radio-Frequency Fingerprinting for Forensic Source Comparison under Domain Shift",
+      "year": 2026,
+      "doi": null,
+      "protocol": "5x TI CC2650 same-model units, CH37, CFO-compensated pre-PDU raw I/Q + time-frequency representation",
+      "hardware": "USRP B200",
+      "dataset": "same-model campaign, 20+ dias de captura",
+      "input_type": "raw_iq_pre_pdu",
+      "method": "leave-one-unit-out same-model verification, calibracion con regresion logistica",
+      "limitations": "Resultados condicionados a 5 unidades fisicas; no generalizable a poblacion abierta sin validacion adicional.",
+      "implementation_decision_supported": "Separacion TRAIN/VALIDATION/TEST por sesion completa (nunca por ventana dentro de una misma sesion); CFO como paso de preprocesamiento opt-in y justificado, nunca aplicado por defecto.",
+      "applicability_status": "PARTIALLY_APPLICABLE"
+    }
+  ],
+  "pending_research": [
+    "El resto del registro (SVM/RF sobre features clasicas para RFFI, CNN1D sobre I/Q crudo, CNN2D sobre espectrogramas, deteccion de UNKNOWN via distancia a centroides/umbral calibrado en VALIDATION, invariancia de fase/tiempo en deteccion de near-duplicates) requiere investigacion bibliografica real antes de anadir entradas.",
+    "No se debe anadir ninguna entrada a 'techniques' sin autores, titulo y fuente verificables. No incluir un paper solo porque use una CNN: debe declararse explicitamente que parte es transferible a BLE-RFFI y cual no (applicability_status)."
+  ]
+}

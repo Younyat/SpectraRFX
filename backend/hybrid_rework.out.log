@@ -1,0 +1,7 @@
+INFO:     127.0.0.1:56419 - "GET /api/ble/capture/devices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56419 - "POST /api/ble/hybrid/sessions HTTP/1.1" 202 Accepted
+INFO:     127.0.0.1:53480 - "GET /api/ble/hybrid/sessions/BLE-HYBRID-20260718T214338Z-b3afd4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58450 - "GET /api/ble/hybrid/sessions/BLE-HYBRID-20260718T214338Z-b3afd4 HTTP/1.1" 200 OK
+{"segments": 18, "crc_valid_packets": 10}
+{"schema_version": "ble-correlation-metrics-v1", "window_ms": 250.0, "sdr_packets": 10, "native_callbacks": 74, "strong_matches": 0, "payload_matches": 0, "ambiguous": 0, "b200_only": 10}
+INFO:     127.0.0.1:49682 - "GET /api/ble/hybrid/sessions/BLE-HYBRID-20260718T214338Z-b3afd4 HTTP/1.1" 200 OK

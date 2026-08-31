@@ -1,0 +1,1623 @@
+# Code/test diff for this technical-evidence-audit phase
+# Scope: backend/app/modules, backend/app/tests, docs/ble/generate_evidence_figures.py
+# Excludes: regenerated JSON artifacts, figures, and CSV provenance sidecars under
+#   backend/app/infrastructure/persistence/storage/scientific_reports/ble/ (listed in
+#   TECHNICAL_EVIDENCE_AUDIT.md section 16 'ARTIFACT CHANGES' instead).
+#
+# --- diffstat ---
+ .../ble_rffi_studio/api/studio_repository.py       |  54 +++++++-
+ .../ble_rffi_studio/evaluation/evaluator.py        | 111 ++++++++++++++-
+ .../preprocessing/base_preprocessing.py            |  25 ++++
+ .../preprocessing/representation_profiles.py       |  17 ++-
+ .../api/scientific_results_job_manager.py          |  13 +-
+ .../api/scientific_results_repository.py           |  71 ++++++++--
+ .../api/scientific_results_routes.py               |   5 +-
+ .../ble_scientific_results/coverage_analysis.py    |  75 ++++++++++
+ .../ble_scientific_results/engineering_reports.py  |   2 +-
+ .../modules/ble_scientific_results/paper_export.py |   6 +-
+ .../modules/ble_scientific_results/rq1_runner.py   |  30 ++--
+ .../ble_scientific_results/sensitivity_analysis.py |  30 ++--
+ .../ble_scientific_results/statistics/__init__.py  |   4 +-
+ .../statistics/confirmatory_analysis_runner.py     |  16 +--
+ .../ble_scientific_results/statistics/inference.py | 151 +++++++++++++++++++++
+ .../statistics/sensitivity.py                      |  44 +++---
+ .../ble_rffi_studio/test_bootstrap_accuracy_ci.py  | 121 +++++++++++++++++
+ .../test_confirmatory_analysis_runner.py           |   6 +-
+ .../test_coverage_analysis.py                      |  80 +++++++++++
+ .../test_sensitivity_analysis.py                   |  16 +--
+ .../test_sensitivity_analysis_repository.py        |   2 +-
+ .../test_statistics_inference.py                   | 140 +++++++++++++++++++
+ .../test_statistics_sensitivity.py                 |   8 +-
+ docs/ble/generate_evidence_figures.py              |  47 +++++++
+ 24 files changed, 986 insertions(+), 88 deletions(-)
+#
+# --- full unified diff ---
+diff --git a/backend/app/modules/ble_rffi_studio/api/studio_repository.py b/backend/app/modules/ble_rffi_studio/api/studio_repository.py
+index 34c17bf..3327458 100644
+--- a/backend/app/modules/ble_rffi_studio/api/studio_repository.py
++++ b/backend/app/modules/ble_rffi_studio/api/studio_repository.py
+@@ -1584,9 +1584,10 @@ class StudioRepository:
+     def get_training_run_predictions(self, training_run_id: str, split: str) -> list[dict[str, Any]] | None:
+         """Real, already-persisted per-example predictions for one split of
+         one training run (predictions.json, written by run_training()) --
+-        the SAME shape Evaluator.evaluate_split()/leave_one_device_out_
+-        sensitivity() already consume. Returns None (never []) when the
+-        run has no predictions yet or never had that split."""
++        the SAME shape Evaluator.evaluate_split()/
++        enrolled_population_class_exclusion_sensitivity() already consume.
++        Returns None (never []) when the run has no predictions yet or
++        never had that split."""
+         predictions_path = self.training_dir / training_run_id / "predictions.json"
+         if not predictions_path.is_file():
+             return None
+@@ -1695,6 +1696,53 @@ class StudioRepository:
+             return None
+         return {"split_a": split_a, "split_b": split_b, **dataclasses.asdict(result)}
+ 
++    def bootstrap_balanced_accuracy_ci_stratified_by_class(
++        self, training_run_id: str, *, split: str = "VALIDATION", n_resamples: int = 2000, confidence_level: float = 0.95,
++    ) -> dict[str, Any] | None:
++        """Methodological-audit fix (2026-08-22, item 3): class-preserving
++        sibling of bootstrap_balanced_accuracy_ci() -- same real predictions/
++        session read path, resamples within each true class independently
++        so no resample can silently drop a class from the mean-per-class-
++        recall statistic. See Evaluator.bootstrap_balanced_accuracy_ci_
++        stratified_by_class's own docstring."""
++        loaded = self._load_predictions_for_bootstrap(training_run_id, split)
++        if loaded is None:
++            return None
++        predictions, label_classes, session_id_by_example_id = loaded
++        result = self.evaluator.bootstrap_balanced_accuracy_ci_stratified_by_class(
++            predictions, label_classes, session_id_by_example_id, n_resamples=n_resamples, confidence_level=confidence_level,
++        )
++        if result is None:
++            return None
++        return {"split": split, **dataclasses.asdict(result)}
++
++    def bootstrap_balanced_accuracy_delta_ci_stratified_by_class(
++        self, training_run_id_a: str, training_run_id_b: str, *, split_a: str = "VALIDATION", split_b: str = "VALIDATION",
++        n_resamples: int = 2000, confidence_level: float = 0.95,
++    ) -> dict[str, Any] | None:
++        """Methodological-audit fix (2026-08-22, item 3): RQ1's real
++        delta_dependence CI, class-stratified on both sides, terminology
++        that does not claim a "paired" bootstrap (there is no physical
++        pairing between the two domains' sessions). See
++        Evaluator.bootstrap_balanced_accuracy_delta_ci_stratified_by_class's
++        own docstring."""
++        loaded_a = self._load_predictions_for_bootstrap(training_run_id_a, split_a)
++        loaded_b = self._load_predictions_for_bootstrap(training_run_id_b, split_b)
++        if loaded_a is None or loaded_b is None:
++            return None
++        predictions_a, label_classes_a, session_ids_a = loaded_a
++        predictions_b, label_classes_b, session_ids_b = loaded_b
++        if sorted(label_classes_a) != sorted(label_classes_b):
++            raise ValueError(f"LABEL_CLASSES_MISMATCH_BETWEEN_RUNS:{training_run_id_a}={label_classes_a}:{training_run_id_b}={label_classes_b}")
++
++        result = self.evaluator.bootstrap_balanced_accuracy_delta_ci_stratified_by_class(
++            predictions_a, predictions_b, label_classes_a, session_ids_a, session_ids_b,
++            n_resamples=n_resamples, confidence_level=confidence_level,
++        )
++        if result is None:
++            return None
++        return {"split_a": split_a, "split_b": split_b, **dataclasses.asdict(result)}
++
+     def train_seed_variability_analysis(self, *, training_run_id: str, seeds: tuple[int, ...] | None = None, progress=None) -> list[dict[str, Any]]:
+         """Fixed seed-set correction (2026-08-08): how much a candidate's
+         VALIDATION performance moves across independent training runs of the
+diff --git a/backend/app/modules/ble_rffi_studio/evaluation/evaluator.py b/backend/app/modules/ble_rffi_studio/evaluation/evaluator.py
+index ece4bbe..2fa22a0 100644
+--- a/backend/app/modules/ble_rffi_studio/evaluation/evaluator.py
++++ b/backend/app/modules/ble_rffi_studio/evaluation/evaluator.py
+@@ -26,7 +26,15 @@ from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
+ # safe here, unlike the ScientificResultsRepository coupling in
+ # studio_repository.py (which needs a deferred import to avoid a real
+ # circular-import risk that does not exist for these).
+-from app.modules.ble_scientific_results.statistics.inference import BootstrapCiResult, hierarchical_cluster_bootstrap, paired_cluster_bootstrap_delta_ci, risk_coverage_curve
++from app.modules.ble_scientific_results.statistics.inference import (
++    BootstrapCiResult,
++    hierarchical_cluster_bootstrap,
++    independent_domain_bootstrap_delta_ci,
++    matched_stratified_bootstrap_delta_ci,
++    paired_cluster_bootstrap_delta_ci,
++    risk_coverage_curve,
++    stratified_hierarchical_cluster_bootstrap,
++)
+ 
+ FinalDecision = Literal["IDENTIFIED", "UNKNOWN", "INSUFFICIENT_EVIDENCE"]
+ 
+@@ -93,6 +101,38 @@ def _session_clustered_label_pairs(
+     return list(by_session.values())
+ 
+ 
++def _session_clustered_label_pairs_by_true_class(
++    predictions: list[dict[str, Any]], known_classes: list[str], session_id_by_example_id: dict[str, str],
++) -> dict[str, list[list[tuple[str, str]]]] | None:
++    """Methodological-audit fix (2026-08-22, item 3): the same real
++    session-clustering step `_session_clustered_label_pairs` performs, but
++    additionally grouped by each prediction's own real `true_label` (for
++    the closed-set MULTI_DEVICE_CLASSIFICATION task this IS the real
++    physical_unit_id -- confirmed directly against a real predictions.json
++    entry, never a second identity source) so
++    `stratified_hierarchical_cluster_bootstrap` can resample within each
++    true-class stratum independently -- guaranteeing every resample keeps
++    all `known_classes` represented. Stratifying by `true_label` (not a
++    separately-looked-up physical_unit_id) is also the mathematically
++    correct choice regardless of task: balanced accuracy is DEFINED as mean
++    recall over the true classes, so preserving every true class in every
++    resample is exactly what a class-preserving bootstrap for BA needs.
++    None when nothing is comparable, matching
++    `_session_clustered_label_pairs`'s own None convention."""
++    comparable = [p for p in predictions if p["true_label"] in known_classes]
++    if len(known_classes) < 2 or not comparable:
++        return None
++    by_class_session: dict[str, dict[str, list[tuple[str, str]]]] = {}
++    for prediction in comparable:
++        session_id = session_id_by_example_id.get(prediction["example_id"])
++        if session_id is None:
++            continue
++        by_class_session.setdefault(prediction["true_label"], {}).setdefault(session_id, []).append((prediction["true_label"], prediction["predicted_label"]))
++    if not by_class_session:
++        return None
++    return {true_class: list(sessions.values()) for true_class, sessions in by_class_session.items()}
++
++
+ def _balanced_accuracy_statistic(pairs: Sequence[tuple[str, str]], known_classes: list[str]) -> float:
+     """Mean-per-class recall over pooled (true_label, predicted_label)
+     pairs -- the same balanced_accuracy definition SplitEvaluationReport
+@@ -235,6 +275,75 @@ class Evaluator:
+             n_resamples=n_resamples, confidence_level=confidence_level,
+         )
+ 
++    def bootstrap_balanced_accuracy_ci_stratified_by_class(
++        self, predictions: list[dict[str, Any]], known_classes: list[str], session_id_by_example_id: dict[str, str],
++        n_resamples: int = 2000, confidence_level: float = 0.95,
++    ) -> BootstrapCiResult | None:
++        """Methodological-audit fix (2026-08-22, item 3): class-preserving
++        sibling of bootstrap_balanced_accuracy_ci() above -- same statistic
++        (mean-per-class recall), same session-clustering unit, but resamples
++        WITHIN each true class independently (stratified_hierarchical_
++        cluster_bootstrap) instead of pooling every session into one draw.
++        Use this whenever a domain's session count per class is small
++        enough that a plain pooled resample could draw zero sessions from a
++        class (RQ1's real closed-set task, e.g. capture-disjoint
++        VALIDATION's 12 sessions across 4 units) -- bootstrap_balanced_
++        accuracy_ci() stays unchanged for every other real caller (RQ2
++        branch CIs, etc.) that has not been audited for this failure mode."""
++        cluster_values_by_class = _session_clustered_label_pairs_by_true_class(predictions, known_classes, session_id_by_example_id)
++        if cluster_values_by_class is None:
++            return None
++        return stratified_hierarchical_cluster_bootstrap(
++            cluster_values_by_class, statistic=lambda pairs: _balanced_accuracy_statistic(pairs, known_classes),
++            n_resamples=n_resamples, confidence_level=confidence_level,
++        )
++
++    def bootstrap_balanced_accuracy_delta_ci_stratified_by_class(
++        self, predictions_a: list[dict[str, Any]], predictions_b: list[dict[str, Any]], known_classes: list[str],
++        session_id_by_example_id_a: dict[str, str], session_id_by_example_id_b: dict[str, str],
++        n_resamples: int = 2000, confidence_level: float = 0.95,
++    ) -> BootstrapCiResult | None:
++        """Methodological-audit fix (2026-08-22, item 3): RQ1's real
++        delta_dependence CI, recomputed with class-stratified resampling on
++        BOTH sides and terminology that does not claim a "paired" bootstrap
++        -- there is no physical pairing between the capture-dependent
++        domain's sessions and the capture-disjoint domain's sessions (see
++        independent_domain_bootstrap_delta_ci's own docstring). Replaces
++        bootstrap_balanced_accuracy_delta_ci() for RQ1's own use; that
++        method stays unchanged for other real callers."""
++        cluster_values_by_class_a = _session_clustered_label_pairs_by_true_class(predictions_a, known_classes, session_id_by_example_id_a)
++        cluster_values_by_class_b = _session_clustered_label_pairs_by_true_class(predictions_b, known_classes, session_id_by_example_id_b)
++        if cluster_values_by_class_a is None or cluster_values_by_class_b is None:
++            return None
++        return independent_domain_bootstrap_delta_ci(
++            cluster_values_by_class_a, cluster_values_by_class_b, statistic=lambda pairs: _balanced_accuracy_statistic(pairs, known_classes),
++            n_resamples=n_resamples, confidence_level=confidence_level,
++        )
++
++    def bootstrap_balanced_accuracy_delta_ci_matched_by_class(
++        self, predictions_a: list[dict[str, Any]], predictions_b: list[dict[str, Any]], known_classes: list[str],
++        session_id_by_example_id_a: dict[str, str], session_id_by_example_id_b: dict[str, str],
++        n_resamples: int = 2000, confidence_level: float = 0.95,
++    ) -> BootstrapCiResult | None:
++        """RQ4 exploratory fix (2026-08-22): for a genuinely matched design
++        -- the SAME real evidence (same example_ids/sessions) scored under
++        two analytical regions/representations (e.g. FULL_BURST vs
++        PRE_PDU views of the identical VALIDATION set) -- unlike RQ1's
++        `..._stratified_by_class` sibling above, which is for two
++        INDEPENDENT domains with no real pairing. Raises via
++        matched_stratified_bootstrap_delta_ci if the two populations'
++        session-cluster structure does not actually match (caller's own
++        responsibility to have already verified the underlying evidence is
++        the same before calling this)."""
++        cluster_values_by_class_a = _session_clustered_label_pairs_by_true_class(predictions_a, known_classes, session_id_by_example_id_a)
++        cluster_values_by_class_b = _session_clustered_label_pairs_by_true_class(predictions_b, known_classes, session_id_by_example_id_b)
++        if cluster_values_by_class_a is None or cluster_values_by_class_b is None:
++            return None
++        return matched_stratified_bootstrap_delta_ci(
++            cluster_values_by_class_a, cluster_values_by_class_b, statistic=lambda pairs: _balanced_accuracy_statistic(pairs, known_classes),
++            n_resamples=n_resamples, confidence_level=confidence_level,
++        )
++
+     def calibrate_unknown_threshold(self, validation_predictions: list[dict[str, Any]], known_classes: list[str], min_identified_precision: float = 0.9) -> float:
+         """VALIDATION-only. A candidate threshold's precision is measured
+         over every VALIDATION example whose top confidence clears it
+diff --git a/backend/app/modules/ble_rffi_studio/preprocessing/base_preprocessing.py b/backend/app/modules/ble_rffi_studio/preprocessing/base_preprocessing.py
+index 80201a4..8070e75 100644
+--- a/backend/app/modules/ble_rffi_studio/preprocessing/base_preprocessing.py
++++ b/backend/app/modules/ble_rffi_studio/preprocessing/base_preprocessing.py
+@@ -75,6 +75,31 @@ DEFAULT_BASE_PROFILE = BasePreprocessingProfile(profile_id="base-v1")
+ 
+ 
+ def estimate_cfo_hz(window: np.ndarray, sample_rate_sps: float) -> float:
++    """Methodological-audit finding (2026-08-22, item 1): despite the name,
++    this is NOT a validated carrier-frequency-offset (CFO) estimator. It is
++    a mean-phase-rate / frequency-offset estimator: the mean of the
++    sample-to-sample unwrapped phase increment over the WHOLE window, with
++    no known-bit reference waveform, no frozen index set, no least-squares
++    fit -- see paper_compliant_cfo.py::estimate_phi0_and_fb for the real,
++    reference-correlated Eq.(6)-(7) estimator this is NOT. Two real
++    consequences for any caller (including feature_vector_representation's
++    cfo_estimate_hz, RQ2's engineered-RF feature #7): (1) it mixes GFSK
++    modulation phase trajectory into the estimate, since it never isolates a
++    known-content span; (2) whenever it is computed on a window this
++    module's compensation steps have NOT already corrected (e.g. profile
++    base-v1/offset-retaining-v1, both identity), the output is the
++    UNCOMPENSATED, un-decomposed sum of transmitter frequency offset AND
++    the B200 receiver's own local-oscillator offset -- the two are not
++    separable from a single receiver without an independent reference tone.
++    To defensibly call a value here "transmitter CFO," it would need: (a)
++    reference correlation over a known-bit span (the preamble+access-address
++    region already used by paper_eq6_7_compensation, not the whole burst),
++    (b) an independently measured/calibrated B200 LO offset to subtract
++    (e.g. a reference tone captured on the same receiver under the same
++    session), and (c) validation that the resulting estimate is stable
++    across repeated captures of the same transmitter under a fixed receiver
++    state. None of that is done here; call this a mean phase-rate /
++    frequency-offset estimate, not a CFO measurement, until it is."""
+     if len(window) < 2:
+         return 0.0
+     phase = np.unwrap(np.angle(window))
+diff --git a/backend/app/modules/ble_rffi_studio/preprocessing/representation_profiles.py b/backend/app/modules/ble_rffi_studio/preprocessing/representation_profiles.py
+index 1054ec4..3b4e7c1 100644
+--- a/backend/app/modules/ble_rffi_studio/preprocessing/representation_profiles.py
++++ b/backend/app/modules/ble_rffi_studio/preprocessing/representation_profiles.py
+@@ -76,7 +76,22 @@ FEATURE_NAMES = [
+ 
+ def feature_vector_representation(window: np.ndarray, sample_rate_sps: float, n_fft: int = 128) -> np.ndarray:
+     """A real, hand-crafted feature vector -- not a placeholder. Every value
+-    is computed from the actual I/Q samples, matching FEATURE_NAMES order."""
++    is computed from the actual I/Q samples, matching FEATURE_NAMES order.
++
++    Methodological-audit note (2026-08-22, item 1) on feature #7
++    (cfo_estimate_hz): computed via estimate_cfo_hz() -- see that function's
++    own docstring for why it is a mean phase-rate / frequency-offset
++    estimate, not a validated transmitter-CFO measurement, and why it can
++    include B200 local-oscillator contribution whenever the window this
++    function receives has not already been reference-corrected (true for
++    every real closed-set training run to date -- all of them use
++    base_preprocessing_profile_id="base-v1", identity preprocessing; see
++    base_preprocessing_registry.py). None of the other 9 features are
++    calibrated estimators of a specific transmitter-hardware impairment
++    (PA nonlinearity, phase noise, I/Q imbalance, DC offset, gain error,
++    spectral regrowth) either -- they are general amplitude/power/spectral
++    statistics that MAY be influenced by such impairments, never presented
++    as isolating one."""
+     amplitude = np.abs(window)
+     power = amplitude ** 2
+     mean_power = float(np.mean(power)) if len(power) else 0.0
+diff --git a/backend/app/modules/ble_scientific_results/api/scientific_results_job_manager.py b/backend/app/modules/ble_scientific_results/api/scientific_results_job_manager.py
+index 34000d7..879798f 100644
+--- a/backend/app/modules/ble_scientific_results/api/scientific_results_job_manager.py
++++ b/backend/app/modules/ble_scientific_results/api/scientific_results_job_manager.py
+@@ -565,9 +565,12 @@ class ScientificResultsJobManager:
+             self._cancel_flags.pop(job_id, None)
+ 
+     # ------------------------------------------------------------------
+-    # Sensitivity closure (2026-08-12): consolidates LODO (already real),
+-    # offset-retaining preprocessing (real, previously uncalled), and RQ2's
+-    # own seed_variability (reused, never recomputed) into one report.
++    # Sensitivity closure (2026-08-12): consolidates enrolled-population
++    # class-exclusion metric sensitivity (already real; renamed 2026-08-22
++    # from its original, overstated "LODO" name -- the model is never
++    # retrained without the excluded class), offset-retaining preprocessing
++    # (real, previously uncalled), and RQ2's own seed_variability (reused,
++    # never recomputed) into one report.
+     # ------------------------------------------------------------------
+ 
+     def start_sensitivity_analysis_job(self, *, paper_run_id: str) -> dict[str, Any]:
+@@ -584,14 +587,14 @@ class ScientificResultsJobManager:
+ 
+     def _run_sensitivity_analysis_job(self, job_id: str, paper_run_id: str) -> None:
+         job_dir = self._job_dir(job_id)
+-        self._write(job_dir, "running", job_type="SENSITIVITY_ANALYSIS", paper_run_id=paper_run_id, stage="starting", overall_progress=0.0, message="Starting sensitivity analysis (LODO + offset-retaining)")
++        self._write(job_dir, "running", job_type="SENSITIVITY_ANALYSIS", paper_run_id=paper_run_id, stage="starting", overall_progress=0.0, message="Starting sensitivity analysis (class-exclusion + offset-retaining)")
+         try:
+             def progress(stage: str, fraction: float, message: str) -> None:
+                 self._write(job_dir, "running", job_type="SENSITIVITY_ANALYSIS", paper_run_id=paper_run_id, stage=stage, overall_progress=fraction, message=str(message))
+ 
+             result = self.repository.run_sensitivity_analysis(paper_run_id=paper_run_id, studio_repository=self._studio_repository)
+             offset = result.get("offset_retaining") or {}
+-            message = f"LODO {len(result.get('leave_one_device_out', {}).get('rows', []))} unit(s), offset-retaining delta_vs_primary={offset.get('delta_vs_primary')}"
++            message = f"class-exclusion sensitivity {len(result.get('enrolled_population_class_exclusion_sensitivity', {}).get('rows', []))} unit(s), offset-retaining delta_vs_primary={offset.get('delta_vs_primary')}"
+             self._write(job_dir, "completed", job_type="SENSITIVITY_ANALYSIS", paper_run_id=paper_run_id, stage="done", overall_progress=1.0, message=message, result=result)
+         except Exception as error:  # noqa: BLE001 -- includes missing StudioRepository/no frozen PRIMARY branch
+             self._write(job_dir, "failed", job_type="SENSITIVITY_ANALYSIS", paper_run_id=paper_run_id, error=str(error))
+diff --git a/backend/app/modules/ble_scientific_results/api/scientific_results_repository.py b/backend/app/modules/ble_scientific_results/api/scientific_results_repository.py
+index d290e68..b9a3d8a 100644
+--- a/backend/app/modules/ble_scientific_results/api/scientific_results_repository.py
++++ b/backend/app/modules/ble_scientific_results/api/scientific_results_repository.py
+@@ -21,6 +21,7 @@ from typing import Any
+ 
+ from app.infrastructure.ble.capture.ble_capture_metadata import atomic_json
+ from app.modules.ble_rffi_studio.contracts import CaptureRecord, DatasetManifest, DatasetQualityReport, ExampleRecord, SplitManifest
++from app.modules.ble_rffi_studio.preprocessing.base_preprocessing_registry import resolve_preprocessing_profile
+ from app.modules.ble_rffi_studio.registry.physical_device_registry import PhysicalDeviceRegistry
+ 
+ from ..contracts import (
+@@ -1786,7 +1787,7 @@ class ScientificResultsRepository:
+         bundle genuinely has none (never fabricated as 'not frozen' when a
+         real VALIDATION-calibrated one exists)."""
+         from app.modules.ble_rffi_studio.inference.decision_windows import DEFAULT_MINIMUM_ELIGIBLE_BURSTS, DEFAULT_WINDOW_DURATION_S
+-        from ..coverage_analysis import CoverageRow, compute_coverage_summary, coverage_row_from_decision_window
++        from ..coverage_analysis import CoverageRow, compute_coverage_summary, coverage_row_from_decision_window, operational_coverage_breakdown
+         from ..coverage_analysis import evaluate_window_level as _evaluate_window_level
+ 
+         window_duration_s = window_duration_s if window_duration_s is not None else DEFAULT_WINDOW_DURATION_S
+@@ -1940,6 +1941,21 @@ class ScientificResultsRepository:
+                         "balanced_accuracy": report.balanced_accuracy, "macro_f1": report.macro_f1,
+                         "confusion_matrix": report.confusion_matrix, "n_comparable": n_total,
+                         "distinct_physical_units": sorted(distinct_units),
++                        # Methodological-audit fix (2026-08-22, item 2): the
++                        # balanced_accuracy/confusion_matrix/n_comparable
++                        # fields above (like `decided` everywhere else in
++                        # this module) intentionally treat UNKNOWN
++                        # (threshold-rejected) windows as "decided, just
++                        # wrong-class" -- real for their own purpose, but not
++                        # what "coverage" means operationally. This is the
++                        # explicit, additive breakdown that separates
++                        # IDENTIFIED / UNKNOWN-below-threshold /
++                        # INSUFFICIENT_EVIDENCE and reports operational
++                        # coverage (IDENTIFIED / admissible), argmax accuracy
++                        # ignoring the threshold, and accuracy restricted to
++                        # accepted (IDENTIFIED) decisions only -- computed
++                        # from the SAME domain_rows, never a second read.
++                        "operational_breakdown": operational_coverage_breakdown(domain_rows),
+                         # `risk` in each point below IS the selective_error (error
+                         # rate among decided instances at that threshold) -- same
+                         # El-Yaniv & Wiener (2010) definition used everywhere else
+@@ -1985,8 +2001,13 @@ class ScientificResultsRepository:
+ 
+     def run_sensitivity_analysis(self, *, paper_run_id: str, studio_repository: Any) -> dict[str, Any]:
+         """Sensitivity closure (2026-08-12): consolidates the three real
+-        sensitivity mechanisms this study already defines -- LODO (already
+-        wired, real, tested since 2026-08-09), offset-retaining
++        sensitivity mechanisms this study already defines -- enrolled-
++        population class-exclusion metric sensitivity (already wired, real,
++        tested since 2026-08-09; renamed 2026-08-22 from its original,
++        overstated "LODO"/leave-one-device-out name -- see statistics/
++        sensitivity.py's own docstring for why: the model is never
++        retrained without the excluded class, only the aggregate metric is
++        recomputed post-hoc), offset-retaining
+         preprocessing (train_offset_retaining_sensitivity, closed this
+         pass), and RQ2's seed_variability (REUSED verbatim from the RQ2
+         report, never recomputed) -- into one report that explicitly
+@@ -1998,8 +2019,8 @@ class ScientificResultsRepository:
+         never persists a report built on missing pieces."""
+         if studio_repository is None:
+             raise ValueError("NO_STUDIO_REPOSITORY_CONFIGURED:sensitivity analysis needs a real StudioRepository to read predictions/re-train")
+-        from ..sensitivity_analysis import enrich_lodo_with_delta_vs_full_set, full_set_balanced_accuracy
+-        from ..statistics.sensitivity import leave_one_device_out_sensitivity
++        from ..sensitivity_analysis import enrich_class_exclusion_with_delta_vs_full_set, full_set_balanced_accuracy
++        from ..statistics.sensitivity import enrolled_population_class_exclusion_sensitivity
+ 
+         rq2_report = self.get_rq2_representation_comparison_report(paper_run_id)
+         primary = next((b for b in (rq2_report or {}).get("branches", []) if b.get("analysis_role") == "PRIMARY"), None)
+@@ -2016,29 +2037,61 @@ class ScientificResultsRepository:
+         # never a second identity source.
+         device_id_by_example_id = {p["example_id"]: p["physical_unit_id"] for p in predictions if p.get("physical_unit_id")}
+ 
+-        lodo_raw = leave_one_device_out_sensitivity(predictions, device_id_by_example_id, label_classes)
++        class_exclusion_raw = enrolled_population_class_exclusion_sensitivity(predictions, device_id_by_example_id, label_classes)
+         baseline_ba = full_set_balanced_accuracy(predictions, label_classes)
+-        lodo_rows = enrich_lodo_with_delta_vs_full_set(lodo_raw, full_set_ba=baseline_ba)
++        class_exclusion_rows = enrich_class_exclusion_with_delta_vs_full_set(class_exclusion_raw, full_set_ba=baseline_ba)
+ 
+         offset_result = studio_repository.train_offset_retaining_sensitivity(training_run_id=training_run_id)
+         primary_ba = primary.get("balanced_accuracy")
+         offset_ba = offset_result.get("validation_balanced_accuracy")
++
++        # Methodological-audit fix (2026-08-22, item 1): this comparison is
++        # only a real CFO/phase-offset ablation when the PRIMARY run's own
++        # base_preprocessing_profile_id resolves to DIFFERENT enabled steps
++        # than "offset-retaining-v1" -- if PRIMARY already ran identity
++        # preprocessing (base-v1, whose enabled_steps() is []), comparing it
++        # against offset-retaining-v1 (also enabled_steps()==[]) compares
++        # identity against a relabeled clone of itself, and any delta=0.000
++        # reported is a trivial consequence of that, never evidence that
++        # "retaining the offset" leaves the result unchanged. This is
++        # detected here from the REAL resolved profile flags, never assumed.
++        base_profile_id = (studio_repository.get_training_run(training_run_id) or {}).get("base_preprocessing_profile_id")
++        primary_enabled_steps = resolve_preprocessing_profile(base_profile_id).enabled_steps() if base_profile_id else None
++        offset_enabled_steps = resolve_preprocessing_profile("offset-retaining-v1").enabled_steps()
++        profiles_behaviorally_identical = primary_enabled_steps is not None and primary_enabled_steps == offset_enabled_steps
++        interpretive_validity = (
++            "NOT_INFORMATIVE_IDENTICAL_PREPROCESSING_PROFILES" if profiles_behaviorally_identical
++            else ("REAL_ABLATION_DIFFERENT_PREPROCESSING_PROFILES" if primary_enabled_steps is not None else "CANNOT_DETERMINE_PRIMARY_PROFILE")
++        )
++        interpretive_note = (
++            f"PRIMARY's own base_preprocessing_profile_id={base_profile_id!r} resolves to the SAME enabled preprocessing "
++            f"steps as offset-retaining-v1 ({offset_enabled_steps!r} both) -- this is NOT a real test of whether retaining "
++            f"CFO/phase offset changes the result; PRIMARY never applied any CFO/phase compensation to begin with, so this "
++            f"delta is trivially ~0 by construction, not evidence of CFO-compensation insensitivity."
++            if profiles_behaviorally_identical else
++            f"PRIMARY's base_preprocessing_profile_id={base_profile_id!r} (enabled steps: {primary_enabled_steps!r}) genuinely "
++            f"differs from offset-retaining-v1 (enabled steps: {offset_enabled_steps!r}) -- this delta is a real ablation."
++        )
+         offset_retaining = {
+             "analysis_role": "OFFSET_RETAINING_SENSITIVITY", "training_run_id": offset_result["training_run_id"],
+             "base_run_training_run_id": training_run_id, "base_preprocessing_profile_id": offset_result["base_preprocessing_profile_id"],
++            "primary_base_preprocessing_profile_id": base_profile_id,
+             "estimate": offset_ba, "coverage": offset_result.get("coverage"),
+             "delta_vs_primary": (offset_ba - primary_ba) if (offset_ba is not None and primary_ba is not None) else None,
++            "profiles_behaviorally_identical": profiles_behaviorally_identical,
++            "interpretive_validity": interpretive_validity,
++            "interpretive_note": interpretive_note,
+         }
+ 
+         as_dict = {
+             "schema_version": "ble-scientific-results-sensitivity-analysis-v1", "generated_at": utc_now(), "paper_run_id": paper_run_id,
+             "primary": {"analysis_role": "PRIMARY", "branch": primary.get("branch"), "training_run_id": training_run_id, "balanced_accuracy": primary_ba},
+-            "leave_one_device_out": {"analysis_role": "SENSITIVITY", "full_set_balanced_accuracy": baseline_ba, "rows": lodo_rows},
++            "enrolled_population_class_exclusion_sensitivity": {"analysis_role": "SENSITIVITY", "full_set_balanced_accuracy": baseline_ba, "rows": class_exclusion_rows},
+             "offset_retaining": offset_retaining,
+             "seed_variability": {"analysis_role": "SENSITIVITY", "rows": primary.get("seed_variability")} if primary.get("seed_variability") else None,
+         }
+         atomic_json(self._run_dir(paper_run_id) / "06_statistics" / "sensitivity_report.json", as_dict)
+-        self.logger.info("sensitivity analysis persisted paper_run_id=%s lodo_rows=%s", paper_run_id, len(lodo_rows))
++        self.logger.info("sensitivity analysis persisted paper_run_id=%s class_exclusion_rows=%s", paper_run_id, len(class_exclusion_rows))
+         return as_dict
+ 
+     def get_sensitivity_report(self, paper_run_id: str) -> dict[str, Any] | None:
+diff --git a/backend/app/modules/ble_scientific_results/api/scientific_results_routes.py b/backend/app/modules/ble_scientific_results/api/scientific_results_routes.py
+index efed0e2..c83917c 100644
+--- a/backend/app/modules/ble_scientific_results/api/scientific_results_routes.py
++++ b/backend/app/modules/ble_scientific_results/api/scientific_results_routes.py
+@@ -573,8 +573,9 @@ def build_ble_scientific_results_router(repository, job_manager) -> APIRouter:
+             return result if result is not None else {"status": "NO_DATA"}
+         return call(resolve)
+ 
+-    # Sensitivity closure (2026-08-12): LODO + offset-retaining + reused
+-    # RQ2 seed_variability, consolidated into one real report.
++    # Sensitivity closure (2026-08-12): enrolled-population class-exclusion
++    # metric sensitivity + offset-retaining + reused RQ2 seed_variability,
++    # consolidated into one real report.
+     @router.post("/sensitivity-analysis", status_code=202)
+     def start_sensitivity_analysis(body: dict):
+         return call(lambda: job_manager.start_sensitivity_analysis_job(paper_run_id=body["paper_run_id"]))
+diff --git a/backend/app/modules/ble_scientific_results/coverage_analysis.py b/backend/app/modules/ble_scientific_results/coverage_analysis.py
+index bb40e1d..8281dc2 100644
+--- a/backend/app/modules/ble_scientific_results/coverage_analysis.py
++++ b/backend/app/modules/ble_scientific_results/coverage_analysis.py
+@@ -45,6 +45,16 @@ class CoverageRow:
+     # definition.
+     predicted_class: str | None = None
+     aggregated_probabilities: dict[str, float] | None = None
++    # Methodological-audit fix (2026-08-22, item 2): the raw
++    # run_decision_windows() final_decision string ("IDENTIFIED" /
++    # "UNKNOWN" / "INSUFFICIENT_EVIDENCE"), carried verbatim. `decided` and
++    # `correct` above intentionally conflate IDENTIFIED-and-right into a
++    # single "correct" bit (by design, for their own existing consumers --
++    # see this module's top docstring) -- that conflation loses whether an
++    # UNKNOWN (threshold-rejected) window's own argmax would have been
++    # right or wrong, which operational_coverage_breakdown() below needs.
++    # This field is the one place that real distinction survives.
++    final_decision: str | None = None
+ 
+ 
+ def coverage_row_from_decision_window(
+@@ -64,9 +74,74 @@ def coverage_row_from_decision_window(
+         decided=decided, correct=correct, evaluation_domain=evaluation_domain, branch=branch,
+         physical_unit_id=physical_unit_id, abstention_reason=window.get("abstention_reason"),
+         predicted_class=window.get("predicted_class"), aggregated_probabilities=window.get("aggregated_probabilities"),
++        final_decision=window.get("final_decision"),
+     )
+ 
+ 
++def operational_coverage_breakdown(rows: list[CoverageRow]) -> dict[str, Any]:
++    """Methodological-audit fix (2026-08-22, item 2): a real, additive
++    breakdown that separates what `evaluate_window_level()`'s BA/accuracy
++    (and the existing `decided`/`coverage()` bucket, both of which treat
++    UNKNOWN as a "decided, just wrong-class" outcome by design -- see this
++    module's own top docstring) conflate together: a window the calibrated
++    acceptance_threshold actually REJECTED (final_decision=="UNKNOWN") is
++    an abstention from the operator's point of view, not a decision. This
++    function never changes `decided`/`coverage_row_from_decision_window`'s
++    existing meaning (real other consumers, e.g. RQ3's coverage() calls,
++    keep exactly their current behavior) -- it is a second, explicit view
++    computed from the SAME real `rows`, never a second data source.
++
++    Argmax-correctness here is computed directly from
++    `predicted_class == physical_unit_id`, independent of `final_decision`
++    -- NEVER from the `correct` field above, which is only True when a row
++    is BOTH IDENTIFIED and right, so it cannot by itself tell an UNKNOWN
++    row's underlying argmax was correct (needed for `n_correct_rejected`)
++    from one whose argmax was also wrong (`n_errors_rejected`).
++
++    `argmax_accuracy_ignoring_threshold` reproduces exactly what
++    evaluate_window_level()'s own BA/confusion-matrix already measure
++    (every admissible window, IDENTIFIED or UNKNOWN, scored by its argmax
++    class) -- kept here too so a reader never has to reconcile two
++    differently-scoped reports by hand. `accuracy_among_identified` is the
++    operationally meaningful complement: accuracy only among windows the
++    system actually committed to a decision for."""
++    admissible = [r for r in rows if r.final_decision != "INSUFFICIENT_EVIDENCE"]
++    insufficient_evidence = [r for r in rows if r.final_decision == "INSUFFICIENT_EVIDENCE"]
++    identified = [r for r in admissible if r.final_decision == "IDENTIFIED"]
++    unknown = [r for r in admissible if r.final_decision == "UNKNOWN"]
++
++    def _is_argmax_correct(row: CoverageRow) -> bool | None:
++        if row.physical_unit_id is None or row.predicted_class is None:
++            return None
++        return row.predicted_class == row.physical_unit_id
++
++    def _n_correct_with_gt(subset: list[CoverageRow]) -> tuple[int, int]:
++        """(n_correct, n_with_ground_truth) -- never divides by a count
++        that includes rows with no real ground truth to judge against."""
++        verdicts = [_is_argmax_correct(r) for r in subset]
++        known = [v for v in verdicts if v is not None]
++        return sum(1 for v in known if v), len(known)
++
++    n_admissible_correct, n_admissible_with_gt = _n_correct_with_gt(admissible)
++    n_identified_correct, n_identified_with_gt = _n_correct_with_gt(identified)
++    correct_rejected = [r for r in unknown if _is_argmax_correct(r) is True]
++    errors_rejected = [r for r in unknown if _is_argmax_correct(r) is False]
++    errors_accepted = [r for r in identified if _is_argmax_correct(r) is False]
++
++    return {
++        "total_admissible_windows": len(admissible),
++        "n_identified": len(identified),
++        "n_unknown_below_threshold": len(unknown),
++        "n_insufficient_evidence": len(insufficient_evidence),
++        "operational_coverage": (len(identified) / len(admissible)) if admissible else None,
++        "argmax_accuracy_ignoring_threshold": (n_admissible_correct / n_admissible_with_gt) if n_admissible_with_gt else None,
++        "accuracy_among_identified": (n_identified_correct / n_identified_with_gt) if n_identified_with_gt else None,
++        "n_correct_rejected": len(correct_rejected),
++        "n_errors_rejected": len(errors_rejected),
++        "n_errors_accepted": len(errors_accepted),
++    }
++
++
+ def evaluate_window_level(rows: list[CoverageRow], *, evaluator: Any, known_classes: list[str], domain_label: str) -> Any:
+     """Closed-set decision-window BA/confusion-matrix/risk-coverage
+     (2026-08-17): reuses Evaluator.evaluate_split() UNCHANGED -- the exact
+diff --git a/backend/app/modules/ble_scientific_results/engineering_reports.py b/backend/app/modules/ble_scientific_results/engineering_reports.py
+index 634fd8f..16e2657 100644
+--- a/backend/app/modules/ble_scientific_results/engineering_reports.py
++++ b/backend/app/modules/ble_scientific_results/engineering_reports.py
+@@ -9,7 +9,7 @@ primitives (`statistics.metrics.balanced_accuracy`/`coverage`) -- no new
+ statistical test, no retraining, no model change. Neither function computes
+ anything from raw I/Q or re-runs a model; both take already-scored
+ per-example predictions the caller supplies (exactly like
+-`statistics.sensitivity.leave_one_device_out_sensitivity` already does for
++`statistics.sensitivity.enrolled_population_class_exclusion_sensitivity` already does for
+ RQ2/RQ3/RQ4).
+ 
+ S1's method (frozen model trained on CH37 development data, no retraining,
+diff --git a/backend/app/modules/ble_scientific_results/paper_export.py b/backend/app/modules/ble_scientific_results/paper_export.py
+index e10a4cc..dd0912e 100644
+--- a/backend/app/modules/ble_scientific_results/paper_export.py
++++ b/backend/app/modules/ble_scientific_results/paper_export.py
+@@ -631,11 +631,11 @@ def generate_paper_exports(repository: Any) -> dict[str, Any]:
+     sensitivity_source = repository.get_confirmatory_statistical_plan_report(run_dir.name) if run_dir else None
+     _emit_confirmatory_derived_exports(emit, confirmatory_future, run_dir, exports_dir, figures_dir, validation_dry_run=sensitivity_source)
+ 
+-    if sensitivity_source and sensitivity_source.get("leave_one_device_out", {}).get("status") == "EXECUTED":
+-        _write_csv(exports_dir / "sensitivity_results.csv", statistical_method_rows(sensitivity_source, ["leave_one_device_out", "fixed_seed_variability"]))
++    if sensitivity_source and sensitivity_source.get("enrolled_population_class_exclusion_sensitivity", {}).get("status") == "EXECUTED":
++        _write_csv(exports_dir / "sensitivity_results.csv", statistical_method_rows(sensitivity_source, ["enrolled_population_class_exclusion_sensitivity", "fixed_seed_variability"]))
+         emit("sensitivity_results.csv", ExportOutcome("GENERATED", f"real, from {run_dir.name}/06_statistics/confirmatory_statistical_plan_report.json"))
+     else:
+-        emit("sensitivity_results.csv", ExportOutcome("SKIPPED_NO_DATA", "no EXECUTED leave_one_device_out in confirmatory_statistical_plan_report.json", "06_statistics/confirmatory_statistical_plan_report.json"))
++        emit("sensitivity_results.csv", ExportOutcome("SKIPPED_NO_DATA", "no EXECUTED enrolled_population_class_exclusion_sensitivity in confirmatory_statistical_plan_report.json", "06_statistics/confirmatory_statistical_plan_report.json"))
+ 
+     # --- S1/S2 engineering ---
+     channel_transport = repository.get_channel_transport_report(run_dir.name) if run_dir else None
+diff --git a/backend/app/modules/ble_scientific_results/rq1_runner.py b/backend/app/modules/ble_scientific_results/rq1_runner.py
+index ae5aa4c..383532c 100644
+--- a/backend/app/modules/ble_scientific_results/rq1_runner.py
++++ b/backend/app/modules/ble_scientific_results/rq1_runner.py
+@@ -158,18 +158,30 @@ def run_rq1_acquisition_dependence(
+     # (see build_rq1_dependence_diagnostic's own docstring), so a CI on it
+     # would describe uncertainty of a deliberately non-confirmatory number.
+     report("UNCERTAINTY", 0.9, "Computing bootstrap confidence intervals on ba_capture, ba_window, and delta_dependence")
+-    ba_capture_ci = studio_repository.bootstrap_balanced_accuracy_ci(recommended_training_run_id, split="VALIDATION")
++    # Methodological-audit fix (2026-08-22, item 3): switched from
++    # bootstrap_balanced_accuracy_ci/_delta_ci to the class-stratified
++    # siblings -- RQ1's own BA is defined as mean recall over the 4 fixed
++    # physical classes, so a resample that (by chance) draws zero sessions
++    # from one class must never silently redefine BA over only the classes
++    # still present. Stratifying within each true class (session-clustered,
++    # same resampling unit as before) removes that failure mode entirely.
++    # bootstrap_balanced_accuracy_ci/_delta_ci themselves stay unchanged for
++    # other real callers (RQ2 branch CIs, etc.) not audited for this issue.
++    ba_capture_ci = studio_repository.bootstrap_balanced_accuracy_ci_stratified_by_class(recommended_training_run_id, split="VALIDATION")
+     # RQ1 completion pass (2026-08-17): ba_window now ALSO gets its own real
+     # CI -- ba_window is a deliberately leakage-optimistic diagnostic, not a
+     # confirmatory estimator, but its own resampling uncertainty is still a
+     # real, reportable quantity (never fabricated, never omitted just
+     # because the point estimate itself is intentionally optimistic).
+-    ba_window_ci = studio_repository.bootstrap_balanced_accuracy_ci(diag_run_id, split="VALIDATION")
+-    # delta_dependence's CI comes from a JOINT resample over both populations
+-    # (see Evaluator.bootstrap_balanced_accuracy_delta_ci's own docstring for
+-    # why subtracting the two marginal CIs above would be invalid) -- never a
+-    # second bootstrap engine, reuses hierarchical_cluster_bootstrap.
+-    delta_dependence_ci = studio_repository.bootstrap_balanced_accuracy_delta_ci(
++    ba_window_ci = studio_repository.bootstrap_balanced_accuracy_ci_stratified_by_class(diag_run_id, split="VALIDATION")
++    # delta_dependence's CI comes from independently, class-stratified
++    # resampling both domains and differencing per replicate -- NEVER a
++    # "paired" bootstrap (there is no physical pairing between the
++    # capture-dependent domain's sessions and the capture-disjoint domain's
++    # sessions -- see independent_domain_bootstrap_delta_ci's own
++    # docstring), and never subtracting the two marginal CIs above (see the
++    # same docstring for why that would be invalid regardless).
++    delta_dependence_ci = studio_repository.bootstrap_balanced_accuracy_delta_ci_stratified_by_class(
+         diag_run_id, recommended_training_run_id, split_a="VALIDATION", split_b="VALIDATION",
+     )
+     uncertainty_ci = {
+@@ -177,7 +189,9 @@ def run_rq1_acquisition_dependence(
+         "ba_window_ci": {"ci_low": ba_window_ci["ci_low"], "ci_high": ba_window_ci["ci_high"]} if ba_window_ci else None,
+         "delta_dependence_ci": {
+             "ci_low": delta_dependence_ci["ci_low"], "ci_high": delta_dependence_ci["ci_high"],
+-            "method": "paired_cluster_bootstrap_delta_ci (joint resample, session-clustered, NOT ci_window - ci_capture)",
++            "method": "independent_domain_bootstrap_delta_ci (independent, class-stratified resample of each domain, "
++                      "per-replicate difference; NOT paired -- no physical pairing exists between capture-dependent "
++                      "and capture-disjoint sessions; NOT ci_window - ci_capture)",
+         } if delta_dependence_ci else None,
+     } if (ba_capture_ci or ba_window_ci or delta_dependence_ci) else None
+ 
+diff --git a/backend/app/modules/ble_scientific_results/sensitivity_analysis.py b/backend/app/modules/ble_scientific_results/sensitivity_analysis.py
+index 64e9ae5..174fd82 100644
+--- a/backend/app/modules/ble_scientific_results/sensitivity_analysis.py
++++ b/backend/app/modules/ble_scientific_results/sensitivity_analysis.py
+@@ -1,7 +1,10 @@
+ """Sensitivity canonical producer (2026-08-12, Scientific Closure pass).
+ Consolidates the three real sensitivity mechanisms this study already
+-defines -- leave-one-device-out (statistics/sensitivity.py, wired since
+-2026-08-09), offset-retaining preprocessing
++defines -- enrolled-population class-exclusion metric sensitivity
++(statistics/sensitivity.py, wired since 2026-08-09; renamed 2026-08-22
++from its original, overstated "leave-one-device-out" name -- the model is
++never retrained without the excluded class, only the aggregate metric is
++recomputed post-hoc), offset-retaining preprocessing
+ (StudioRepository.train_offset_retaining_sensitivity, closed this pass),
+ and RQ2's seed variability (already computed and persisted on the RQ2
+ canonical report -- REUSED here, never recomputed) -- into one report that
+@@ -14,13 +17,14 @@ from __future__ import annotations
+ from typing import Any, Sequence
+ 
+ from .statistics.metrics import balanced_accuracy as _balanced_accuracy
+-from .statistics.sensitivity import LeaveOneDeviceOutResult
++from .statistics.sensitivity import ClassExclusionSensitivityResult
+ 
+ 
+ def full_set_balanced_accuracy(predictions: list[dict[str, Any]], known_classes: Sequence[str]) -> float | None:
+     """The SAME balanced_accuracy() definition every other confirmatory
+-    metric in this package uses, computed with NO device excluded -- the
+-    real baseline LODO's delta_vs_full_set is measured against."""
++    metric in this package uses, computed with NO class excluded -- the
++    real baseline enrolled_population_class_exclusion_sensitivity's own
++    delta_vs_full_set is measured against."""
+     comparable = [p for p in predictions if p["true_label"] in known_classes]
+     if not comparable:
+         return None
+@@ -30,18 +34,18 @@ def full_set_balanced_accuracy(predictions: list[dict[str, Any]], known_classes:
+         return None
+ 
+ 
+-def enrich_lodo_with_delta_vs_full_set(
+-    lodo_results: list[LeaveOneDeviceOutResult], *, full_set_ba: float | None,
++def enrich_class_exclusion_with_delta_vs_full_set(
++    class_exclusion_results: list[ClassExclusionSensitivityResult], *, full_set_ba: float | None,
+ ) -> list[dict[str, Any]]:
+     """Real per-omitted-unit delta vs the full-set estimate -- a plain
+     diff of two already-computed balanced_accuracy values, never a new
+-    statistic. `coverage` is honestly None: leave_one_device_out_
+-    sensitivity() operates on Evaluator.evaluate_split()-shaped
+-    predictions, which never apply the calibrated acceptance_threshold/
+-    abstention rule (that only happens in the decision-window inference
+-    path -- see coverage_analysis.py)."""
++    statistic. `coverage` is honestly None:
++    enrolled_population_class_exclusion_sensitivity() operates on
++    Evaluator.evaluate_split()-shaped predictions, which never apply the
++    calibrated acceptance_threshold/abstention rule (that only happens in
++    the decision-window inference path -- see coverage_analysis.py)."""
+     rows = []
+-    for result in lodo_results:
++    for result in class_exclusion_results:
+         delta = None
+         if full_set_ba is not None and result.balanced_accuracy_value is not None:
+             delta = result.balanced_accuracy_value - full_set_ba
+diff --git a/backend/app/modules/ble_scientific_results/statistics/__init__.py b/backend/app/modules/ble_scientific_results/statistics/__init__.py
+index 28e9070..9e3b99c 100644
+--- a/backend/app/modules/ble_scientific_results/statistics/__init__.py
++++ b/backend/app/modules/ble_scientific_results/statistics/__init__.py
+@@ -27,7 +27,7 @@ from .hypothesis_power import (
+ )
+ from .confirmatory_analysis_runner import ConfirmatoryStatisticalPlanReport, MethodResult, confirmatory_statistical_plan_to_dict, run_confirmatory_statistical_plan
+ from .metrics import EerResult, FarFrr, balanced_accuracy, cllr, coverage, eer, far_frr, worst_case_error
+-from .sensitivity import LeaveOneDeviceOutResult, leave_one_device_out_sensitivity
++from .sensitivity import ClassExclusionSensitivityResult, enrolled_population_class_exclusion_sensitivity
+ from .power_simulation import (
+     DesignEvaluation,
+     HierarchicalDesign,
+@@ -42,7 +42,7 @@ __all__ = [
+     "BootstrapCiResult", "HolmResult", "NonInferiorityResult", "PairedContrast", "RandomizationTestResult", "RiskCoveragePoint", "TwoSamplePermutationResult", "StratifiedCrossoverTestResult",
+     "exact_randomization_test", "exact_two_sample_permutation_test", "hierarchical_cluster_bootstrap", "holm_correction", "non_inferiority_test", "paired_contrast", "risk_coverage_curve", "stratified_crossover_permutation_test",
+     "EerResult", "FarFrr", "balanced_accuracy", "cllr", "coverage", "eer", "far_frr", "worst_case_error",
+-    "LeaveOneDeviceOutResult", "leave_one_device_out_sensitivity",
++    "ClassExclusionSensitivityResult", "enrolled_population_class_exclusion_sensitivity",
+     "ConfirmatoryStatisticalPlanReport", "MethodResult", "confirmatory_statistical_plan_to_dict", "run_confirmatory_statistical_plan",
+     "DesignEvaluation", "HierarchicalDesign", "PowerSimulationResult",
+     "closed_form_power_two_proportions", "evaluate_design_sufficiency", "find_minimum_sufficient_design", "simulate_hierarchical_power",
+diff --git a/backend/app/modules/ble_scientific_results/statistics/confirmatory_analysis_runner.py b/backend/app/modules/ble_scientific_results/statistics/confirmatory_analysis_runner.py
+index 7ddee03..1a0e7f0 100644
+--- a/backend/app/modules/ble_scientific_results/statistics/confirmatory_analysis_runner.py
++++ b/backend/app/modules/ble_scientific_results/statistics/confirmatory_analysis_runner.py
+@@ -39,7 +39,7 @@ from .inference import (
+     stratified_crossover_permutation_test,
+ )
+ from .metrics import coverage
+-from .sensitivity import LeaveOneDeviceOutResult, leave_one_device_out_sensitivity
++from .sensitivity import ClassExclusionSensitivityResult, enrolled_population_class_exclusion_sensitivity
+ 
+ 
+ @dataclass
+@@ -60,7 +60,7 @@ class ConfirmatoryStatisticalPlanReport:
+     rq4_paired_comparison: MethodResult = field(default_factory=lambda: MethodResult(status="SKIPPED_NO_DATA"))
+     non_inferiority: MethodResult = field(default_factory=lambda: MethodResult(status="SKIPPED_NO_DATA"))
+     holm_correction: MethodResult = field(default_factory=lambda: MethodResult(status="SKIPPED_NO_DATA"))
+-    leave_one_device_out: MethodResult = field(default_factory=lambda: MethodResult(status="SKIPPED_NO_DATA"))
++    enrolled_population_class_exclusion_sensitivity: MethodResult = field(default_factory=lambda: MethodResult(status="SKIPPED_NO_DATA"))
+     fixed_seed_variability: MethodResult = field(default_factory=lambda: MethodResult(status="SKIPPED_NO_DATA"))
+ 
+ 
+@@ -143,13 +143,13 @@ def run_confirmatory_statistical_plan(
+         report.holm_correction.detail = "no real p-values produced by the tests above to correct"
+ 
+     if predictions and device_id_by_example_id and known_classes:
+-        lodo_results: list[LeaveOneDeviceOutResult] = leave_one_device_out_sensitivity(predictions, device_id_by_example_id, known_classes)
+-        if lodo_results:
+-            report.leave_one_device_out = MethodResult(status="EXECUTED", value=lodo_results)
++        class_exclusion_results: list[ClassExclusionSensitivityResult] = enrolled_population_class_exclusion_sensitivity(predictions, device_id_by_example_id, known_classes)
++        if class_exclusion_results:
++            report.enrolled_population_class_exclusion_sensitivity = MethodResult(status="EXECUTED", value=class_exclusion_results)
+         else:
+-            report.leave_one_device_out.detail = "no prediction maps to a known device_id"
++            report.enrolled_population_class_exclusion_sensitivity.detail = "no prediction maps to a known device_id"
+     else:
+-        report.leave_one_device_out.detail = "predictions/device_id_by_example_id/known_classes not supplied"
++        report.enrolled_population_class_exclusion_sensitivity.detail = "predictions/device_id_by_example_id/known_classes not supplied"
+ 
+     if seed_variability_results:
+         report.fixed_seed_variability = MethodResult(status="EXECUTED", value=seed_variability_results)
+@@ -182,7 +182,7 @@ def confirmatory_statistical_plan_to_dict(report: ConfirmatoryStatisticalPlanRep
+         "rq4_paired_comparison": _method(report.rq4_paired_comparison),
+         "non_inferiority": _method(report.non_inferiority),
+         "holm_correction": _method(report.holm_correction),
+-        "leave_one_device_out": _method(report.leave_one_device_out),
++        "enrolled_population_class_exclusion_sensitivity": _method(report.enrolled_population_class_exclusion_sensitivity),
+         "fixed_seed_variability": _method(report.fixed_seed_variability),
+     }
+ 
+diff --git a/backend/app/modules/ble_scientific_results/statistics/inference.py b/backend/app/modules/ble_scientific_results/statistics/inference.py
+index 8aeed2e..7a0273a 100644
+--- a/backend/app/modules/ble_scientific_results/statistics/inference.py
++++ b/backend/app/modules/ble_scientific_results/statistics/inference.py
+@@ -298,6 +298,157 @@ def hierarchical_cluster_bootstrap(
+     return (result, resample_statistics) if return_samples else result
+ 
+ 
++def stratified_hierarchical_cluster_bootstrap(
++    cluster_values_by_stratum: dict[str, Sequence[Sequence[float]]], *,
++    statistic: Callable[[Sequence[float]], float] = lambda values: sum(values) / len(values),
++    n_resamples: int = 5000, confidence_level: float = 0.95, rng: np.random.Generator | None = None,
++    return_samples: bool = False,
++) -> BootstrapCiResult | tuple[BootstrapCiResult, np.ndarray]:
++    """Methodological-audit fix (2026-08-22, item 3): `hierarchical_cluster_
++    bootstrap` above resamples clusters from ONE pooled list -- for RQ1's
++    real closed-set task (BA defined as mean recall over 4 fixed physical
++    classes), a resample can, by chance, draw zero clusters belonging to
++    one class (a real risk whenever a stratum's cluster count is small,
++    e.g. capture-disjoint VALIDATION's 12 sessions across 4 units), and the
++    statistic then silently computes BA over only the classes still
++    present -- quietly changing the definition of BA in some resamples but
++    not others, exactly the failure mode this function exists to remove.
++
++    Resamples WITHIN each stratum (here: physical_unit_id) independently --
++    every stratum contributes exactly `len(that stratum's real clusters)`
++    resampled clusters (with replacement) to every single replicate, so
++    every stratum, and therefore every class, is present in every
++    replicate by construction. `cluster_values_by_stratum` keys are
++    iterated in sorted order for determinism. Point estimate is the real
++    statistic over the full, unresampled pooled data (unchanged by
++    stratification -- only the resampling distribution changes)."""
++    strata = sorted(cluster_values_by_stratum)
++    if not strata:
++        raise ValueError("NEED_AT_LEAST_ONE_STRATUM")
++    for stratum in strata:
++        if len(cluster_values_by_stratum[stratum]) == 0:
++            raise ValueError(f"STRATUM_HAS_NO_CLUSTERS:{stratum}")
++    rng = rng or np.random.default_rng(12345)
++    flat_all = [value for stratum in strata for cluster in cluster_values_by_stratum[stratum] for value in cluster]
++    point_estimate = statistic(flat_all)
++
++    resample_statistics = np.empty(n_resamples, dtype=float)
++    for i in range(n_resamples):
++        pooled: list[float] = []
++        for stratum in strata:
++            clusters = cluster_values_by_stratum[stratum]
++            n_clusters = len(clusters)
++            chosen = rng.choice(np.arange(n_clusters), size=n_clusters, replace=True)
++            for cluster_index in chosen:
++                pooled.extend(clusters[cluster_index])
++        resample_statistics[i] = statistic(pooled)
++
++    alpha = 1.0 - confidence_level
++    ci_low, ci_high = np.quantile(resample_statistics, [alpha / 2, 1 - alpha / 2])
++    result = BootstrapCiResult(point_estimate=point_estimate, ci_low=float(ci_low), ci_high=float(ci_high), n_resamples=n_resamples, confidence_level=confidence_level)
++    return (result, resample_statistics) if return_samples else result
++
++
++def matched_stratified_bootstrap_delta_ci(
++    cluster_values_by_stratum_a: dict[str, Sequence[Sequence[float]]], cluster_values_by_stratum_b: dict[str, Sequence[Sequence[float]]], *,
++    statistic: Callable[[Sequence[float]], float] = lambda values: sum(values) / len(values),
++    n_resamples: int = 5000, confidence_level: float = 0.95, rng: np.random.Generator | None = None,
++) -> BootstrapCiResult:
++    """RQ4 exploratory FULL_BURST vs PRE_PDU comparison (2026-08-22): a
++    genuinely matched/joint stratified bootstrap for two representations
++    of the SAME underlying evidence -- e.g. the same VALIDATION example_ids,
++    grouped into the same real sessions, scored twice (once per analytical
++    region). Unlike `independent_domain_bootstrap_delta_ci` (built for
++    RQ1's two DISJOINT session pools, which have no real pairing), this
++    function draws ONE set of resampled cluster indices per stratum per
++    replicate and applies that SAME draw to BOTH populations -- never two
++    separately-drawn resamples that only happen to align by seed/size/
++    order. This is the statistically correct procedure whenever the two
++    populations are truly the same clusters under two conditions (a
++    genuine within-cluster paired design), respecting session-level
++    dependence throughout (never resampling individual examples across a
++    session boundary).
++
++    Requires `cluster_values_by_stratum_a` and `_b` to have IDENTICAL
++    stratum keys and, within each stratum, the SAME NUMBER of clusters (not
++    necessarily identical content -- the caller is responsible for having
++    verified the two populations really are the same sessions in the same
++    order before calling this, e.g. by comparing real session_id sets) --
++    raises rather than silently resampling mismatched populations as if
++    they were paired."""
++    strata_a, strata_b = sorted(cluster_values_by_stratum_a), sorted(cluster_values_by_stratum_b)
++    if strata_a != strata_b:
++        raise ValueError(f"STRATA_MISMATCH_BETWEEN_A_AND_B:a={strata_a}:b={strata_b}")
++    if not strata_a:
++        raise ValueError("NEED_AT_LEAST_ONE_STRATUM")
++    for stratum in strata_a:
++        n_a, n_b = len(cluster_values_by_stratum_a[stratum]), len(cluster_values_by_stratum_b[stratum])
++        if n_a == 0 or n_b == 0:
++            raise ValueError(f"STRATUM_HAS_NO_CLUSTERS:{stratum}")
++        if n_a != n_b:
++            raise ValueError(f"CLUSTER_COUNT_MISMATCH_IN_STRATUM_NOT_A_REAL_MATCHED_PAIR:{stratum}:a={n_a}:b={n_b}")
++    rng = rng or np.random.default_rng(12345)
++
++    flat_a = [value for stratum in strata_a for cluster in cluster_values_by_stratum_a[stratum] for value in cluster]
++    flat_b = [value for stratum in strata_a for cluster in cluster_values_by_stratum_b[stratum] for value in cluster]
++    point_estimate = statistic(flat_a) - statistic(flat_b)
++
++    delta_samples = np.empty(n_resamples, dtype=float)
++    for i in range(n_resamples):
++        pooled_a: list[float] = []
++        pooled_b: list[float] = []
++        for stratum in strata_a:
++            clusters_a = cluster_values_by_stratum_a[stratum]
++            clusters_b = cluster_values_by_stratum_b[stratum]
++            n_clusters = len(clusters_a)
++            chosen = rng.choice(np.arange(n_clusters), size=n_clusters, replace=True)  # SAME draw applied to both A and B
++            for cluster_index in chosen:
++                pooled_a.extend(clusters_a[cluster_index])
++                pooled_b.extend(clusters_b[cluster_index])
++        delta_samples[i] = statistic(pooled_a) - statistic(pooled_b)
++
++    alpha = 1.0 - confidence_level
++    ci_low, ci_high = np.quantile(delta_samples, [alpha / 2, 1 - alpha / 2])
++    return BootstrapCiResult(point_estimate=point_estimate, ci_low=float(ci_low), ci_high=float(ci_high), n_resamples=n_resamples, confidence_level=confidence_level)
++
++
++def independent_domain_bootstrap_delta_ci(
++    cluster_values_by_stratum_a: dict[str, Sequence[Sequence[float]]], cluster_values_by_stratum_b: dict[str, Sequence[Sequence[float]]], *,
++    statistic: Callable[[Sequence[float]], float] = lambda values: sum(values) / len(values),
++    n_resamples: int = 5000, confidence_level: float = 0.95, rng: np.random.Generator | None = None,
++) -> BootstrapCiResult:
++    """Methodological-audit terminology fix (2026-08-22, item 3): the
++    class-preserving, stratified-by-physical-unit counterpart to
++    `paired_cluster_bootstrap_delta_ci` above -- deliberately NOT named
++    "paired". RQ1's capture-dependent domain (e.g. 34 sessions) and
++    capture-disjoint domain (e.g. 12 sessions) have no physical pairing
++    between their sessions -- there is no real basis to say diagnostic
++    session i "corresponds to" confirmatory session i. What this function
++    computes is statistically real and valid (a bootstrap distribution of
++    the difference between two statistics, each computed over its own
++    independently, stratified-resampled domain, subtracted per replicate,
++    then a percentile CI taken of that difference distribution -- still
++    NEVER two separately-computed marginal CIs subtracted, for the same
++    reason `paired_cluster_bootstrap_delta_ci` gives), it just must not be
++    called a "paired" bootstrap, since there are no real pairs. Use this
++    (not `paired_cluster_bootstrap_delta_ci`) whenever the two populations
++    are independent AND at least one side needs class-stratified
++    resampling (RQ1's own case); keep using
++    `paired_cluster_bootstrap_delta_ci` for genuinely paired designs (e.g.
++    RQ3's real per-device PRE/POST pairs)."""
++    result_a, samples_a = stratified_hierarchical_cluster_bootstrap(
++        cluster_values_by_stratum_a, statistic=statistic, n_resamples=n_resamples, confidence_level=confidence_level, rng=rng, return_samples=True,
++    )
++    result_b, samples_b = stratified_hierarchical_cluster_bootstrap(
++        cluster_values_by_stratum_b, statistic=statistic, n_resamples=n_resamples, confidence_level=confidence_level, rng=rng, return_samples=True,
++    )
++    delta_samples = samples_a - samples_b
++    point_estimate = result_a.point_estimate - result_b.point_estimate
++    alpha = 1.0 - confidence_level
++    ci_low, ci_high = np.quantile(delta_samples, [alpha / 2, 1 - alpha / 2])
++    return BootstrapCiResult(point_estimate=point_estimate, ci_low=float(ci_low), ci_high=float(ci_high), n_resamples=n_resamples, confidence_level=confidence_level)
++
++
+ def paired_cluster_bootstrap_delta_ci(
+     cluster_values_a: Sequence[Sequence[float]], cluster_values_b: Sequence[Sequence[float]], *,
+     statistic: Callable[[Sequence[float]], float] = lambda values: sum(values) / len(values),
+diff --git a/backend/app/modules/ble_scientific_results/statistics/sensitivity.py b/backend/app/modules/ble_scientific_results/statistics/sensitivity.py
+index 23227ec..16a636e 100644
+--- a/backend/app/modules/ble_scientific_results/statistics/sensitivity.py
++++ b/backend/app/modules/ble_scientific_results/statistics/sensitivity.py
+@@ -1,10 +1,19 @@
+-"""Leave-one-device-out (LODO) sensitivity analysis (2026-08-09 addition --
+-did not exist before this pass). Reuses the same per-example prediction
++"""Enrolled-population class-exclusion metric sensitivity (2026-08-09
++addition -- did not exist before this pass; renamed 2026-08-22,
++methodological-audit item 4). Reuses the same per-example prediction
+ records and accuracy definition every other confirmatory metric in this
+ package uses (see evaluator.py's balanced_accuracy/macro_f1) -- no new
+-model, no retraining: this recomputes the SAME already-scored predictions,
+-just excluding one device's examples from the comparison each time, to show
+-whether the reported result depends heavily on any single enrolled device.
++model, no retraining. This is NOT a leave-one-device-out cross-validation:
++the underlying model was trained WITH every enrolled device's examples,
++including the one being "excluded" here. What this function actually does
++is recompute the SAME already-scored predictions from that one fixed
++model, filtering one class's own examples out of the aggregate metric each
++time, to show how much the reported balanced accuracy/accuracy depends on
++any single enrolled class's contribution to the average -- never how the
++model would perform on a device it never saw during training. Calling this
++"leave-one-device-out" (its original 2026-08-09 name) overstated what it
++measures; the misnomer was caught during a methodological audit of the
++paper this feeds, not during the original implementation.
+ """
+ from __future__ import annotations
+ 
+@@ -15,24 +24,27 @@ from .metrics import balanced_accuracy
+ 
+ 
+ @dataclass(frozen=True)
+-class LeaveOneDeviceOutResult:
++class ClassExclusionSensitivityResult:
+     excluded_device_id: str
+     n_comparable: int
+     accuracy: float | None
+     balanced_accuracy_value: float | None
+ 
+ 
+-def leave_one_device_out_sensitivity(
++def enrolled_population_class_exclusion_sensitivity(
+     predictions: list[dict[str, Any]], device_id_by_example_id: dict[str, str], known_classes: Sequence[str],
+-) -> list[LeaveOneDeviceOutResult]:
++) -> list[ClassExclusionSensitivityResult]:
+     """`predictions` are already-scored records (`example_id`, `true_label`,
+-    `predicted_label`) from a real, frozen model -- exactly the same shape
+-    Evaluator.evaluate_split consumes. One result per device that appears in
+-    `device_id_by_example_id`, excluding that device's own examples from the
+-    comparison it measures. Returns [] (never a fabricated result) when no
+-    prediction maps to a known device."""
++    `predicted_label`) from ONE real, already-trained, frozen model -- that
++    model was fit on every enrolled device's examples, this device included;
++    nothing here retrains or refits anything. One result per device that
++    appears in `device_id_by_example_id`, excluding that device's own
++    examples from the METRIC computation only (post-hoc filtering of
++    already-scored predictions, exactly the same shape
++    Evaluator.evaluate_split consumes). Returns [] (never a fabricated
++    result) when no prediction maps to a known device."""
+     device_ids = sorted({device_id_by_example_id[p["example_id"]] for p in predictions if p["example_id"] in device_id_by_example_id})
+-    results: list[LeaveOneDeviceOutResult] = []
++    results: list[ClassExclusionSensitivityResult] = []
+     for excluded_device in device_ids:
+         remaining = [
+             p for p in predictions
+@@ -40,12 +52,12 @@ def leave_one_device_out_sensitivity(
+         ]
+         comparable = [p for p in remaining if p["true_label"] in known_classes]
+         if not comparable:
+-            results.append(LeaveOneDeviceOutResult(excluded_device_id=excluded_device, n_comparable=0, accuracy=None, balanced_accuracy_value=None))
++            results.append(ClassExclusionSensitivityResult(excluded_device_id=excluded_device, n_comparable=0, accuracy=None, balanced_accuracy_value=None))
+             continue
+         accuracy = sum(1 for p in comparable if p["predicted_label"] == p["true_label"]) / len(comparable)
+         try:
+             ba = balanced_accuracy([p["true_label"] for p in comparable], [p["predicted_label"] for p in comparable], labels=list(known_classes))
+         except ValueError:
+             ba = None
+-        results.append(LeaveOneDeviceOutResult(excluded_device_id=excluded_device, n_comparable=len(comparable), accuracy=accuracy, balanced_accuracy_value=ba))
++        results.append(ClassExclusionSensitivityResult(excluded_device_id=excluded_device, n_comparable=len(comparable), accuracy=accuracy, balanced_accuracy_value=ba))
+     return results
+diff --git a/backend/app/tests/unit/ble_rffi_studio/test_bootstrap_accuracy_ci.py b/backend/app/tests/unit/ble_rffi_studio/test_bootstrap_accuracy_ci.py
+index 31e26d6..0571b89 100644
+--- a/backend/app/tests/unit/ble_rffi_studio/test_bootstrap_accuracy_ci.py
++++ b/backend/app/tests/unit/ble_rffi_studio/test_bootstrap_accuracy_ci.py
+@@ -189,3 +189,124 @@ def test_studio_repository_bootstrap_balanced_accuracy_delta_ci_raises_on_label_
+     shutil.copy(real_run_dir / "training_run.json", other_dir / "training_run.json")
+     with pytest.raises(ValueError, match="LABEL_CLASSES_MISMATCH_BETWEEN_RUNS"):
+         repository.bootstrap_balanced_accuracy_delta_ci(training_run_id, other_run_id)
++
++
++# --- Methodological-audit fix (2026-08-22, item 3): class-preserving RQ1 bootstrap ---
++
++def test_bootstrap_balanced_accuracy_ci_stratified_by_class_never_drops_a_class():
++    # A deliberately small-stratum shape (class "B" has exactly ONE
++    # session) -- the exact shape that makes the plain, pooled
++    # bootstrap_balanced_accuracy_ci silently drop a class from some
++    # resamples' mean-per-class-recall statistic (verified empirically
++    # against RQ1's real 12-session capture-disjoint VALIDATION population:
++    # ~26% of resamples lost a class under the old pooled bootstrap). The
++    # stratified sibling must never do that -- every one of B's real
++    # predictions is present in every resample's B-stratum draw, so B's
++    # recall is always defined.
++    evaluator = Evaluator()
++    predictions = (
++        [{"example_id": f"a-{i}", "true_label": "A", "predicted_label": "A"} for i in range(6)]
++        + [{"example_id": "b-0", "true_label": "B", "predicted_label": "A"}]  # class B: exactly one session, wrong
++        + [{"example_id": f"c-{i}", "true_label": "C", "predicted_label": "C"} for i in range(4)]
++    )
++    session_id_by_example_id = (
++        {f"a-{i}": f"SESSION-A-{i}" for i in range(6)}
++        | {"b-0": "SESSION-B"}
++        | {f"c-{i}": f"SESSION-C-{i}" for i in range(4)}
++    )
++    result = evaluator.bootstrap_balanced_accuracy_ci_stratified_by_class(predictions, ["A", "B", "C"], session_id_by_example_id, n_resamples=500)
++    assert result is not None
++    # Point estimate: mean(1.0, 0.0, 1.0) = 2/3 -- class B's 0 recall must
++    # always contribute (never silently dropped, which would instead
++    # average only over whichever classes happened to survive).
++    assert result.point_estimate == pytest.approx(2 / 3)
++    assert result.ci_low <= result.point_estimate <= result.ci_high
++
++
++def test_bootstrap_balanced_accuracy_ci_stratified_by_class_is_none_with_a_single_known_class():
++    evaluator = Evaluator()
++    result = evaluator.bootstrap_balanced_accuracy_ci_stratified_by_class([{"example_id": "e1", "true_label": "A", "predicted_label": "A"}], ["A"], {"e1": "S1"})
++    assert result is None
++
++
++def test_bootstrap_balanced_accuracy_delta_ci_stratified_by_class_point_estimate_is_the_real_difference():
++    evaluator = Evaluator()
++    predictions_a = [{"example_id": f"a-{i}", "true_label": "A", "predicted_label": "A"} for i in range(4)]  # BA=1.0
++    predictions_b = [{"example_id": f"b-{i}", "true_label": "A", "predicted_label": "A" if i < 2 else "B"} for i in range(4)] + [
++        {"example_id": "b-extra", "true_label": "B", "predicted_label": "B"}
++    ]
++    session_ids_a = {f"a-{i}": f"SESSION-A-{i}" for i in range(4)}
++    session_ids_b = {f"b-{i}": f"SESSION-B-{i}" for i in range(4)} | {"b-extra": "SESSION-B-extra"}
++    result = evaluator.bootstrap_balanced_accuracy_delta_ci_stratified_by_class(predictions_a, predictions_b, ["A", "B"], session_ids_a, session_ids_b, n_resamples=300)
++    assert result is not None
++    assert result.ci_low <= result.point_estimate <= result.ci_high
++
++
++def test_bootstrap_balanced_accuracy_delta_ci_stratified_by_class_is_none_when_either_side_has_no_comparable_predictions():
++    evaluator = Evaluator()
++    predictions_a = [{"example_id": "a-1", "true_label": "A", "predicted_label": "A"}]
++    result = evaluator.bootstrap_balanced_accuracy_delta_ci_stratified_by_class(predictions_a, [], ["A", "B"], {"a-1": "S1"}, {})
++    assert result is None
++
++
++def test_studio_repository_bootstrap_balanced_accuracy_ci_stratified_by_class_wired_end_to_end(studio_repository_with_trained_run):
++    repository, training_run_id = studio_repository_with_trained_run
++    result = repository.bootstrap_balanced_accuracy_ci_stratified_by_class(training_run_id, split="VALIDATION", n_resamples=200)
++    assert result is not None
++    assert result["split"] == "VALIDATION"
++    assert 0.0 <= result["point_estimate"] <= 1.0
++    assert result["ci_low"] <= result["point_estimate"] <= result["ci_high"]
++
++
++def test_studio_repository_bootstrap_balanced_accuracy_delta_ci_stratified_by_class_wired_end_to_end(studio_repository_with_trained_run):
++    # Same real training run compared against itself -- point_estimate must
++    # be exactly 0.0, proving the real file-read/stratified-clustering/
++    # independent-resample plumbing works end to end.
++    repository, training_run_id = studio_repository_with_trained_run
++    result = repository.bootstrap_balanced_accuracy_delta_ci_stratified_by_class(training_run_id, training_run_id, split_a="VALIDATION", split_b="VALIDATION", n_resamples=200)
++    assert result is not None
++    assert result["point_estimate"] == pytest.approx(0.0)
++    assert result["ci_low"] <= 0.0 <= result["ci_high"]
++
++
++def test_studio_repository_bootstrap_balanced_accuracy_delta_ci_stratified_by_class_raises_on_label_class_mismatch(studio_repository_with_trained_run):
++    repository, training_run_id = studio_repository_with_trained_run
++    other_run_id = "OTHER-RUN-STRATIFIED"
++    other_dir = repository.training_dir / other_run_id
++    other_dir.mkdir(parents=True)
++    (other_dir / "predictions.json").write_text('{"VALIDATION": []}', encoding="utf-8")
++    (other_dir / "label_classes.json").write_text('{"classes": ["ONLY-ONE-CLASS"]}', encoding="utf-8")
++    real_run_dir = repository.training_dir / training_run_id
++    import shutil
++    shutil.copy(real_run_dir / "training_run.json", other_dir / "training_run.json")
++    with pytest.raises(ValueError, match="LABEL_CLASSES_MISMATCH_BETWEEN_RUNS"):
++        repository.bootstrap_balanced_accuracy_delta_ci_stratified_by_class(training_run_id, other_run_id)
++
++
++# --- RQ4 exploratory fix (2026-08-22): matched FULL_BURST vs PRE_PDU comparison ---
++
++def test_bootstrap_balanced_accuracy_delta_ci_matched_by_class_point_estimate_is_the_real_difference():
++    evaluator = Evaluator()
++    predictions_a = [
++        {"example_id": "e1", "true_label": "A", "predicted_label": "A"},
++        {"example_id": "e2", "true_label": "B", "predicted_label": "B"},
++    ]
++    predictions_b = [
++        {"example_id": "e1", "true_label": "A", "predicted_label": "B"},  # same example, wrong under region B
++        {"example_id": "e2", "true_label": "B", "predicted_label": "B"},
++    ]
++    session_ids = {"e1": "S1", "e2": "S2"}
++    result = evaluator.bootstrap_balanced_accuracy_delta_ci_matched_by_class(
++        predictions_a, predictions_b, ["A", "B"], session_ids, session_ids, n_resamples=200,
++    )
++    assert result is not None
++    # A: BA=1.0 (both correct); B: BA=0.5 (mean(0.0, 1.0)) -> delta = 0.5
++    assert result.point_estimate == pytest.approx(0.5)
++    assert result.ci_low <= result.point_estimate <= result.ci_high
++
++
++def test_bootstrap_balanced_accuracy_delta_ci_matched_by_class_is_none_when_either_side_has_no_comparable_predictions():
++    evaluator = Evaluator()
++    predictions_a = [{"example_id": "a-1", "true_label": "A", "predicted_label": "A"}]
++    result = evaluator.bootstrap_balanced_accuracy_delta_ci_matched_by_class(predictions_a, [], ["A", "B"], {"a-1": "S1"}, {})
++    assert result is None
+diff --git a/backend/app/tests/unit/ble_scientific_results/test_confirmatory_analysis_runner.py b/backend/app/tests/unit/ble_scientific_results/test_confirmatory_analysis_runner.py
+index 17debba..6241f9e 100644
+--- a/backend/app/tests/unit/ble_scientific_results/test_confirmatory_analysis_runner.py
++++ b/backend/app/tests/unit/ble_scientific_results/test_confirmatory_analysis_runner.py
+@@ -63,14 +63,14 @@ def test_supplying_real_non_inferiority_inputs_executes_it():
+     assert report.non_inferiority.value.margin == 0.1
+ 
+ 
+-def test_supplying_real_predictions_and_device_map_executes_leave_one_device_out():
++def test_supplying_real_predictions_and_device_map_executes_enrolled_population_class_exclusion_sensitivity():
+     predictions = [
+         {"example_id": "e1", "true_label": "A", "predicted_label": "A"},
+         {"example_id": "e2", "true_label": "B", "predicted_label": "B"},
+     ]
+     report = run_confirmatory_statistical_plan(predictions=predictions, device_id_by_example_id={"e1": "D1", "e2": "D2"}, known_classes=["A", "B"])
+-    assert report.leave_one_device_out.status == "EXECUTED"
+-    assert len(report.leave_one_device_out.value) == 2
++    assert report.enrolled_population_class_exclusion_sensitivity.status == "EXECUTED"
++    assert len(report.enrolled_population_class_exclusion_sensitivity.value) == 2
+ 
+ 
+ def test_confirmatory_statistical_plan_to_dict_serializes_dataclass_values():
+diff --git a/backend/app/tests/unit/ble_scientific_results/test_coverage_analysis.py b/backend/app/tests/unit/ble_scientific_results/test_coverage_analysis.py
+index 517eb10..196e9f5 100644
+--- a/backend/app/tests/unit/ble_scientific_results/test_coverage_analysis.py
++++ b/backend/app/tests/unit/ble_scientific_results/test_coverage_analysis.py
+@@ -11,6 +11,7 @@ from app.modules.ble_scientific_results.coverage_analysis import (
+     coverage_row_from_decision_window,
+     compute_coverage_summary,
+     evaluate_window_level,
++    operational_coverage_breakdown,
+ )
+ 
+ 
+@@ -124,3 +125,82 @@ def test_evaluate_window_level_reuses_evaluator_evaluate_split_on_decision_windo
+ def test_evaluate_window_level_returns_none_when_nothing_is_comparable():
+     rows = [CoverageRow(decided=False, correct=None, evaluation_domain="TEST", physical_unit_id="UNIT-A", predicted_class=None)]
+     assert evaluate_window_level(rows, evaluator=Evaluator(), known_classes=["UNIT-A", "UNIT-B"], domain_label="TEST") is None
++
++
++def _row(final_decision, predicted_class, physical_unit_id):
++    return coverage_row_from_decision_window({
++        "final_decision": final_decision, "predicted_class": predicted_class, "physical_unit_id": physical_unit_id,
++        "abstention_reason": "BELOW_MINIMUM_ELIGIBLE_BURSTS:0<1" if final_decision == "INSUFFICIENT_EVIDENCE" else None,
++    })
++
++
++def test_operational_coverage_breakdown_reproduces_the_real_closed_set_test_partition():
++    # Methodological-audit fix (2026-08-22, item 2): the real 12 TEST
++    # decision windows for the closed-set PRIMARY branch
++    # (paper-run-2805869e6282778ad729a26d022ec9b0, 06_statistics/
++    # coverage_analysis_report.json) -- 11/12 argmax-correct, but only
++    # 10/12 accepted-and-correct once the 0.66 threshold is honored as a
++    # real rejection, not "decided, just wrong-class".
++    rows = [
++        _row("IDENTIFIED", "keyfobdemo 01", "keyfobdemo 01"),
++        _row("IDENTIFIED", "CC2650-UNIT-01", "CC2650-UNIT-01"),
++        _row("IDENTIFIED", "keyfobdemo 01", "keyfobdemo 01"),
++        _row("IDENTIFIED", "keyfobdemo 02", "keyfobdemo 02"),
++        _row("IDENTIFIED", "keyfobdemo 01", "keyfobdemo 01"),
++        _row("UNKNOWN", "CC2541SensorTag", "CC2541SensorTag"),  # correct argmax, rejected by threshold
++        _row("UNKNOWN", "keyfobdemo 01", "keyfobdemo 02"),  # wrong argmax, rejected by threshold
++        _row("IDENTIFIED", "keyfobdemo 01", "keyfobdemo 01"),
++        _row("IDENTIFIED", "CC2650-UNIT-01", "CC2650-UNIT-01"),
++        _row("IDENTIFIED", "CC2541SensorTag", "CC2541SensorTag"),
++        _row("IDENTIFIED", "CC2650-UNIT-01", "CC2650-UNIT-01"),
++        _row("IDENTIFIED", "keyfobdemo 01", "keyfobdemo 01"),
++    ]
++    breakdown = operational_coverage_breakdown(rows)
++    assert breakdown["total_admissible_windows"] == 12
++    assert breakdown["n_identified"] == 10
++    assert breakdown["n_unknown_below_threshold"] == 2
++    assert breakdown["n_insufficient_evidence"] == 0
++    assert breakdown["operational_coverage"] == pytest.approx(10 / 12)
++    assert breakdown["argmax_accuracy_ignoring_threshold"] == pytest.approx(11 / 12)  # the paper's "11/12"
++    assert breakdown["accuracy_among_identified"] == pytest.approx(1.0)  # the "10/12 accepted-and-correct" reading -- all 10 IDENTIFIED are right
++    assert breakdown["n_correct_rejected"] == 1
++    assert breakdown["n_errors_rejected"] == 1
++    assert breakdown["n_errors_accepted"] == 0
++
++
++def test_operational_coverage_breakdown_surfaces_a_confidently_accepted_error():
++    # A window that clears the threshold while still being wrong (a real
++    # VALIDATION case: keyfobdemo 02 misidentified as keyfobdemo 01 at
++    # 0.78, above the 0.66 threshold) must show up as n_errors_accepted,
++    # never silently folded into "correct" or "rejected".
++    rows = [
++        _row("IDENTIFIED", "keyfobdemo 01", "keyfobdemo 01"),
++        _row("IDENTIFIED", "keyfobdemo 01", "keyfobdemo 02"),  # confidently wrong, accepted
++    ]
++    breakdown = operational_coverage_breakdown(rows)
++    assert breakdown["n_identified"] == 2
++    assert breakdown["accuracy_among_identified"] == pytest.approx(0.5)
++    assert breakdown["n_errors_accepted"] == 1
++    assert breakdown["n_errors_rejected"] == 0
++
++
++def test_operational_coverage_breakdown_separates_insufficient_evidence_from_unknown():
++    rows = [
++        _row("IDENTIFIED", "UNIT-A", "UNIT-A"),
++        _row("UNKNOWN", "UNIT-B", "UNIT-A"),
++        _row("INSUFFICIENT_EVIDENCE", None, "UNIT-A"),
++    ]
++    breakdown = operational_coverage_breakdown(rows)
++    assert breakdown["total_admissible_windows"] == 2  # INSUFFICIENT_EVIDENCE excluded from admissible
++    assert breakdown["n_insufficient_evidence"] == 1
++    assert breakdown["n_identified"] == 1
++    assert breakdown["n_unknown_below_threshold"] == 1
++    assert breakdown["operational_coverage"] == pytest.approx(0.5)
++
++
++def test_operational_coverage_breakdown_empty_input_never_divides_by_zero():
++    breakdown = operational_coverage_breakdown([])
++    assert breakdown["total_admissible_windows"] == 0
++    assert breakdown["operational_coverage"] is None
++    assert breakdown["argmax_accuracy_ignoring_threshold"] is None
++    assert breakdown["accuracy_among_identified"] is None
+diff --git a/backend/app/tests/unit/ble_scientific_results/test_sensitivity_analysis.py b/backend/app/tests/unit/ble_scientific_results/test_sensitivity_analysis.py
+index ed3a818..1045f33 100644
+--- a/backend/app/tests/unit/ble_scientific_results/test_sensitivity_analysis.py
++++ b/backend/app/tests/unit/ble_scientific_results/test_sensitivity_analysis.py
+@@ -5,10 +5,10 @@ from __future__ import annotations
+ import pytest
+ 
+ from app.modules.ble_scientific_results.sensitivity_analysis import (
+-    enrich_lodo_with_delta_vs_full_set,
++    enrich_class_exclusion_with_delta_vs_full_set,
+     full_set_balanced_accuracy,
+ )
+-from app.modules.ble_scientific_results.statistics.sensitivity import LeaveOneDeviceOutResult
++from app.modules.ble_scientific_results.statistics.sensitivity import ClassExclusionSensitivityResult
+ 
+ 
+ def test_full_set_balanced_accuracy_matches_metrics_module_definition():
+@@ -26,11 +26,11 @@ def test_full_set_balanced_accuracy_returns_none_with_no_comparable_predictions(
+ 
+ 
+ def test_enrich_lodo_computes_real_delta_vs_full_set():
+-    lodo = [
+-        LeaveOneDeviceOutResult(excluded_device_id="UNIT-A", n_comparable=10, accuracy=0.8, balanced_accuracy_value=0.75),
+-        LeaveOneDeviceOutResult(excluded_device_id="UNIT-B", n_comparable=8, accuracy=0.6, balanced_accuracy_value=0.55),
++    class_exclusion_results = [
++        ClassExclusionSensitivityResult(excluded_device_id="UNIT-A", n_comparable=10, accuracy=0.8, balanced_accuracy_value=0.75),
++        ClassExclusionSensitivityResult(excluded_device_id="UNIT-B", n_comparable=8, accuracy=0.6, balanced_accuracy_value=0.55),
+     ]
+-    rows = enrich_lodo_with_delta_vs_full_set(lodo, full_set_ba=0.7)
++    rows = enrich_class_exclusion_with_delta_vs_full_set(class_exclusion_results, full_set_ba=0.7)
+     by_unit = {r["omitted_physical_unit"]: r for r in rows}
+     assert by_unit["UNIT-A"]["delta_vs_full_set"] == pytest.approx(0.05)
+     assert by_unit["UNIT-B"]["delta_vs_full_set"] == pytest.approx(-0.15)
+@@ -38,6 +38,6 @@ def test_enrich_lodo_computes_real_delta_vs_full_set():
+ 
+ 
+ def test_enrich_lodo_never_fabricates_a_delta_when_a_real_estimate_is_missing():
+-    lodo = [LeaveOneDeviceOutResult(excluded_device_id="UNIT-A", n_comparable=0, accuracy=None, balanced_accuracy_value=None)]
+-    rows = enrich_lodo_with_delta_vs_full_set(lodo, full_set_ba=0.7)
++    class_exclusion_results = [ClassExclusionSensitivityResult(excluded_device_id="UNIT-A", n_comparable=0, accuracy=None, balanced_accuracy_value=None)]
++    rows = enrich_class_exclusion_with_delta_vs_full_set(class_exclusion_results, full_set_ba=0.7)
+     assert rows[0]["delta_vs_full_set"] is None
+diff --git a/backend/app/tests/unit/ble_scientific_results/test_sensitivity_analysis_repository.py b/backend/app/tests/unit/ble_scientific_results/test_sensitivity_analysis_repository.py
+index 3eafdbe..7e6f8cc 100644
+--- a/backend/app/tests/unit/ble_scientific_results/test_sensitivity_analysis_repository.py
++++ b/backend/app/tests/unit/ble_scientific_results/test_sensitivity_analysis_repository.py
+@@ -73,7 +73,7 @@ def test_run_sensitivity_analysis_persists_lodo_and_offset_retaining_and_reuses_
+ 
+     assert studio.offset_retaining_calls == ["TRAIN-RUN-1"]
+     assert as_dict["primary"]["balanced_accuracy"] == 0.8
+-    lodo_by_unit = {r["omitted_physical_unit"]: r for r in as_dict["leave_one_device_out"]["rows"]}
++    lodo_by_unit = {r["omitted_physical_unit"]: r for r in as_dict["enrolled_population_class_exclusion_sensitivity"]["rows"]}
+     assert set(lodo_by_unit.keys()) == {"UNIT-A", "UNIT-B"}
+     assert lodo_by_unit["UNIT-A"]["delta_vs_full_set"] is not None
+     assert as_dict["offset_retaining"]["analysis_role"] == "OFFSET_RETAINING_SENSITIVITY"
+diff --git a/backend/app/tests/unit/ble_scientific_results/test_statistics_inference.py b/backend/app/tests/unit/ble_scientific_results/test_statistics_inference.py
+index 61dcdad..0456e32 100644
+--- a/backend/app/tests/unit/ble_scientific_results/test_statistics_inference.py
++++ b/backend/app/tests/unit/ble_scientific_results/test_statistics_inference.py
+@@ -10,11 +10,14 @@ from app.modules.ble_scientific_results.statistics.inference import (
+     exact_two_sample_permutation_test,
+     hierarchical_cluster_bootstrap,
+     holm_correction,
++    independent_domain_bootstrap_delta_ci,
++    matched_stratified_bootstrap_delta_ci,
+     non_inferiority_test,
+     paired_contrast,
+     paired_cluster_bootstrap_delta_ci,
+     risk_coverage_curve,
+     stratified_crossover_permutation_test,
++    stratified_hierarchical_cluster_bootstrap,
+ )
+ 
+ 
+@@ -124,6 +127,83 @@ def test_paired_cluster_bootstrap_delta_ci_is_never_the_same_as_subtracting_marg
+     assert joint_width < naive_width
+ 
+ 
++# --- Methodological-audit fix (2026-08-22, item 3): class-preserving, stratified bootstrap ---
++
++def test_stratified_bootstrap_point_estimate_is_the_real_pooled_mean_across_strata():
++    cluster_values_by_stratum = {"A": [[1.0, 2.0], [3.0, 4.0]], "B": [[5.0, 6.0]]}  # pooled mean = 21/6 = 3.5
++    result = stratified_hierarchical_cluster_bootstrap(cluster_values_by_stratum, n_resamples=500)
++    assert result.point_estimate == pytest.approx(3.5)
++    assert result.ci_low <= result.point_estimate <= result.ci_high
++
++
++def test_stratified_bootstrap_is_reproducible_with_a_fixed_seed():
++    import numpy as np
++    cluster_values_by_stratum = {"A": [[1.0, 2.0], [3.0, 4.0]], "B": [[5.0, 6.0], [10.0, 12.0]]}
++    result_a = stratified_hierarchical_cluster_bootstrap(cluster_values_by_stratum, n_resamples=300, rng=np.random.default_rng(7))
++    result_b = stratified_hierarchical_cluster_bootstrap(cluster_values_by_stratum, n_resamples=300, rng=np.random.default_rng(7))
++    assert result_a.ci_low == pytest.approx(result_b.ci_low)
++    assert result_a.ci_high == pytest.approx(result_b.ci_high)
++
++
++def test_stratified_bootstrap_never_drops_a_stratum_even_with_a_single_cluster_stratum():
++    # The real failure mode this fix removes: a plain pooled bootstrap over
++    # 12 sessions (RQ1's real capture-disjoint VALIDATION domain) drops at
++    # least one of the 4 physical classes from ~26% of its resamples
++    # (verified empirically against the real predictions this audit is
++    # fixing). Here, stratum "B" has only ONE cluster -- the exact small-
++    # stratum shape that makes dropping likely under pooled resampling.
++    # Every value carries its own stratum tag so the statistic can verify,
++    # for every single resample, that all 3 strata are represented.
++    cluster_values_by_stratum = {
++        "A": [[("A", 1.0)], [("A", 1.0)]],
++        "B": [[("B", 1.0)]],
++        "C": [[("C", 1.0)], [("C", 1.0)], [("C", 1.0)]],
++    }
++    observed_stratum_counts = []
++
++    def statistic(values):
++        observed_stratum_counts.append(len({label for label, _ in values}))
++        return 0.0
++
++    stratified_hierarchical_cluster_bootstrap(cluster_values_by_stratum, statistic=statistic, n_resamples=500)
++    # 501 calls total: 1 for the real point estimate over the full pooled
++    # data, plus 500 resamples -- every single one must see all 3 strata.
++    assert len(observed_stratum_counts) == 501
++    assert all(count == 3 for count in observed_stratum_counts)  # NEVER dropped, unlike the pooled bootstrap
++
++
++def test_stratified_bootstrap_requires_at_least_one_stratum():
++    with pytest.raises(ValueError):
++        stratified_hierarchical_cluster_bootstrap({}, n_resamples=10)
++
++
++def test_stratified_bootstrap_rejects_a_stratum_with_no_clusters():
++    with pytest.raises(ValueError):
++        stratified_hierarchical_cluster_bootstrap({"A": [[1.0]], "B": []}, n_resamples=10)
++
++
++def test_independent_domain_bootstrap_delta_ci_point_estimate_is_the_real_difference_of_pooled_means():
++    import numpy as np
++    cluster_values_by_stratum_a = {"A": [[0.9, 0.95]], "B": [[0.85, 0.9]]}  # pooled mean = 0.9
++    cluster_values_by_stratum_b = {"A": [[0.7, 0.75]], "B": [[0.65, 0.7]]}  # pooled mean = 0.7
++    result = independent_domain_bootstrap_delta_ci(cluster_values_by_stratum_a, cluster_values_by_stratum_b, n_resamples=500, rng=np.random.default_rng(1))
++    assert result.point_estimate == pytest.approx(0.2)
++    assert result.ci_low <= result.point_estimate <= result.ci_high
++
++
++def test_independent_domain_bootstrap_delta_ci_never_drops_a_stratum_on_either_side():
++    observed_min_strata = []
++
++    def statistic(values):
++        observed_min_strata.append(len({label for label, _ in values}))
++        return sum(v for _, v in values) / len(values)
++
++    cluster_values_by_stratum_a = {"A": [[("A", 1.0)]], "B": [[("B", 1.0)], [("B", 1.0)]]}
++    cluster_values_by_stratum_b = {"A": [[("A", 0.5)]], "B": [[("B", 0.5)], [("B", 0.5)], [("B", 0.5)]]}
++    independent_domain_bootstrap_delta_ci(cluster_values_by_stratum_a, cluster_values_by_stratum_b, statistic=statistic, n_resamples=300)
++    assert all(count == 2 for count in observed_min_strata)  # both A and B, every single resample, both domains
++
++
+ def test_exact_two_sample_permutation_hand_computed():
+     # Values 0,0,0 in group1 vs 10,10 in group0: the observed partition is
+     # the UNIQUE most-extreme split among C(5,3)=10 possible relabelings
+@@ -248,3 +328,63 @@ def test_risk_coverage_curve_groups_tied_confidence_scores():
+     assert points[0].risk == pytest.approx(0.5)
+     assert points[1].coverage == pytest.approx(1.0)
+     assert points[1].risk == pytest.approx(1 / 3)
++
++
++# --- RQ4 exploratory fix (2026-08-22): genuinely matched/joint stratified bootstrap ---
++
++def test_matched_stratified_bootstrap_delta_ci_point_estimate_is_the_real_difference():
++    cluster_values_by_stratum_a = {"A": [[0.9, 0.95]], "B": [[0.85, 0.9]]}  # pooled mean = 0.9
++    cluster_values_by_stratum_b = {"A": [[0.7, 0.75]], "B": [[0.65, 0.7]]}  # pooled mean = 0.7
++    result = matched_stratified_bootstrap_delta_ci(cluster_values_by_stratum_a, cluster_values_by_stratum_b, n_resamples=500)
++    assert result.point_estimate == pytest.approx(0.2)
++    assert result.ci_low <= result.point_estimate <= result.ci_high
++
++
++def test_matched_stratified_bootstrap_delta_ci_uses_the_same_draw_on_both_sides():
++    # The defining property: resample i's chosen cluster indices are
++    # IDENTICAL for A and B (never two independent draws). Proven here by
++    # tagging each cluster with its own index and confirming, for every
++    # replicate, that the set of indices selected for A equals the set
++    # selected for B.
++    cluster_values_by_stratum_a = {"X": [[("c0", 1.0)], [("c1", 2.0)], [("c2", 3.0)]]}
++    cluster_values_by_stratum_b = {"X": [[("c0", 10.0)], [("c1", 20.0)], [("c2", 30.0)]]}
++    # The delta computation calls statistic(pooled_a) then statistic(pooled_b)
++    # per replicate, so alternating entries in a single sink give us that
++    # pairing directly.
++    combined_sink = []
++
++    def combined_statistic(values):
++        combined_sink.append(frozenset(tag for tag, _ in values))
++        return sum(v for _, v in values) / len(values)
++
++    matched_stratified_bootstrap_delta_ci(
++        cluster_values_by_stratum_a, cluster_values_by_stratum_b, statistic=combined_statistic, n_resamples=200,
++    )
++    # First 2 entries are the real point-estimate calls (statistic(flat_a), statistic(flat_b)); skip them.
++    resample_entries = combined_sink[2:]
++    assert len(resample_entries) == 400  # 200 replicates * (A call + B call)
++    for i in range(0, len(resample_entries), 2):
++        assert resample_entries[i] == resample_entries[i + 1]  # A's cluster tags == B's cluster tags, every replicate
++
++
++def test_matched_stratified_bootstrap_delta_ci_raises_on_strata_mismatch():
++    with pytest.raises(ValueError, match="STRATA_MISMATCH"):
++        matched_stratified_bootstrap_delta_ci({"A": [[1.0]]}, {"B": [[1.0]]}, n_resamples=10)
++
++
++def test_matched_stratified_bootstrap_delta_ci_raises_on_cluster_count_mismatch():
++    with pytest.raises(ValueError, match="CLUSTER_COUNT_MISMATCH"):
++        matched_stratified_bootstrap_delta_ci({"A": [[1.0], [2.0]]}, {"A": [[1.0]]}, n_resamples=10)
++
++
++def test_matched_stratified_bootstrap_delta_ci_never_drops_a_stratum():
++    observed_min_strata = []
++
++    def statistic(values):
++        observed_min_strata.append(len({label for label, _ in values}))
++        return sum(v for _, v in values) / len(values)
++
++    cluster_values_by_stratum_a = {"A": [[("A", 1.0)]], "B": [[("B", 1.0)], [("B", 1.0)]]}
++    cluster_values_by_stratum_b = {"A": [[("A", 0.5)]], "B": [[("B", 0.5)], [("B", 0.5)]]}
++    matched_stratified_bootstrap_delta_ci(cluster_values_by_stratum_a, cluster_values_by_stratum_b, statistic=statistic, n_resamples=300)
++    assert all(count == 2 for count in observed_min_strata)
+diff --git a/backend/app/tests/unit/ble_scientific_results/test_statistics_sensitivity.py b/backend/app/tests/unit/ble_scientific_results/test_statistics_sensitivity.py
+index f6906af..70834c4 100644
+--- a/backend/app/tests/unit/ble_scientific_results/test_statistics_sensitivity.py
++++ b/backend/app/tests/unit/ble_scientific_results/test_statistics_sensitivity.py
+@@ -1,6 +1,6 @@
+ from __future__ import annotations
+ 
+-from app.modules.ble_scientific_results.statistics.sensitivity import leave_one_device_out_sensitivity
++from app.modules.ble_scientific_results.statistics.sensitivity import enrolled_population_class_exclusion_sensitivity
+ 
+ 
+ def _predictions() -> list[dict]:
+@@ -17,7 +17,7 @@ def _device_map() -> dict[str, str]:
+ 
+ 
+ def test_excluding_the_device_that_drags_the_score_down_raises_the_remaining_accuracy():
+-    results = leave_one_device_out_sensitivity(_predictions(), _device_map(), known_classes=["A", "B"])
++    results = enrolled_population_class_exclusion_sensitivity(_predictions(), _device_map(), known_classes=["A", "B"])
+     by_device = {r.excluded_device_id: r for r in results}
+     assert set(by_device.keys()) == {"D1", "D2", "D3"}
+     # Excluding D2 (whose only example is misclassified) should leave a
+@@ -27,13 +27,13 @@ def test_excluding_the_device_that_drags_the_score_down_raises_the_remaining_acc
+ 
+ 
+ def test_returns_empty_list_when_no_prediction_maps_to_a_known_device():
+-    results = leave_one_device_out_sensitivity(_predictions(), {}, known_classes=["A", "B"])
++    results = enrolled_population_class_exclusion_sensitivity(_predictions(), {}, known_classes=["A", "B"])
+     assert results == []
+ 
+ 
+ def test_excluded_device_with_nothing_left_comparable_reports_none_not_a_fabricated_number():
+     predictions = [{"example_id": "e1", "true_label": "A", "predicted_label": "A"}]
+-    results = leave_one_device_out_sensitivity(predictions, {"e1": "D1"}, known_classes=["A"])
++    results = enrolled_population_class_exclusion_sensitivity(predictions, {"e1": "D1"}, known_classes=["A"])
+     assert len(results) == 1
+     assert results[0].accuracy is None
+     assert results[0].n_comparable == 0
+diff --git a/docs/ble/generate_evidence_figures.py b/docs/ble/generate_evidence_figures.py
+index fa416f0..a068b24 100644
+--- a/docs/ble/generate_evidence_figures.py
++++ b/docs/ble/generate_evidence_figures.py
+@@ -505,6 +505,51 @@ def verify_documentation_matches_artifacts(repo: ScientificResultsRepository) ->
+     return failures
+ 
+ 
++def verify_preprocessing_profile_provenance(repo: ScientificResultsRepository, paper_run_id: str) -> list[str]:
++    """Methodological-audit lock-in (2026-08-22, item 1): every real training
++    run behind the closed-set RQ1/RQ2 canonical numbers must use
++    base_preprocessing_profile_id="base-v1" (identity preprocessing) --
++    confirmed true as of this audit, and pinned here so it can never silently
++    drift (e.g. someone later wiring paper-eq6-7-v1 into a "PRIMARY" run
++    without updating the paper's Section IV.A claim that raw-I/Q/STFT "use a
++    conservative affine phase compensation" -- which is currently NOT what
++    produced the published numbers). Read-only: reads real training_run.json
++    files, never retrains, never changes which profile is used."""
++    failures: list[str] = []
++    rq1_report = repo.get_rq1_acquisition_dependence_report(paper_run_id)
++    rq2_report = repo.get_rq2_representation_comparison_report(paper_run_id)
++    studio_root = getattr(repo, "ble_root", None)
++    if studio_root is None:
++        return ["verify_preprocessing_profile_provenance: repository has no ble_root attribute -- cannot read training_run.json files"]
++
++    training_run_ids: set[str] = set()
++    if rq1_report:
++        diag_id = rq1_report.get("diagnostic_split_manifest_id")  # actually the diagnostic TRAINING RUN id, per rq1_runner.py convention
++        if diag_id:
++            training_run_ids.add(diag_id)
++    if rq2_report:
++        for branch in rq2_report.get("branches", []):
++            if branch.get("training_run_id"):
++                training_run_ids.add(branch["training_run_id"])
++
++    if not training_run_ids:
++        return ["verify_preprocessing_profile_provenance: no real training_run_ids found via rq1/rq2 canonical reports -- nothing to verify"]
++
++    for training_run_id in sorted(training_run_ids):
++        run_path = studio_root / "training_runs" / training_run_id / "training_run.json"
++        if not run_path.is_file():
++            failures.append(f"PREPROCESSING_PROFILE_PROVENANCE: {training_run_id} has no training_run.json at {run_path}")
++            continue
++        real_profile_id = json.loads(run_path.read_text(encoding="utf-8")).get("base_preprocessing_profile_id")
++        if real_profile_id != "base-v1":
++            failures.append(
++                f"PREPROCESSING_PROFILE_DRIFT: {training_run_id} real base_preprocessing_profile_id={real_profile_id!r}, "
++                f"expected 'base-v1' -- the closed-set canonical numbers are no longer confirmed to be identity-preprocessing "
++                f"only; Section IV.A's phase-compensation claim and this audit's item-1 finding must be re-verified"
++            )
++    return failures
++
++
+ if __name__ == "__main__":
+     parser = argparse.ArgumentParser(description=__doc__)
+     parser.add_argument("--paper-run", dest="paper_run_id", default=None, help="paper_run_id every figure's source_artifact must belong to (only used with --verify)")
+@@ -514,6 +559,8 @@ if __name__ == "__main__":
+     if args.verify:
+         repo = load_repository()
+         failures = verify_figures(repo, args.paper_run_id) + verify_documentation_matches_artifacts(repo)
++        preprocessing_paper_run_id = args.paper_run_id or "paper-run-2805869e6282778ad729a26d022ec9b0"
++        failures += verify_preprocessing_profile_provenance(repo, preprocessing_paper_run_id)
+         if failures:
+             print("FIGURE_VERIFICATION_FAILED:")
+             for reason in failures:

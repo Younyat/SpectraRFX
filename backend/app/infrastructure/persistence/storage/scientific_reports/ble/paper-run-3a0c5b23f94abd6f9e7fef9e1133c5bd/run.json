@@ -1,0 +1,17 @@
+{
+  "analysis_code_commit": "b345017b016edeb8c1b5ead59317bf2ea7c8745a",
+  "analysis_environment_hash": "8f5ed87725a4bee0961da39d8ae8799a54aacf2ed3fe8ddf35cd7f96ce19107c",
+  "campaign_id": "BLE-RFFI-CONFIRMATORY-SOURCE-ADMISSION-V2-CAMPAIGN",
+  "created_at": "2026-08-14T11:30:53.387250Z",
+  "dataset_fingerprint": "c8ae7e1770238882d3e7f519a775dcf9a83d31a41dd24ffa23cd6dc5ed80fe1a",
+  "dataset_id": "CC2541SensorTag-V2-TVB",
+  "dataset_version": "20260814-v2b",
+  "model_set_fingerprint": null,
+  "paper_run_id": "paper-run-3a0c5b23f94abd6f9e7fef9e1133c5bd",
+  "protocol_id": "protocol-56ec3f1285fb45fa0fe3fa99df39dc3a",
+  "protocol_version": 1,
+  "schema_version": "ble-scientific-results-paper-run-v1",
+  "scientific_task": "TARGET_VS_BACKGROUND",
+  "split_fingerprint": "7cb8d2682403fd97ae077c2c32d593f2471935d9ce0ad54e439c82e6393f3a96",
+  "storage_path": "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\scientific_reports\\ble\\paper-run-3a0c5b23f94abd6f9e7fef9e1133c5bd"
+}

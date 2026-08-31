@@ -1,0 +1,30 @@
+{
+  "approval_status": "EVALUATED",
+  "artifact_hashes": {
+    "acceptance_criteria.json": "e3566b3a06430868d71e9287dfd6c6c520a3da027aabea01951d407ee131dc2f",
+    "calibration_report.json": "1899d0c8dff099cfeb85dab4111b5a7c556e77f219f6927b3f5dbf1261e719d4",
+    "code_reference.json": "807614f093140fd17e996d263638faef587fdc9a4edc02cb78764e61e476eddb",
+    "dataset_reference.json": "5c8b594bd8c16962c642caa4a3d70384ef948233b80676376cfb23834e651dd5",
+    "evaluation_report.json": "cacc0d259f7c73b7d86774773c3cc69ca511fd9510e5c728546d632eee6fb865",
+    "feature_config.json": "d3a173f10babb395aa212e083bf306526e337db17d766b763c92aee90db2f713",
+    "input_contract.json": "4f5508ac63f1c0786977f27df34cf30a6daf4939ebc9864cbae3f6882e5bb6d7",
+    "label_map.json": "b70fbc9f2806c577e9ab7f50a4925d403513623f63d2dddc6284b3f6e778a1d0",
+    "model_card.md": "d676bfb9c8c2694f791c302fdfc4614ae14e815a9599da50f5c27c78fe167a65",
+    "model_file": "3b17a7066d92633d5b746db6494d5312ed75015324f0f661984d0d6dca6b175b",
+    "model_manifest.json": "44f004c63874572891d418c5bea8f7e53939f889e449628212e0159bfe5b1c59",
+    "preprocessing_config.json": "75b3d4c39e972dcd3908d5e7792a7b9a89334ccb751b1d200763525c4cbf0c11",
+    "runtime_requirements.json": "7fc3198f21c43c137966431429b62513788538657401f414db4b134e65192e8b",
+    "scientific_basis.json": "3eeae5c6047828a9f42fa8f88c7031006734d2dfe756155308d391eaf8d0da1c",
+    "split_reference.json": "e43608ca9ac942e2c2dcd9c54fac3b6ff1681a3dd0ab1a45036e44581e7bb9d8",
+    "thresholds.json": "1899d0c8dff099cfeb85dab4111b5a7c556e77f219f6927b3f5dbf1261e719d4"
+  },
+  "bundle_id": "CLOSED-SET-4DEVICES-random_forest-bundle",
+  "bundle_sha256": "36c9ef76a859b9fecacf8da8eeee78dbe6f7b768ec924b6c5066a5d874eab9be",
+  "confirmatory_eligible": true,
+  "created_at": "2026-08-17T13:35:32.039352Z",
+  "data_origin": "REAL_B200",
+  "operational_use": "ALLOWED",
+  "schema_version": "ble-rffi-studio-bundle-v1",
+  "test_evaluation_provenance": "SINGLE_SELECTION_GUARANTEE",
+  "training_run_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd"
+}

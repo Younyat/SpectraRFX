@@ -1,0 +1,9 @@
+﻿{
+    "created_at_utc":  "2026-04-26T11:36:04.3256426Z",
+    "remote_host":  "192.168.193.49",
+    "dataset_dir":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\rf_dataset",
+    "model_dir":  "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\mlops\\data\\remote_trained_model",
+    "remote_user":  "assouyat",
+    "reason":  "after_update",
+    "version_id":  "20260426T113604Z-after_update"
+}

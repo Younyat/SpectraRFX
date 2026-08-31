@@ -1,0 +1,6 @@
+{
+  "n_fft": 1024,
+  "hop_length": 256,
+  "window": "hann",
+  "power_scale": "db"
+}

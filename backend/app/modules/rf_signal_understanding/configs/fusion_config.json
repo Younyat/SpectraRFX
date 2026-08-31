@@ -1,0 +1,8 @@
+{
+  "method": "waterfall_visual_mlp_bispectral_fusion",
+  "low_snr_db": 6.0,
+  "high_snr_db": 15.0,
+  "visual_weight": 0.55,
+  "mlp_weight": 0.35,
+  "agreement_bonus": 0.1
+}

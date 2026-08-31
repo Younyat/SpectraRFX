@@ -1,0 +1,12 @@
+gate,status,detail
+association_state,NOT_READY,"find_frozen_association_policy() returned None -- real, current, not a bug"
+b200_detected,READY,real device detected
+capture_continuity_and_quality_summary,READY,no unexpected discontinuities; quality summary reviewed
+channel_frequency_consistency,READY,channel<->frequency mapping verified
+eq6_7_smoke_test_on_real_iq,READY,apply_base_preprocessing_with_provenance smoke test APPLIED on a real burst
+holdout_untouched,READY,0 FUTURE_TEST accesses logged
+qualified_acquisition_profile,READY,"{'qualified_acquisition_profile_hash': 'profile-74c08c4b078104f4', 'receiver_device_id': 'sdr-018ca73b3c2d07b3', 'sdr_model': 'B200'}"
+receiver_identity,READY,receiver_identity_id resolved from a real device-queried serial
+rq3_readiness,READY,"build_pre_post_pairs() executed: 0/0 real pair(s) valid (0 valid pairs is still a real, checked result, not a blocker by itself)"
+rq4_eligibility,NOT_READY,0/7 device(s) marked RQ4 ELIGIBLE
+source_iq_digest,READY,iq_sha256 verified against real bytes

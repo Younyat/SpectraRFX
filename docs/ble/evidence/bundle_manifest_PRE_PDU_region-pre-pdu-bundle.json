@@ -1,0 +1,30 @@
+{
+  "approval_status": "TEST_NOT_EXECUTED",
+  "artifact_hashes": {
+    "acceptance_criteria.json": "e3566b3a06430868d71e9287dfd6c6c520a3da027aabea01951d407ee131dc2f",
+    "calibration_report.json": "aaaaf8c7a0e1039a0e6c2394f291b9fe6f845d25b023ba97a27f14c034ba43fe",
+    "code_reference.json": "9153af40d48b3117bf57cbad25736c3622db5ec91a19c26d21fc93a1b58d7d71",
+    "dataset_reference.json": "5c8b594bd8c16962c642caa4a3d70384ef948233b80676376cfb23834e651dd5",
+    "evaluation_report.json": "34f01b8f2e3e686d3ecc13dcbe249de4fd537a9f79f4e3b50538fa29949c9174",
+    "feature_config.json": "d3a173f10babb395aa212e083bf306526e337db17d766b763c92aee90db2f713",
+    "input_contract.json": "4f5508ac63f1c0786977f27df34cf30a6daf4939ebc9864cbae3f6882e5bb6d7",
+    "label_map.json": "b70fbc9f2806c577e9ab7f50a4925d403513623f63d2dddc6284b3f6e778a1d0",
+    "model_card.md": "0311edaac77e82841e6f0f6ca607ba51da2874582a8bb66f19ba648dd56610d5",
+    "model_file": "ba3c42b7555f977dbae7b20cba0bfa2a41aa1df38ba411332dc8e15a7484129a",
+    "model_manifest.json": "30a983ab9af48d767ccbdd7df35ab51934fd9d1ded01c46223ce8491298d34df",
+    "preprocessing_config.json": "75b3d4c39e972dcd3908d5e7792a7b9a89334ccb751b1d200763525c4cbf0c11",
+    "runtime_requirements.json": "7fc3198f21c43c137966431429b62513788538657401f414db4b134e65192e8b",
+    "scientific_basis.json": "3eeae5c6047828a9f42fa8f88c7031006734d2dfe756155308d391eaf8d0da1c",
+    "split_reference.json": "e43608ca9ac942e2c2dcd9c54fac3b6ff1681a3dd0ab1a45036e44581e7bb9d8",
+    "thresholds.json": "aaaaf8c7a0e1039a0e6c2394f291b9fe6f845d25b023ba97a27f14c034ba43fe"
+  },
+  "bundle_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd-region-pre-pdu-bundle",
+  "bundle_sha256": "dec1cb5d10ecffba83338939704eed98f80915c515515706f2e1df38a60759e7",
+  "confirmatory_eligible": false,
+  "created_at": "2026-08-21T23:28:41.980838Z",
+  "data_origin": "REAL_B200",
+  "operational_use": "FORBIDDEN",
+  "schema_version": "ble-rffi-studio-bundle-v1",
+  "test_evaluation_provenance": "NOT_EVALUATED",
+  "training_run_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd-region-pre-pdu"
+}

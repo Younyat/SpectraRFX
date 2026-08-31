@@ -1,0 +1,15 @@
+{
+  "window_size": 1024,
+  "stride": 1024,
+  "batch_size": 128,
+  "epochs": 20,
+  "lr": 0.001,
+  "embedding_dim": 128,
+  "max_windows_per_file": 3000,
+  "max_complex_samples_per_file": null,
+  "seed": 42,
+  "start_mode": "from_scratch",
+  "device_used": "cuda",
+  "sample_rate_hz": 2500000.0,
+  "center_frequency_hz": 89400000.0
+}

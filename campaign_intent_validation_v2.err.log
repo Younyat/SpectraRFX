@@ -1,0 +1,9 @@
+Remove-Item : No se puede quitar el elemento C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\backend\venv
+\Lib\site-packages\charset_normalizer\cd.cp312-win_amd64.pyd: Acceso denegado a la ruta de acceso 
+'cd.cp312-win_amd64.pyd'.
+En C:\Users\Usuario\Desktop\NICS\RF-Fingerprint-Lab\spectrum-lab\scripts\run_dev.ps1: 444 Car cter: 5
++     Remove-Item -LiteralPath $ResolvedVenv -Recurse -Force
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : PermissionDenied: (cd.cp312-win_amd64.pyd:FileInfo) [Remove-Item], UnauthorizedAccessExc 
+   eption
+    + FullyQualifiedErrorId : RemoveFileSystemItemUnAuthorizedAccess,Microsoft.PowerShell.Commands.RemoveItemCommand

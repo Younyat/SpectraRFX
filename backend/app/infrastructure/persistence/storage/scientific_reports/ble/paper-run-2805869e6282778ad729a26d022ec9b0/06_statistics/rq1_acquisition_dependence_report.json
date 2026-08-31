@@ -1,0 +1,90 @@
+{
+  "ba_capture": 0.6338138990398197,
+  "ba_capture_n_comparable": 2203,
+  "ba_future": null,
+  "ba_future_n_comparable": null,
+  "ba_future_status": "NOT_YET_AVAILABLE",
+  "ba_window": 0.9578781766067187,
+  "ba_window_n_comparable": 1790,
+  "confirmatory_split_manifest_id": "IDENTITY-c52850a953__20260814T224525.782975Z__MULTI_DEVICE_CLASSIFICATION",
+  "confirmatory_split_manifest_sha256": "a9e11cba02ecf4db6dd1ca60b46bb7bf52cd73761e7dd64894c4f45b7c47495d",
+  "confusion_matrix_capture": {
+    "CC2541SensorTag": {
+      "CC2541SensorTag": 146,
+      "CC2650-UNIT-01": 0,
+      "keyfobdemo 01": 15,
+      "keyfobdemo 02": 26
+    },
+    "CC2650-UNIT-01": {
+      "CC2541SensorTag": 0,
+      "CC2650-UNIT-01": 158,
+      "keyfobdemo 01": 1,
+      "keyfobdemo 02": 7
+    },
+    "keyfobdemo 01": {
+      "CC2541SensorTag": 185,
+      "CC2650-UNIT-01": 13,
+      "keyfobdemo 01": 1346,
+      "keyfobdemo 02": 146
+    },
+    "keyfobdemo 02": {
+      "CC2541SensorTag": 0,
+      "CC2650-UNIT-01": 0,
+      "keyfobdemo 01": 159,
+      "keyfobdemo 02": 1
+    }
+  },
+  "confusion_matrix_future": null,
+  "contract_sha256": "5aa011ed44cdde1c9a0020b4002dae69a6744c30d61eae10b552a23a9f4ffa5d",
+  "coverage": null,
+  "dataset_manifest_sha256": "b989398147f7cd2ff858a0a4792d9e49ef75a1584317c062978165d6913c9658",
+  "decision_window_cross_reference": {
+    "by_evaluation_domain": {
+      "TEST": {
+        "n_decision_windows": 12
+      },
+      "TRAIN": {
+        "n_decision_windows": 34
+      },
+      "VALIDATION": {
+        "n_decision_windows": 12
+      }
+    },
+    "note": "RQ1's own ba_window/ba_capture are ExampleRecord-level (see evaluation_unit above) -- these decision-window counts are a SEPARATE, real cross-reference, not RQ1's evaluation unit.",
+    "source_artifact": "06_statistics/coverage_analysis_report.json",
+    "window_duration_s": 10.0
+  },
+  "delta_dependence": 0.32406427756689904,
+  "delta_future": null,
+  "diagnostic_split_manifest_id": "RQ1DIAG-IDENTITY-c52850a953-random_forest-511086ab",
+  "diagnostic_split_manifest_sha256": "01fe1b1fe7a7acc9c6ba07dfccc1a2bd9ad58df1b6e872a2593d2344b34c3636",
+  "evaluation_unit": "EXAMPLE_RECORD",
+  "evidence_status": "DEVELOPMENT",
+  "generated_at": "2026-08-21T22:49:19.854859Z",
+  "git_sha": "c7c3343029aebea51eedb5f5c4de6c27f7cae339",
+  "model_bundle_id": "CLOSED-SET-4DEVICES-random_forest-bundle",
+  "model_bundle_sha256": "36c9ef76a859b9fecacf8da8eeee78dbe6f7b768ec924b6c5066a5d874eab9be",
+  "per_unit_recall": null,
+  "protocol_id": "ble-rffi-studio-TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+  "protocol_version": 1,
+  "schema_version": "ble-scientific-results-rq1-acquisition-dependence-v1",
+  "source_evaluation_domains": {
+    "capture": "MULTI_DEVICE_CLASSIFICATION:VALIDATION",
+    "window": "RQ1_ACQUISITION_DEPENDENCE_DIAGNOSTIC:VALIDATION"
+  },
+  "uncertainty_ci": {
+    "ba_capture_ci": {
+      "ci_high": 0.6850857789866278,
+      "ci_low": 0.5912219610540254
+    },
+    "ba_window_ci": {
+      "ci_high": 0.9751987706077437,
+      "ci_low": 0.9389651703995975
+    },
+    "delta_dependence_ci": {
+      "ci_high": 0.3706519487491247,
+      "ci_low": 0.2686419390410907,
+      "method": "independent_domain_bootstrap_delta_ci (independent, class-stratified resample of each domain, per-replicate difference; NOT paired -- no physical pairing exists between capture-dependent and capture-disjoint sessions; NOT ci_window - ci_capture)"
+    }
+  }
+}

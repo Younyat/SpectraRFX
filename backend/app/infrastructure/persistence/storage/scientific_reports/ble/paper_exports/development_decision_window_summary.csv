@@ -1,0 +1,4 @@
+partition,n_windows,n_per_tx,balanced_accuracy,accuracy,n_decided,n_abstained,coverage,evaluation_unit,window_duration_s,evidence_status
+TRAIN,34,"{""CC2541SensorTag"": 5, ""CC2650-UNIT-01"": 7, ""keyfobdemo 01"": 14, ""keyfobdemo 02"": 8}",1.0,1.0,34,0,1.0,DECISION_WINDOW,10.0,DEVELOPMENT
+VALIDATION,12,"{""CC2541SensorTag"": 2, ""CC2650-UNIT-01"": 3, ""keyfobdemo 01"": 5, ""keyfobdemo 02"": 2}",0.75,0.8333333333333334,12,0,1.0,DECISION_WINDOW,10.0,DEVELOPMENT
+TEST,12,"{""CC2541SensorTag"": 2, ""CC2650-UNIT-01"": 3, ""keyfobdemo 01"": 5, ""keyfobdemo 02"": 2}",0.875,0.9166666666666666,12,0,1.0,DECISION_WINDOW,10.0,DEVELOPMENT

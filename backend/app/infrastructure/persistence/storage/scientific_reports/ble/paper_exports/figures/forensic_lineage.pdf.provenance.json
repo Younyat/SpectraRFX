@@ -1,0 +1,10 @@
+{
+  "contract_sha256": "5aa011ed44cdde1c9a0020b4002dae69a6744c30d61eae10b552a23a9f4ffa5d",
+  "dataset_id": "IDENTITY-c52850a953",
+  "dataset_version": "20260814T224525.782975Z",
+  "git_sha": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+  "model_bundle_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+  "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+  "protocol_id": "ble-rffi-studio-TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+  "protocol_version": 1
+}

@@ -1,0 +1,412 @@
+{
+  "entries": [
+    {
+      "detail": "real, from get_study_status()",
+      "file": "study_status.json",
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, from get_paper_readiness()",
+      "file": "paper_readiness.json",
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, from campaign_qualification_preflight_report.json",
+      "file": "qualification_summary.csv",
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, from 5 calibration attempt(s)",
+      "file": "association_summary.csv",
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, from paper-run-2805869e6282778ad729a26d022ec9b0/01_inputs/canonical_records/capture_records.json",
+      "file": "dataset_summary.csv",
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, from paper-run-2805869e6282778ad729a26d022ec9b0/01_inputs/canonical_records/campaign_deviations.json",
+      "file": "exclusions_summary.csv",
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, from paper-run-2805869e6282778ad729a26d022ec9b0/06_statistics/rq1_acquisition_dependence_report.json",
+      "file": "rq1_results.csv",
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real",
+      "file": "figures/rq1_acquisition_dependence.pdf",
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, publication variant of figures/rq1_acquisition_dependence.pdf (same data, no caption/footnote text)",
+      "file": "figures/rq1_acquisition_dependence_publication.pdf",
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, from rq1_acquisition_dependence_report.json",
+      "file": "confusion_matrix_capture.csv",
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real",
+      "file": "figures/rq1_confusion_matrix_capture.pdf",
+      "status": "GENERATED"
+    },
+    {
+      "detail": "rq1_acquisition_dependence_report.json has no confusion_matrix_future",
+      "file": "confusion_matrix_future.csv",
+      "status": "SKIPPED_NO_DATA",
+      "would_be_derived_from": "06_statistics/rq1_acquisition_dependence_report.json"
+    },
+    {
+      "detail": "rq1_acquisition_dependence_report.json has no confusion_matrix_future",
+      "file": "figures/rq1_confusion_matrix_future.pdf",
+      "status": "SKIPPED_NO_DATA",
+      "would_be_derived_from": "06_statistics/rq1_acquisition_dependence_report.json"
+    },
+    {
+      "detail": "rq1_acquisition_dependence_report.json has no per-unit recall values",
+      "file": "figures/rq1_per_unit_recall.pdf",
+      "status": "SKIPPED_NO_DATA",
+      "would_be_derived_from": "06_statistics/rq1_acquisition_dependence_report.json"
+    },
+    {
+      "detail": "real, from paper-run-2805869e6282778ad729a26d022ec9b0/06_statistics/rq2_representation_comparison_report.json",
+      "file": "rq2_results.csv",
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real",
+      "file": "figures/rq2_representation_comparison.pdf",
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, publication variant of figures/rq2_representation_comparison.pdf (same data, human-readable labels, no footnote)",
+      "file": "figures/rq2_representation_comparison_publication.pdf",
+      "status": "GENERATED"
+    },
+    {
+      "detail": "no branch in rq2_representation_comparison_report.json has a real coverage value",
+      "file": "figures/rq2_coverage.pdf",
+      "status": "SKIPPED_NO_DATA",
+      "would_be_derived_from": "06_statistics/rq2_representation_comparison_report.json"
+    },
+    {
+      "detail": "real, from paper-run-2805869e6282778ad729a26d022ec9b0/06_statistics/rq4_full_burst_vs_pre_pdu_exploratory_report.json",
+      "file": "rq4_full_burst_vs_pre_pdu_results.csv",
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real",
+      "file": "figures/rq4_full_burst_vs_pre_pdu.pdf",
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real",
+      "file": "figures/rq4_per_unit_recall.pdf",
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, from paper-run-2805869e6282778ad729a26d022ec9b0/06_statistics/feature_group_ablation_exploratory_report.json",
+      "file": "feature_group_ablation_results.csv",
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real",
+      "file": "figures/feature_group_ablation.pdf",
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, from paper-run-2805869e6282778ad729a26d022ec9b0/06_statistics/session_stability_analysis_report.json",
+      "file": "session_stability_summary.csv",
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real",
+      "file": "figures/session_stability.pdf",
+      "status": "GENERATED"
+    },
+    {
+      "detail": "no EXECUTED rq3_within_device_permutation_test in confirmatory_future_analysis_report.json",
+      "file": "rq3_results.csv",
+      "status": "SKIPPED_NO_DATA",
+      "would_be_derived_from": "06_statistics/confirmatory_future_analysis_report.json"
+    },
+    {
+      "detail": "no EXECUTED rq3_within_device_permutation_test in confirmatory_future_analysis_report.json",
+      "file": "figures/rq3_pre_post.pdf",
+      "status": "SKIPPED_NO_DATA",
+      "would_be_derived_from": "06_statistics/confirmatory_future_analysis_report.json"
+    },
+    {
+      "detail": "no EXECUTED rq3_within_device_permutation_test in confirmatory_future_analysis_report.json",
+      "file": "figures/rq3_delta_cycle.pdf",
+      "status": "SKIPPED_NO_DATA",
+      "would_be_derived_from": "06_statistics/confirmatory_future_analysis_report.json"
+    },
+    {
+      "detail": "no EXECUTED rq4_paired_comparison in confirmatory_future_analysis_report.json",
+      "file": "rq4_results.csv",
+      "status": "SKIPPED_NO_DATA",
+      "would_be_derived_from": "06_statistics/confirmatory_future_analysis_report.json"
+    },
+    {
+      "detail": "no EXECUTED rq4_paired_comparison in confirmatory_future_analysis_report.json",
+      "file": "figures/rq4_region_dependence.pdf",
+      "status": "SKIPPED_NO_DATA",
+      "would_be_derived_from": "06_statistics/confirmatory_future_analysis_report.json"
+    },
+    {
+      "detail": "no EXECUTED rq4_paired_comparison in confirmatory_future_analysis_report.json",
+      "file": "figures/rq4_noninferiority.pdf",
+      "status": "SKIPPED_NO_DATA",
+      "would_be_derived_from": "06_statistics/confirmatory_future_analysis_report.json"
+    },
+    {
+      "detail": "no EXECUTED enrolled_population_class_exclusion_sensitivity in confirmatory_statistical_plan_report.json",
+      "file": "sensitivity_results.csv",
+      "status": "SKIPPED_NO_DATA",
+      "would_be_derived_from": "06_statistics/confirmatory_statistical_plan_report.json"
+    },
+    {
+      "detail": "no channel_transport_report.json for any real paper run",
+      "file": "channel_transport_results.csv",
+      "status": "SKIPPED_NO_DATA",
+      "would_be_derived_from": "06_statistics/channel_transport_report.json"
+    },
+    {
+      "detail": "no channel_transport_report.json for any real paper run",
+      "file": "figures/channel_transport.pdf",
+      "status": "SKIPPED_NO_DATA",
+      "would_be_derived_from": "06_statistics/channel_transport_report.json"
+    },
+    {
+      "detail": "no offline_nearlive_report.json with real analytical_agreement for any real paper run",
+      "file": "offline_nearlive_results.csv",
+      "status": "SKIPPED_NO_DATA",
+      "would_be_derived_from": "06_statistics/offline_nearlive_report.json"
+    },
+    {
+      "detail": "no offline_nearlive_report.json for any real paper run",
+      "file": "figures/offline_nearlive_latency.pdf",
+      "status": "SKIPPED_NO_DATA",
+      "would_be_derived_from": "06_statistics/offline_nearlive_report.json"
+    },
+    {
+      "detail": "no EXECUTED risk_coverage in confirmatory_future_analysis_report.json",
+      "file": "coverage_results.csv",
+      "status": "SKIPPED_NO_DATA",
+      "would_be_derived_from": "06_statistics/confirmatory_future_analysis_report.json"
+    },
+    {
+      "detail": "no EXECUTED risk_coverage in confirmatory_future_analysis_report.json",
+      "file": "figures/risk_coverage.pdf",
+      "status": "SKIPPED_NO_DATA",
+      "would_be_derived_from": "06_statistics/confirmatory_future_analysis_report.json"
+    },
+    {
+      "detail": "real, from build_tx_composition_table()",
+      "figure_classification": "PAPER_PRIMARY",
+      "file": "tx_composition.csv",
+      "provenance": {
+        "contract_sha256": "5aa011ed44cdde1c9a0020b4002dae69a6744c30d61eae10b552a23a9f4ffa5d",
+        "git_sha": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+        "protocol_id": "ble-rffi-studio-TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "protocol_version": 1
+      },
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, from build_receiver_epoch_table()",
+      "figure_classification": "PAPER_PRIMARY",
+      "file": "receiver_epochs.csv",
+      "provenance": {
+        "contract_sha256": "5aa011ed44cdde1c9a0020b4002dae69a6744c30d61eae10b552a23a9f4ffa5d",
+        "git_sha": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+        "protocol_id": "ble-rffi-studio-TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "protocol_version": 1
+      },
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, from get_scientific_completeness_report()",
+      "figure_classification": "PAPER_PRIMARY",
+      "file": "scientific_completeness.csv",
+      "provenance": {
+        "contract_sha256": "5aa011ed44cdde1c9a0020b4002dae69a6744c30d61eae10b552a23a9f4ffa5d",
+        "git_sha": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+        "protocol_id": "ble-rffi-studio-TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "protocol_version": 1
+      },
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, from build_partition_composition_table()",
+      "figure_classification": "PAPER_PRIMARY",
+      "file": "closed_set_partition_composition.csv",
+      "provenance": {
+        "contract_sha256": "5aa011ed44cdde1c9a0020b4002dae69a6744c30d61eae10b552a23a9f4ffa5d",
+        "dataset_id": "IDENTITY-c52850a953",
+        "dataset_version": "20260814T224525.782975Z",
+        "git_sha": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+        "model_bundle_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+        "protocol_id": "ble-rffi-studio-TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "protocol_version": 1
+      },
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, from the PRIMARY branch's real TEST evaluation",
+      "figure_classification": "PAPER_PRIMARY",
+      "file": "closed_set_per_transmitter.csv",
+      "provenance": {
+        "contract_sha256": "5aa011ed44cdde1c9a0020b4002dae69a6744c30d61eae10b552a23a9f4ffa5d",
+        "dataset_id": "IDENTITY-c52850a953",
+        "dataset_version": "20260814T224525.782975Z",
+        "git_sha": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+        "model_bundle_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+        "protocol_id": "ble-rffi-studio-TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "protocol_version": 1
+      },
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, row-normalized from the same TEST confusion matrix already exported",
+      "figure_classification": "PAPER_PRIMARY",
+      "file": "figures/closed_set_confusion_matrix_normalized.pdf",
+      "provenance": {
+        "contract_sha256": "5aa011ed44cdde1c9a0020b4002dae69a6744c30d61eae10b552a23a9f4ffa5d",
+        "dataset_id": "IDENTITY-c52850a953",
+        "dataset_version": "20260814T224525.782975Z",
+        "git_sha": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+        "model_bundle_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+        "protocol_id": "ble-rffi-studio-TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "protocol_version": 1
+      },
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, from 06_statistics/coverage_analysis_report.json window_level_evaluation[engineered_rf]",
+      "figure_classification": "PAPER_PRIMARY",
+      "file": "closed_set_decision_windows.csv",
+      "provenance": {
+        "contract_sha256": "5aa011ed44cdde1c9a0020b4002dae69a6744c30d61eae10b552a23a9f4ffa5d",
+        "dataset_id": "IDENTITY-c52850a953",
+        "dataset_version": "20260814T224525.782975Z",
+        "git_sha": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+        "model_bundle_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+        "protocol_id": "ble-rffi-studio-TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "protocol_version": 1
+      },
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, from 06_statistics/coverage_analysis_report.json window_level_evaluation[engineered_rf]",
+      "figure_classification": "PAPER_PRIMARY",
+      "file": "closed_set_risk_coverage_window_level.csv",
+      "provenance": {
+        "contract_sha256": "5aa011ed44cdde1c9a0020b4002dae69a6744c30d61eae10b552a23a9f4ffa5d",
+        "dataset_id": "IDENTITY-c52850a953",
+        "dataset_version": "20260814T224525.782975Z",
+        "git_sha": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+        "model_bundle_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+        "protocol_id": "ble-rffi-studio-TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "protocol_version": 1
+      },
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, from 06_statistics/coverage_analysis_report.json window_level_evaluation[engineered_rf]",
+      "figure_classification": "PAPER_PRIMARY",
+      "file": "development_decision_window_summary.csv",
+      "provenance": {
+        "contract_sha256": "5aa011ed44cdde1c9a0020b4002dae69a6744c30d61eae10b552a23a9f4ffa5d",
+        "dataset_id": "IDENTITY-c52850a953",
+        "dataset_version": "20260814T224525.782975Z",
+        "git_sha": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+        "model_bundle_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+        "protocol_id": "ble-rffi-studio-TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "protocol_version": 1
+      },
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, from 06_statistics/coverage_analysis_report.json window_level_evaluation[engineered_rf].by_evaluation_domain.TEST",
+      "figure_classification": "PAPER_PRIMARY",
+      "file": "development_test_window_confusion_matrix.csv",
+      "provenance": {
+        "contract_sha256": "5aa011ed44cdde1c9a0020b4002dae69a6744c30d61eae10b552a23a9f4ffa5d",
+        "dataset_id": "IDENTITY-c52850a953",
+        "dataset_version": "20260814T224525.782975Z",
+        "git_sha": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+        "model_bundle_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+        "protocol_id": "ble-rffi-studio-TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "protocol_version": 1
+      },
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, from get_study_control_center_status()",
+      "figure_classification": "PAPER_PRIMARY",
+      "file": "figures/campaign_timeline.pdf",
+      "provenance": {
+        "contract_sha256": "5aa011ed44cdde1c9a0020b4002dae69a6744c30d61eae10b552a23a9f4ffa5d",
+        "git_sha": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+        "protocol_id": "ble-rffi-studio-TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "protocol_version": 1
+      },
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, traced from the closed-set PRIMARY branch",
+      "figure_classification": "PAPER_PRIMARY",
+      "file": "figures/forensic_lineage.pdf",
+      "provenance": {
+        "contract_sha256": "5aa011ed44cdde1c9a0020b4002dae69a6744c30d61eae10b552a23a9f4ffa5d",
+        "dataset_id": "IDENTITY-c52850a953",
+        "dataset_version": "20260814T224525.782975Z",
+        "git_sha": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+        "model_bundle_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+        "protocol_id": "ble-rffi-studio-TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "protocol_version": 1
+      },
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, publication variant of figures/forensic_lineage.pdf (same chain, no truncated hashes)",
+      "figure_classification": "PAPER_PRIMARY",
+      "file": "figures/forensic_lineage_publication.pdf",
+      "provenance": {
+        "contract_sha256": "5aa011ed44cdde1c9a0020b4002dae69a6744c30d61eae10b552a23a9f4ffa5d",
+        "dataset_id": "IDENTITY-c52850a953",
+        "dataset_version": "20260814T224525.782975Z",
+        "git_sha": "dc7642d16d93c46242fdf57f1c60caedb0ec24d6",
+        "model_bundle_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+        "protocol_id": "ble-rffi-studio-TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+        "protocol_version": 1
+      },
+      "status": "GENERATED"
+    },
+    {
+      "detail": "real, 19 table section(s) from real CSVs",
+      "file": "paper_tables.tex",
+      "status": "GENERATED"
+    }
+  ],
+  "generated_at": "2026-08-23T20:12:18.485475Z",
+  "generated_count": 35,
+  "schema_version": "ble-scientific-results-paper-export-manifest-v1",
+  "skipped_count": 17
+}

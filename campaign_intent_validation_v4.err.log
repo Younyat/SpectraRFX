@@ -1,0 +1,200 @@
+INFO:     Started server process [16416]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+2026-07-19 01:37:45,832 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog source https://kiwisdr.com/public/ failed: TCP connection to kiwisdr.com:443 could not be established. HTTPS is unavailable from the current environment. Will try HTTP fallback if configured. Cause: <urlopen error [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión>
+2026-07-19 01:37:46,223 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog refresh used HTTP fallback because HTTPS was unavailable. The backend will normalize and cache the result locally.
+2026-07-19 01:37:50,698 | WARNING | app.infrastructure.ble.capture.ble_sdr_device_service | SoapySDR probe diagnostics: [1m[33m[WARNING] SoapyVOLKConverters: no VOLK config file found. Run volk_profile for best performance.[0m
+[1m[33m[WARNING] Unable to scan local: -19
+[0m
+[INFO] [UHD] Win32; Microsoft Visual C++ version 14.2; Boost_108600; UHD_4.8.0.0-release
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C34B&MI_01\6&34DE16B7&0&0001'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C077\5&3C72EC3&0&7'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_8087&PID_0033\5&3C72EC3&0&10'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\ROOT_HUB30\4&70DF8FF&0&0'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C34B&MI_00\6&34DE16B7&0&0000'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C34B\5&3C72EC3&0&1'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\ROOT_HUB30\4&11F5616B&0&0'
+[1m[33m[WARNING] Unable to scan ip: -19
+[0m
+[INFO] [b200_impl.cpp:422] [B200] Detected Device: B200
+[INFO] [B200] Detected Device: B200
+[INFO] [b200_impl.cpp:469] [B200] Operating over USB 2.
+[INFO] [B200] Operating over USB 2.
+[INFO] [b200_impl.cpp:620] [B200] Initialize CODEC control...
+[INFO] [B200] Initialize CODEC control...
+[INFO] [b200_impl.cpp:689] [B200] Initialize Radio control...
+[INFO] [B200] Initialize Radio control...
+[INFO] [b200_impl.cpp:1100] [B200] Performing register loopback test... 
+[INFO] [B200] Performing register loopback test... 
+[INFO] [b200_impl.cpp:1109] [B200] Register loopback test passed
+[INFO] [B200] Register loopback test passed
+[INFO] [b200_impl.cpp:815] [B200] Setting master clock rate selection to 'automatic'.
+[INFO] [B200] Setting master clock rate selection to 'automatic'.
+[INFO] [b200_impl.cpp:1150] [B200] Asking for clock rate 16.000000 MHz... 
+[INFO] [B200] Asking for clock rate 16.000000 MHz... 
+[INFO] [b200_impl.cpp:1163] [B200] Actually got clock rate 16.000000 MHz.
+[INFO] [B200] Actually got clock rate 16.000000 MHz.
+
+2026-07-19 02:37:49,240 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog source https://kiwisdr.com/public/ failed: TCP connection to kiwisdr.com:443 could not be established. HTTPS is unavailable from the current environment. Will try HTTP fallback if configured. Cause: <urlopen error [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión>
+2026-07-19 02:37:49,625 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog refresh used HTTP fallback because HTTPS was unavailable. The backend will normalize and cache the result locally.
+2026-07-19 03:37:52,661 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog source https://kiwisdr.com/public/ failed: TCP connection to kiwisdr.com:443 could not be established. HTTPS is unavailable from the current environment. Will try HTTP fallback if configured. Cause: <urlopen error [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión>
+2026-07-19 03:37:53,049 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog refresh used HTTP fallback because HTTPS was unavailable. The backend will normalize and cache the result locally.
+2026-07-19 04:37:56,081 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog source https://kiwisdr.com/public/ failed: TCP connection to kiwisdr.com:443 could not be established. HTTPS is unavailable from the current environment. Will try HTTP fallback if configured. Cause: <urlopen error [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión>
+2026-07-19 04:37:56,470 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog refresh used HTTP fallback because HTTPS was unavailable. The backend will normalize and cache the result locally.
+2026-07-19 05:37:59,496 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog source https://kiwisdr.com/public/ failed: TCP connection to kiwisdr.com:443 could not be established. HTTPS is unavailable from the current environment. Will try HTTP fallback if configured. Cause: <urlopen error [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión>
+2026-07-19 05:37:59,871 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog refresh used HTTP fallback because HTTPS was unavailable. The backend will normalize and cache the result locally.
+2026-07-19 06:38:02,924 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog source https://kiwisdr.com/public/ failed: TCP connection to kiwisdr.com:443 could not be established. HTTPS is unavailable from the current environment. Will try HTTP fallback if configured. Cause: <urlopen error [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión>
+2026-07-19 06:38:03,318 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog refresh used HTTP fallback because HTTPS was unavailable. The backend will normalize and cache the result locally.
+2026-07-19 07:38:06,343 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog source https://kiwisdr.com/public/ failed: TCP connection to kiwisdr.com:443 could not be established. HTTPS is unavailable from the current environment. Will try HTTP fallback if configured. Cause: <urlopen error [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión>
+2026-07-19 07:38:06,720 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog refresh used HTTP fallback because HTTPS was unavailable. The backend will normalize and cache the result locally.
+2026-07-19 08:38:09,751 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog source https://kiwisdr.com/public/ failed: TCP connection to kiwisdr.com:443 could not be established. HTTPS is unavailable from the current environment. Will try HTTP fallback if configured. Cause: <urlopen error [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión>
+2026-07-19 08:38:10,123 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog refresh used HTTP fallback because HTTPS was unavailable. The backend will normalize and cache the result locally.
+2026-07-19 09:38:13,167 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog source https://kiwisdr.com/public/ failed: TCP connection to kiwisdr.com:443 could not be established. HTTPS is unavailable from the current environment. Will try HTTP fallback if configured. Cause: <urlopen error [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión>
+2026-07-19 09:38:13,545 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog refresh used HTTP fallback because HTTPS was unavailable. The backend will normalize and cache the result locally.
+2026-07-19 10:38:16,619 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog source https://kiwisdr.com/public/ failed: TCP connection to kiwisdr.com:443 could not be established. HTTPS is unavailable from the current environment. Will try HTTP fallback if configured. Cause: <urlopen error [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión>
+2026-07-19 10:38:17,030 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog refresh used HTTP fallback because HTTPS was unavailable. The backend will normalize and cache the result locally.
+2026-07-19 11:38:20,066 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog source https://kiwisdr.com/public/ failed: TCP connection to kiwisdr.com:443 could not be established. HTTPS is unavailable from the current environment. Will try HTTP fallback if configured. Cause: <urlopen error [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión>
+2026-07-19 11:38:20,456 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog refresh used HTTP fallback because HTTPS was unavailable. The backend will normalize and cache the result locally.
+2026-07-19 12:38:23,479 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog source https://kiwisdr.com/public/ failed: TCP connection to kiwisdr.com:443 could not be established. HTTPS is unavailable from the current environment. Will try HTTP fallback if configured. Cause: <urlopen error [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión>
+2026-07-19 12:38:23,861 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog refresh used HTTP fallback because HTTPS was unavailable. The backend will normalize and cache the result locally.
+2026-07-19 13:38:26,897 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog source https://kiwisdr.com/public/ failed: TCP connection to kiwisdr.com:443 could not be established. HTTPS is unavailable from the current environment. Will try HTTP fallback if configured. Cause: <urlopen error [WinError 10061] No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión>
+2026-07-19 13:38:27,267 | WARNING | app.modules.kiwisdr.infrastructure.public_catalog_client | KiwiSDR catalog refresh used HTTP fallback because HTTPS was unavailable. The backend will normalize and cache the result locally.
+2026-07-19 14:06:50,235 | WARNING | app.infrastructure.ble.capture.ble_sdr_device_service | SoapySDR probe diagnostics: [1m[33m[WARNING] SoapyVOLKConverters: no VOLK config file found. Run volk_profile for best performance.[0m
+[1m[33m[WARNING] Unable to scan local: -19
+[0m
+[INFO] [UHD] Win32; Microsoft Visual C++ version 14.2; Boost_108600; UHD_4.8.0.0-release
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C34B&MI_01\6&34DE16B7&0&0001'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C077\5&3C72EC3&0&7'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_8087&PID_0033\5&3C72EC3&0&10'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\ROOT_HUB30\4&70DF8FF&0&0'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C34B&MI_00\6&34DE16B7&0&0000'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C34B\5&3C72EC3&0&1'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\ROOT_HUB30\4&11F5616B&0&0'
+[1m[33m[WARNING] Unable to scan ip: -19
+[0m
+
+2026-07-19 14:06:50,672 | WARNING | app.infrastructure.ble.capture.ble_sdr_device_service | SoapySDR probe diagnostics: [1m[33m[WARNING] SoapyVOLKConverters: no VOLK config file found. Run volk_profile for best performance.[0m
+[1m[33m[WARNING] Unable to scan local: -19
+[0m
+[INFO] [UHD] Win32; Microsoft Visual C++ version 14.2; Boost_108600; UHD_4.8.0.0-release
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C34B&MI_01\6&34DE16B7&0&0001'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C077\5&3C72EC3&0&7'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_8087&PID_0033\5&3C72EC3&0&10'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\ROOT_HUB30\4&70DF8FF&0&0'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C34B&MI_00\6&34DE16B7&0&0000'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C34B\5&3C72EC3&0&1'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\ROOT_HUB30\4&11F5616B&0&0'
+[1m[33m[WARNING] Unable to scan ip: -19
+[0m
+
+2026-07-19 14:06:52,796 | WARNING | app.infrastructure.ble.capture.ble_sdr_device_service | SoapySDR probe diagnostics: [1m[33m[WARNING] SoapyVOLKConverters: no VOLK config file found. Run volk_profile for best performance.[0m
+[1m[33m[WARNING] Unable to scan local: -19
+[0m
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C34B&MI_01\6&34DE16B7&0&0001'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C077\5&3C72EC3&0&7'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_8087&PID_0033\5&3C72EC3&0&10'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\ROOT_HUB30\4&70DF8FF&0&0'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C34B&MI_00\6&34DE16B7&0&0000'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C34B\5&3C72EC3&0&1'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\ROOT_HUB30\4&11F5616B&0&0'
+[INFO] [UHD] Win32; Microsoft Visual C++ version 14.2; Boost_108600; UHD_4.8.0.0-release
+[1m[33m[WARNING] Unable to scan ip: -19
+[0m
+[INFO] [b200_impl.cpp:422] [B200] Detected Device: B200
+[INFO] [B200] Detected Device: B200
+[INFO] [b200_impl.cpp:469] [B200] Operating over USB 2.
+[INFO] [B200] Operating over USB 2.
+[INFO] [b200_impl.cpp:620] [B200] Initialize CODEC control...
+[INFO] [B200] Initialize CODEC control...
+[INFO] [b200_impl.cpp:689] [B200] Initialize Radio control...
+[INFO] [B200] Initialize Radio control...
+[INFO] [b200_impl.cpp:1100] [B200] Performing register loopback test... 
+[INFO] [B200] Performing register loopback test... 
+[INFO] [b200_impl.cpp:1109] [B200] Register loopback test passed
+[INFO] [B200] Register loopback test passed
+[INFO] [b200_impl.cpp:815] [B200] Setting master clock rate selection to 'automatic'.
+[INFO] [B200] Setting master clock rate selection to 'automatic'.
+[INFO] [b200_impl.cpp:1150] [B200] Asking for clock rate 16.000000 MHz... 
+[INFO] [B200] Asking for clock rate 16.000000 MHz... 
+[INFO] [b200_impl.cpp:1163] [B200] Actually got clock rate 16.000000 MHz.
+[INFO] [B200] Actually got clock rate 16.000000 MHz.
+
+2026-07-19 14:06:59,502 | WARNING | app.infrastructure.ble.capture.ble_sdr_device_service | SoapySDR probe diagnostics: [1m[33m[WARNING] SoapyVOLKConverters: no VOLK config file found. Run volk_profile for best performance.[0m
+[1m[33m[WARNING] Unable to scan local: -19
+[0m
+[INFO] [UHD] Win32; Microsoft Visual C++ version 14.2; Boost_108600; UHD_4.8.0.0-release
+[1m[33m[WARNING] Unable to scan ip: -19
+[0m
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C34B&MI_01\6&34DE16B7&0&0001'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C077\5&3C72EC3&0&7'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_8087&PID_0033\5&3C72EC3&0&10'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\ROOT_HUB30\4&70DF8FF&0&0'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C34B&MI_00\6&34DE16B7&0&0000'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C34B\5&3C72EC3&0&1'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\ROOT_HUB30\4&11F5616B&0&0'
+[INFO] [b200_impl.cpp:422] [B200] Detected Device: B200
+[INFO] [B200] Detected Device: B200
+[INFO] [b200_impl.cpp:469] [B200] Operating over USB 2.
+[INFO] [B200] Operating over USB 2.
+[INFO] [b200_impl.cpp:620] [B200] Initialize CODEC control...
+[INFO] [B200] Initialize CODEC control...
+[INFO] [b200_impl.cpp:689] [B200] Initialize Radio control...
+[INFO] [B200] Initialize Radio control...
+[INFO] [b200_impl.cpp:1100] [B200] Performing register loopback test... 
+[INFO] [B200] Performing register loopback test... 
+[INFO] [b200_impl.cpp:1109] [B200] Register loopback test passed
+[INFO] [B200] Register loopback test passed
+[INFO] [b200_impl.cpp:815] [B200] Setting master clock rate selection to 'automatic'.
+[INFO] [B200] Setting master clock rate selection to 'automatic'.
+[INFO] [b200_impl.cpp:1150] [B200] Asking for clock rate 16.000000 MHz... 
+[INFO] [B200] Asking for clock rate 16.000000 MHz... 
+[INFO] [b200_impl.cpp:1163] [B200] Actually got clock rate 16.000000 MHz.
+[INFO] [B200] Actually got clock rate 16.000000 MHz.
+
+2026-07-19 14:07:06,345 | WARNING | app.infrastructure.ble.capture.ble_sdr_device_service | SoapySDR probe diagnostics: [1m[33m[WARNING] SoapyVOLKConverters: no VOLK config file found. Run volk_profile for best performance.[0m
+[1m[33m[WARNING] Unable to scan local: -19
+[0m
+[INFO] [UHD] Win32; Microsoft Visual C++ version 14.2; Boost_108600; UHD_4.8.0.0-release
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C34B&MI_01\6&34DE16B7&0&0001'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C077\5&3C72EC3&0&7'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_8087&PID_0033\5&3C72EC3&0&10'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\ROOT_HUB30\4&70DF8FF&0&0'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C34B&MI_00\6&34DE16B7&0&0000'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C34B\5&3C72EC3&0&1'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\ROOT_HUB30\4&11F5616B&0&0'
+[1m[33m[WARNING] Unable to scan ip: -19
+[0m
+[INFO] [b200_impl.cpp:422] [B200] Detected Device: B200
+[INFO] [B200] Detected Device: B200
+[INFO] [b200_impl.cpp:469] [B200] Operating over USB 2.
+[INFO] [B200] Operating over USB 2.
+[INFO] [b200_impl.cpp:620] [B200] Initialize CODEC control...
+[INFO] [B200] Initialize CODEC control...
+[INFO] [b200_impl.cpp:689] [B200] Initialize Radio control...
+[INFO] [B200] Initialize Radio control...
+[INFO] [b200_impl.cpp:1100] [B200] Performing register loopback test... 
+[INFO] [B200] Performing register loopback test... 
+[INFO] [b200_impl.cpp:1109] [B200] Register loopback test passed
+[INFO] [B200] Register loopback test passed
+[INFO] [b200_impl.cpp:815] [B200] Setting master clock rate selection to 'automatic'.
+[INFO] [B200] Setting master clock rate selection to 'automatic'.
+[INFO] [b200_impl.cpp:1150] [B200] Asking for clock rate 16.000000 MHz... 
+[INFO] [B200] Asking for clock rate 16.000000 MHz... 
+[INFO] [b200_impl.cpp:1163] [B200] Actually got clock rate 16.000000 MHz.
+[INFO] [B200] Actually got clock rate 16.000000 MHz.
+
+2026-07-19 14:07:10,189 | WARNING | app.infrastructure.ble.capture.ble_sdr_device_service | SoapySDR probe diagnostics: [1m[33m[WARNING] SoapyVOLKConverters: no VOLK config file found. Run volk_profile for best performance.[0m
+[1m[33m[WARNING] Unable to scan local: -19
+[0m
+[INFO] [UHD] Win32; Microsoft Visual C++ version 14.2; Boost_108600; UHD_4.8.0.0-release
+[1m[33m[WARNING] Unable to scan ip: -19
+[0m
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C34B&MI_01\6&34DE16B7&0&0001'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C077\5&3C72EC3&0&7'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_8087&PID_0033\5&3C72EC3&0&10'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\ROOT_HUB30\4&70DF8FF&0&0'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C34B&MI_00\6&34DE16B7&0&0000'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\VID_046D&PID_C34B\5&3C72EC3&0&1'
+libusb: info [get_guid] no DeviceInterfaceGUID registered for 'USB\ROOT_HUB30\4&11F5616B&0&0'
+

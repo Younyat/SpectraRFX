@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.1.0",
+  "states": {
+    "TARGET_MATCHED_STRONG": {"human": "Objetivo corroborado por ambos receptores", "definition": "Windows y B200 observaron dirección, payload y proximidad temporal compatibles."},
+    "TARGET_MATCHED_BY_PAYLOAD": {"human": "Objetivo asociado mediante payload", "definition": "El contenido publicitario permitió asociarlo aunque la dirección no fuera comparable."},
+    "TARGET_NATIVE_ONLY": {"human": "Objetivo observado solamente por Windows", "definition": "Windows lo observó pero B200 no recuperó un CRC válido asociado."},
+    "TARGET_B200_ONLY": {"human": "Evidencia del objetivo solamente por B200", "definition": "B200 produjo evidencia compatible sin observación Windows correspondiente."},
+    "TARGET_AMBIGUOUS": {"human": "Asociación del objetivo ambigua", "definition": "Varias observaciones son compatibles."},
+    "TARGET_NOT_OBSERVED": {"human": "Objetivo no observado", "definition": "No se obtuvo evidencia suficiente del objetivo durante esta campaña.", "does_not_demonstrate": "No demuestra que estuviera apagado, ausente, sin transmitir ni fuera del alcance del B200.", "possible_causes": ["duración insuficiente", "publicidad en otro canal", "intervalo de advertising", "interferencia", "pérdidas de adquisición", "distancia", "estado de conexión BLE"]},
+    "TARGET_NOT_EVALUATED": {"human": "No se seleccionó un objetivo concreto", "definition": "La campaña evaluó tráfico general."}
+  }
+}

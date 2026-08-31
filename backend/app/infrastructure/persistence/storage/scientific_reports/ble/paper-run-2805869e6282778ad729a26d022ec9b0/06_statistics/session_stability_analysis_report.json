@@ -1,0 +1,845 @@
+{
+  "evidence_status": "DEVELOPMENT_EXPLORATORY",
+  "generated_at": "2026-08-23T20:04:46.025555Z",
+  "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+  "per_unit_summary": {
+    "CC2541SensorTag": {
+      "all_sessions_recall_below_0_10": false,
+      "feature_between_session_variability": {
+        "amplitude_kurtosis": {
+          "max_session_median": 10.948843955993652,
+          "median_of_session_medians": 5.493398547172546,
+          "min_session_median": 0.03795313835144043,
+          "stdev_of_session_medians": 5.455445408821106
+        },
+        "amplitude_skewness": {
+          "max_session_median": -0.1030329130589962,
+          "median_of_session_medians": -1.8289578389376402,
+          "min_session_median": -3.554882764816284,
+          "stdev_of_session_medians": 1.725924925878644
+        },
+        "cfo_estimate_hz": {
+          "max_session_median": 51770.01171875,
+          "median_of_session_medians": 36694.9541015625,
+          "min_session_median": 21619.896484375,
+          "stdev_of_session_medians": 15075.0576171875
+        },
+        "mean_abs_amplitude": {
+          "max_session_median": 0.04616369307041168,
+          "median_of_session_medians": 0.0322942016646266,
+          "min_session_median": 0.018424710258841515,
+          "stdev_of_session_medians": 0.013869491405785084
+        },
+        "mean_power_dbfs": {
+          "max_session_median": -26.508062653664368,
+          "median_of_session_medians": -30.578516973841914,
+          "min_session_median": -34.64897129401946,
+          "stdev_of_session_medians": 4.0704543201775465
+        },
+        "papr_db": {
+          "max_session_median": 0.8698027595691005,
+          "median_of_session_medians": 0.8411834384361632,
+          "min_session_median": 0.8125641173032259,
+          "stdev_of_session_medians": 0.028619321132937303
+        },
+        "spectral_bandwidth_hz": {
+          "max_session_median": 559400.0751783965,
+          "median_of_session_medians": 551263.2068664292,
+          "min_session_median": 543126.3385544617,
+          "stdev_of_session_medians": 8136.86831196741
+        },
+        "spectral_centroid_hz": {
+          "max_session_median": 42294.374517216325,
+          "median_of_session_medians": 34725.06757145039,
+          "min_session_median": 27155.760625684445,
+          "stdev_of_session_medians": 7569.30694576594
+        },
+        "std_abs_amplitude": {
+          "max_session_median": 0.010051230899989605,
+          "median_of_session_medians": 0.005697160726413131,
+          "min_session_median": 0.0013430905528366566,
+          "stdev_of_session_medians": 0.004354070173576474
+        },
+        "std_power_db": {
+          "max_session_median": 7.29597806930542,
+          "median_of_session_medians": 4.4792380928993225,
+          "min_session_median": 1.662498116493225,
+          "stdev_of_session_medians": 2.8167399764060974
+        }
+      },
+      "n_examples_total": 187,
+      "n_sessions": 2,
+      "physical_unit_pseudonym": "TX-01",
+      "recall_max": 0.9195402298850575,
+      "recall_min": 0.66,
+      "recall_per_session": {
+        "BLE-HYBRID-20260730T132022Z-faeed5": 0.9195402298850575,
+        "BLE-HYBRID-20260730T132109Z-fec5ba": 0.66
+      },
+      "recall_stdev_between_sessions": 0.1297701149425287
+    },
+    "CC2650-UNIT-01": {
+      "all_sessions_recall_below_0_10": false,
+      "feature_between_session_variability": {
+        "amplitude_kurtosis": {
+          "max_session_median": 23.195637702941895,
+          "median_of_session_medians": 19.45639991760254,
+          "min_session_median": 19.188615798950195,
+          "stdev_of_session_medians": 1.8290808890618395
+        },
+        "amplitude_skewness": {
+          "max_session_median": -4.558266639709473,
+          "median_of_session_medians": -4.60232400894165,
+          "min_session_median": -4.987730026245117,
+          "stdev_of_session_medians": 0.19290690049636927
+        },
+        "cfo_estimate_hz": {
+          "max_session_median": -30777.7939453125,
+          "median_of_session_medians": -32289.015625,
+          "min_session_median": -32414.947265625,
+          "stdev_of_session_medians": 743.8578670596104
+        },
+        "mean_abs_amplitude": {
+          "max_session_median": 0.10455184057354927,
+          "median_of_session_medians": 0.06771259009838104,
+          "min_session_median": 0.02105008438229561,
+          "stdev_of_session_medians": 0.034167988758647336
+        },
+        "mean_power_dbfs": {
+          "max_session_median": -19.551845877861787,
+          "median_of_session_medians": -23.313838663935066,
+          "min_session_median": -33.48989807435488,
+          "stdev_of_session_medians": 5.887595942875035
+        },
+        "papr_db": {
+          "max_session_median": 0.7935441801262398,
+          "median_of_session_medians": 0.7426079775469814,
+          "min_session_median": 0.6921127900849905,
+          "stdev_of_session_medians": 0.041409322052618
+        },
+        "spectral_bandwidth_hz": {
+          "max_session_median": 557799.4884914838,
+          "median_of_session_medians": 557746.3959545427,
+          "min_session_median": 557147.986528127,
+          "stdev_of_session_medians": 295.4032022996224
+        },
+        "spectral_centroid_hz": {
+          "max_session_median": -19227.372184778003,
+          "median_of_session_medians": -25882.86283484837,
+          "min_session_median": -28092.929329972096,
+          "stdev_of_session_medians": 3767.9651626241707
+        },
+        "std_abs_amplitude": {
+          "max_session_median": 0.01425224682316184,
+          "median_of_session_medians": 0.008213108405470848,
+          "min_session_median": 0.001301509328186512,
+          "stdev_of_session_medians": 0.005291114105501251
+        },
+        "std_power_db": {
+          "max_session_median": 6.722270965576172,
+          "median_of_session_medians": 5.382125377655029,
+          "min_session_median": 2.6194941997528076,
+          "stdev_of_session_medians": 1.7081796162426488
+        }
+      },
+      "n_examples_total": 166,
+      "n_sessions": 3,
+      "physical_unit_pseudonym": "TX-05",
+      "recall_max": 1.0,
+      "recall_min": 0.9157894736842105,
+      "recall_per_session": {
+        "BLE-HYBRID-20260730T132508Z-e26c0b": 0.9157894736842105,
+        "BLE-HYBRID-20260730T134110Z-96da87": 1.0,
+        "BLE-HYBRID-20260730T134310Z-5bc966": 1.0
+      },
+      "recall_stdev_between_sessions": 0.03969722280345532
+    },
+    "keyfobdemo 01": {
+      "all_sessions_recall_below_0_10": false,
+      "feature_between_session_variability": {
+        "amplitude_kurtosis": {
+          "max_session_median": 0.1843552589416504,
+          "median_of_session_medians": 0.04188704490661621,
+          "min_session_median": -0.03914165496826172,
+          "stdev_of_session_medians": 0.07599554182323985
+        },
+        "amplitude_skewness": {
+          "max_session_median": 0.007333784829825163,
+          "median_of_session_medians": -0.03364989534020424,
+          "min_session_median": -0.06684183329343796,
+          "stdev_of_session_medians": 0.02858089575943184
+        },
+        "cfo_estimate_hz": {
+          "max_session_median": 6734.4677734375,
+          "median_of_session_medians": 6568.241943359375,
+          "min_session_median": 5792.541015625,
+          "stdev_of_session_medians": 334.6865580532521
+        },
+        "mean_abs_amplitude": {
+          "max_session_median": 0.029592229053378105,
+          "median_of_session_medians": 0.012514172121882439,
+          "min_session_median": 0.0035846629180014133,
+          "stdev_of_session_medians": 0.009216681345376258
+        },
+        "mean_power_dbfs": {
+          "max_session_median": -30.538670557427345,
+          "median_of_session_medians": -37.94128824447235,
+          "min_session_median": -48.87527522598095,
+          "stdev_of_session_medians": 6.53280708942273
+        },
+        "papr_db": {
+          "max_session_median": 2.3084951948218015,
+          "median_of_session_medians": 1.5936816799177422,
+          "min_session_median": 1.3304332157468632,
+          "stdev_of_session_medians": 0.33837916625131487
+        },
+        "spectral_bandwidth_hz": {
+          "max_session_median": 564562.1231921228,
+          "median_of_session_medians": 551588.0536774092,
+          "min_session_median": 544858.3446753605,
+          "stdev_of_session_medians": 8190.654810812655
+        },
+        "spectral_centroid_hz": {
+          "max_session_median": 14833.032781025886,
+          "median_of_session_medians": 8319.522024008578,
+          "min_session_median": 6527.161790095671,
+          "stdev_of_session_medians": 3270.325751953417
+        },
+        "std_abs_amplitude": {
+          "max_session_median": 0.0007640852709300816,
+          "median_of_session_medians": 0.0007516712066717446,
+          "min_session_median": 0.00033179676393046975,
+          "stdev_of_session_medians": 0.0001923873014109303
+        },
+        "std_power_db": {
+          "max_session_median": 1.9036450386047363,
+          "median_of_session_medians": 1.3075145483016968,
+          "min_session_median": 0.73018878698349,
+          "stdev_of_session_medians": 0.385173239059496
+        }
+      },
+      "n_examples_total": 1690,
+      "n_sessions": 5,
+      "physical_unit_pseudonym": "TX-03",
+      "recall_max": 0.8717948717948718,
+      "recall_min": 0.6293929712460063,
+      "recall_per_session": {
+        "BLE-HYBRID-20260728T134223Z-29d19e": 0.6293929712460063,
+        "BLE-HYBRID-20260728T134257Z-82522b": 0.8717948717948718,
+        "BLE-HYBRID-20260728T134346Z-708d73": 0.8058823529411765,
+        "BLE-HYBRID-20260728T134434Z-a1522c": 0.8259587020648967,
+        "BLE-HYBRID-20260728T134507Z-413268": 0.8328530259365994
+      },
+      "recall_stdev_between_sessions": 0.08463596263563707
+    },
+    "keyfobdemo 02": {
+      "all_sessions_recall_below_0_10": true,
+      "feature_between_session_variability": {
+        "amplitude_kurtosis": {
+          "max_session_median": -0.02154850959777832,
+          "median_of_session_medians": -0.04495203495025635,
+          "min_session_median": -0.06835556030273438,
+          "stdev_of_session_medians": 0.023403525352478027
+        },
+        "amplitude_skewness": {
+          "max_session_median": 0.0496450699865818,
+          "median_of_session_medians": 0.022011608351022005,
+          "min_session_median": -0.005621853284537792,
+          "stdev_of_session_medians": 0.027633461635559797
+        },
+        "cfo_estimate_hz": {
+          "max_session_median": 30522.27734375,
+          "median_of_session_medians": 30511.943359375,
+          "min_session_median": 30501.609375,
+          "stdev_of_session_medians": 10.333984375
+        },
+        "mean_abs_amplitude": {
+          "max_session_median": 0.006486187223345041,
+          "median_of_session_medians": 0.0048925785813480616,
+          "min_session_median": 0.003298969939351082,
+          "stdev_of_session_medians": 0.0015936086419969797
+        },
+        "mean_power_dbfs": {
+          "max_session_median": -43.741497766425745,
+          "median_of_session_medians": -46.66272675238229,
+          "min_session_median": -49.58395573833884,
+          "stdev_of_session_medians": 2.921228985956546
+        },
+        "papr_db": {
+          "max_session_median": 2.4288379352231724,
+          "median_of_session_medians": 1.9877969602425185,
+          "min_session_median": 1.5467559852618646,
+          "stdev_of_session_medians": 0.44104097498065387
+        },
+        "spectral_bandwidth_hz": {
+          "max_session_median": 622628.8704688089,
+          "median_of_session_medians": 607464.0792427403,
+          "min_session_median": 592299.2880166717,
+          "stdev_of_session_medians": 15164.791226068628
+        },
+        "spectral_centroid_hz": {
+          "max_session_median": 40305.47728199818,
+          "median_of_session_medians": 40096.89657371257,
+          "min_session_median": 39888.315865426965,
+          "stdev_of_session_medians": 208.58070828560813
+        },
+        "std_abs_amplitude": {
+          "max_session_median": 0.00039749022107571363,
+          "median_of_session_medians": 0.00037350202910602093,
+          "min_session_median": 0.0003495138371363282,
+          "stdev_of_session_medians": 2.3988191969692707e-05
+        },
+        "std_power_db": {
+          "max_session_median": 0.9334872961044312,
+          "median_of_session_medians": 0.7343359589576721,
+          "min_session_median": 0.5351846218109131,
+          "stdev_of_session_medians": 0.19915133714675903
+        }
+      },
+      "n_examples_total": 160,
+      "n_sessions": 2,
+      "physical_unit_pseudonym": "TX-04",
+      "recall_max": 0.012048192771084338,
+      "recall_min": 0.0,
+      "recall_per_session": {
+        "BLE-HYBRID-20260729T141323Z-055798": 0.012048192771084338,
+        "BLE-HYBRID-20260729T141457Z-c5b022": 0.0
+      },
+      "recall_stdev_between_sessions": 0.006024096385542169
+    }
+  },
+  "provenance": {
+    "base_preprocessing_profile_id": "base-v1",
+    "dataset_id": "IDENTITY-c52850a953",
+    "dataset_version": "20260814T224525.782975Z",
+    "domain_choice_note": "VALIDATION only (not TRAIN): TRAIN sessions would be in-sample for PRIMARY's own fit (optimistic bias), and the RQ1 capture-dependent diagnostic domain uses a DIFFERENT model (RQ1DIAG-...), outside this analysis's explicit PRIMARY-only scope. VALIDATION is the same capture-disjoint, out-of-sample domain already used for RQ1/RQ2/RQ4/feature-group-ablation.",
+    "evaluation_domain": "VALIDATION",
+    "feature_names": [
+      "mean_power_dbfs",
+      "std_power_db",
+      "mean_abs_amplitude",
+      "std_abs_amplitude",
+      "spectral_centroid_hz",
+      "spectral_bandwidth_hz",
+      "cfo_estimate_hz",
+      "papr_db",
+      "amplitude_kurtosis",
+      "amplitude_skewness"
+    ],
+    "no_retraining": true,
+    "primary_bundle_id": "CLOSED-SET-4DEVICES-random_forest-bundle",
+    "primary_training_run_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+    "split_manifest_id": "IDENTITY-c52850a953__20260814T224525.782975Z__MULTI_DEVICE_CLASSIFICATION",
+    "test_never_opened": true
+  },
+  "question": "How does PRIMARY's per-example performance and per-feature values vary across a transmitter's own real acquisition sessions, within the capture-disjoint VALIDATION domain -- purely descriptive, not a causal model, not a solution to the TX/session confound.",
+  "schema_version": "ble-scientific-results-session-stability-analysis-v1",
+  "sessions": [
+    {
+      "accuracy": 0.9195402298850575,
+      "class_distribution": {
+        "CC2541SensorTag": 0.9195402298850575,
+        "CC2650-UNIT-01": 0.0,
+        "keyfobdemo 01": 0.034482758620689655,
+        "keyfobdemo 02": 0.04597701149425287
+      },
+      "feature_iqrs_within_session": {
+        "amplitude_kurtosis": 17.076542377471924,
+        "amplitude_skewness": 2.3329923152923584,
+        "cfo_estimate_hz": 49182.5234375,
+        "mean_abs_amplitude": 0.0025275982916355133,
+        "mean_power_dbfs": 0.25590093795240065,
+        "papr_db": 0.23990544116854906,
+        "spectral_bandwidth_hz": 16640.274288629065,
+        "spectral_centroid_hz": 33826.831053360744,
+        "std_abs_amplitude": 0.005606037098914385,
+        "std_power_db": 4.881089210510254
+      },
+      "feature_medians": {
+        "amplitude_kurtosis": 10.948843955993652,
+        "amplitude_skewness": -3.554882764816284,
+        "cfo_estimate_hz": 51770.01171875,
+        "mean_abs_amplitude": 0.04616369307041168,
+        "mean_power_dbfs": -26.508062653664368,
+        "papr_db": 0.8125641173032259,
+        "spectral_bandwidth_hz": 559400.0751783965,
+        "spectral_centroid_hz": 27155.760625684445,
+        "std_abs_amplitude": 0.010051230899989605,
+        "std_power_db": 7.29597806930542
+      },
+      "median_correct_class_score": 0.62,
+      "n_examples": 87,
+      "physical_unit_id": "CC2541SensorTag",
+      "physical_unit_pseudonym": "TX-01",
+      "recall": 0.9195402298850575,
+      "session_id": "BLE-HYBRID-20260730T132022Z-faeed5",
+      "top_competing_class": "keyfobdemo 02",
+      "top_competing_class_share": 0.04597701149425287
+    },
+    {
+      "accuracy": 0.66,
+      "class_distribution": {
+        "CC2541SensorTag": 0.66,
+        "CC2650-UNIT-01": 0.0,
+        "keyfobdemo 01": 0.12,
+        "keyfobdemo 02": 0.22
+      },
+      "feature_iqrs_within_session": {
+        "amplitude_kurtosis": 19.04202687740326,
+        "amplitude_skewness": 4.486084824427962,
+        "cfo_estimate_hz": 9213.1728515625,
+        "mean_abs_amplitude": 0.0007138708606362343,
+        "mean_power_dbfs": 0.22102616766054695,
+        "papr_db": 0.2507580128754844,
+        "spectral_bandwidth_hz": 62832.090647275676,
+        "spectral_centroid_hz": 34724.45215933895,
+        "std_abs_amplitude": 0.0028537575562950224,
+        "std_power_db": 5.3626648634672165
+      },
+      "feature_medians": {
+        "amplitude_kurtosis": 0.03795313835144043,
+        "amplitude_skewness": -0.1030329130589962,
+        "cfo_estimate_hz": 21619.896484375,
+        "mean_abs_amplitude": 0.018424710258841515,
+        "mean_power_dbfs": -34.64897129401946,
+        "papr_db": 0.8698027595691005,
+        "spectral_bandwidth_hz": 543126.3385544617,
+        "spectral_centroid_hz": 42294.374517216325,
+        "std_abs_amplitude": 0.0013430905528366566,
+        "std_power_db": 1.662498116493225
+      },
+      "median_correct_class_score": 0.75,
+      "n_examples": 100,
+      "physical_unit_id": "CC2541SensorTag",
+      "physical_unit_pseudonym": "TX-01",
+      "recall": 0.66,
+      "session_id": "BLE-HYBRID-20260730T132109Z-fec5ba",
+      "top_competing_class": "keyfobdemo 02",
+      "top_competing_class_share": 0.22
+    },
+    {
+      "accuracy": 0.6293929712460063,
+      "class_distribution": {
+        "CC2541SensorTag": 0.0926517571884984,
+        "CC2650-UNIT-01": 0.022364217252396165,
+        "keyfobdemo 01": 0.6293929712460063,
+        "keyfobdemo 02": 0.25559105431309903
+      },
+      "feature_iqrs_within_session": {
+        "amplitude_kurtosis": 0.3686497211456299,
+        "amplitude_skewness": 0.16604684107005596,
+        "cfo_estimate_hz": 46901.8486328125,
+        "mean_abs_amplitude": 0.026524420361965895,
+        "mean_power_dbfs": 22.74763105361984,
+        "papr_db": 2.681880469860569,
+        "spectral_bandwidth_hz": 103940.9618734261,
+        "spectral_centroid_hz": 32359.971772110115,
+        "std_abs_amplitude": 0.0004982222308171913,
+        "std_power_db": 1.4750964641571045
+      },
+      "feature_medians": {
+        "amplitude_kurtosis": -0.001802682876586914,
+        "amplitude_skewness": -0.008266190066933632,
+        "cfo_estimate_hz": 5792.541015625,
+        "mean_abs_amplitude": 0.0035846629180014133,
+        "mean_power_dbfs": -48.87527522598095,
+        "papr_db": 2.3084951948218015,
+        "spectral_bandwidth_hz": 548800.5276642764,
+        "spectral_centroid_hz": 8319.522024008578,
+        "std_abs_amplitude": 0.00033179676393046975,
+        "std_power_db": 1.3075145483016968
+      },
+      "median_correct_class_score": 0.64,
+      "n_examples": 313,
+      "physical_unit_id": "keyfobdemo 01",
+      "physical_unit_pseudonym": "TX-03",
+      "recall": 0.6293929712460063,
+      "session_id": "BLE-HYBRID-20260728T134223Z-29d19e",
+      "top_competing_class": "keyfobdemo 02",
+      "top_competing_class_share": 0.25559105431309903
+    },
+    {
+      "accuracy": 0.8717948717948718,
+      "class_distribution": {
+        "CC2541SensorTag": 0.08547008547008547,
+        "CC2650-UNIT-01": 0.002849002849002849,
+        "keyfobdemo 01": 0.8717948717948718,
+        "keyfobdemo 02": 0.039886039886039885
+      },
+      "feature_iqrs_within_session": {
+        "amplitude_kurtosis": 13.279667139053345,
+        "amplitude_skewness": 3.7560093626379967,
+        "cfo_estimate_hz": 66594.857421875,
+        "mean_abs_amplitude": 0.02571561699733138,
+        "mean_power_dbfs": 19.237099190567672,
+        "papr_db": 1.5131566017033384,
+        "spectral_bandwidth_hz": 67540.56333441421,
+        "spectral_centroid_hz": 29567.604193121915,
+        "std_abs_amplitude": 0.002503749215975404,
+        "std_power_db": 4.764155030250549
+      },
+      "feature_medians": {
+        "amplitude_kurtosis": 0.1843552589416504,
+        "amplitude_skewness": -0.06684183329343796,
+        "cfo_estimate_hz": 6543.06982421875,
+        "mean_abs_amplitude": 0.012514172121882439,
+        "mean_power_dbfs": -37.94128824447235,
+        "papr_db": 1.5936816799177422,
+        "spectral_bandwidth_hz": 564547.4986083738,
+        "spectral_centroid_hz": 6527.161790095671,
+        "std_abs_amplitude": 0.0007640852709300816,
+        "std_power_db": 1.1443071365356445
+      },
+      "median_correct_class_score": 0.73,
+      "n_examples": 351,
+      "physical_unit_id": "keyfobdemo 01",
+      "physical_unit_pseudonym": "TX-03",
+      "recall": 0.8717948717948718,
+      "session_id": "BLE-HYBRID-20260728T134257Z-82522b",
+      "top_competing_class": "CC2541SensorTag",
+      "top_competing_class_share": 0.08547008547008547
+    },
+    {
+      "accuracy": 0.8058823529411765,
+      "class_distribution": {
+        "CC2541SensorTag": 0.11470588235294117,
+        "CC2650-UNIT-01": 0.0058823529411764705,
+        "keyfobdemo 01": 0.8058823529411765,
+        "keyfobdemo 02": 0.07352941176470588
+      },
+      "feature_iqrs_within_session": {
+        "amplitude_kurtosis": 0.2899136543273926,
+        "amplitude_skewness": 0.14377125352621078,
+        "cfo_estimate_hz": 60466.60546875,
+        "mean_abs_amplitude": 0.02413383754901588,
+        "mean_power_dbfs": 17.71145172261748,
+        "papr_db": 1.6518184809595124,
+        "spectral_bandwidth_hz": 99759.80314448458,
+        "spectral_centroid_hz": 32073.685657093556,
+        "std_abs_amplitude": 0.00038642816070932895,
+        "std_power_db": 0.657972514629364
+      },
+      "feature_medians": {
+        "amplitude_kurtosis": -0.03914165496826172,
+        "amplitude_skewness": 0.007333784829825163,
+        "cfo_estimate_hz": 6568.241943359375,
+        "mean_abs_amplitude": 0.005528249312192202,
+        "mean_power_dbfs": -45.0977232726563,
+        "papr_db": 1.8934430014644583,
+        "spectral_bandwidth_hz": 564562.1231921228,
+        "spectral_centroid_hz": 14833.032781025886,
+        "std_abs_amplitude": 0.0004050631250720471,
+        "std_power_db": 0.73018878698349
+      },
+      "median_correct_class_score": 0.76,
+      "n_examples": 340,
+      "physical_unit_id": "keyfobdemo 01",
+      "physical_unit_pseudonym": "TX-03",
+      "recall": 0.8058823529411765,
+      "session_id": "BLE-HYBRID-20260728T134346Z-708d73",
+      "top_competing_class": "CC2541SensorTag",
+      "top_competing_class_share": 0.11470588235294117
+    },
+    {
+      "accuracy": 0.8259587020648967,
+      "class_distribution": {
+        "CC2541SensorTag": 0.10619469026548672,
+        "CC2650-UNIT-01": 0.008849557522123894,
+        "keyfobdemo 01": 0.8259587020648967,
+        "keyfobdemo 02": 0.058997050147492625
+      },
+      "feature_iqrs_within_session": {
+        "amplitude_kurtosis": 10.569005250930786,
+        "amplitude_skewness": 3.419711008667946,
+        "cfo_estimate_hz": 49151.5341796875,
+        "mean_abs_amplitude": 0.02419356512837112,
+        "mean_power_dbfs": 17.678025087499112,
+        "papr_db": 1.2250178010378452,
+        "spectral_bandwidth_hz": 90360.51360770006,
+        "spectral_centroid_hz": 28482.378115645544,
+        "std_abs_amplitude": 0.0025142802041955292,
+        "std_power_db": 3.6487589478492737
+      },
+      "feature_medians": {
+        "amplitude_kurtosis": 0.06147956848144531,
+        "amplitude_skewness": -0.059520915150642395,
+        "cfo_estimate_hz": 6605.7724609375,
+        "mean_abs_amplitude": 0.01527330931276083,
+        "mean_power_dbfs": -36.08834286183105,
+        "papr_db": 1.5483015523553791,
+        "spectral_bandwidth_hz": 551588.0536774092,
+        "spectral_centroid_hz": 6807.731106105949,
+        "std_abs_amplitude": 0.0007516712066717446,
+        "std_power_db": 1.9036450386047363
+      },
+      "median_correct_class_score": 0.78,
+      "n_examples": 339,
+      "physical_unit_id": "keyfobdemo 01",
+      "physical_unit_pseudonym": "TX-03",
+      "recall": 0.8259587020648967,
+      "session_id": "BLE-HYBRID-20260728T134434Z-a1522c",
+      "top_competing_class": "CC2541SensorTag",
+      "top_competing_class_share": 0.10619469026548672
+    },
+    {
+      "accuracy": 0.8328530259365994,
+      "class_distribution": {
+        "CC2541SensorTag": 0.14697406340057637,
+        "CC2650-UNIT-01": 0.0,
+        "keyfobdemo 01": 0.8328530259365994,
+        "keyfobdemo 02": 0.020172910662824207
+      },
+      "feature_iqrs_within_session": {
+        "amplitude_kurtosis": 12.02744197845459,
+        "amplitude_skewness": 3.6885180063545704,
+        "cfo_estimate_hz": 48635.6875,
+        "mean_abs_amplitude": 0.03210066189058125,
+        "mean_power_dbfs": 20.355304089917215,
+        "papr_db": 1.5324803318384173,
+        "spectral_bandwidth_hz": 103866.27393783169,
+        "spectral_centroid_hz": 31236.038611649714,
+        "std_abs_amplitude": 0.0039294159796554595,
+        "std_power_db": 2.688491612672806
+      },
+      "feature_medians": {
+        "amplitude_kurtosis": 0.04188704490661621,
+        "amplitude_skewness": -0.03364989534020424,
+        "cfo_estimate_hz": 6734.4677734375,
+        "mean_abs_amplitude": 0.029592229053378105,
+        "mean_power_dbfs": -30.538670557427345,
+        "papr_db": 1.3304332157468632,
+        "spectral_bandwidth_hz": 544858.3446753605,
+        "spectral_centroid_hz": 12308.99631982752,
+        "std_abs_amplitude": 0.0007588367443531752,
+        "std_power_db": 1.4704487323760986
+      },
+      "median_correct_class_score": 0.72,
+      "n_examples": 347,
+      "physical_unit_id": "keyfobdemo 01",
+      "physical_unit_pseudonym": "TX-03",
+      "recall": 0.8328530259365994,
+      "session_id": "BLE-HYBRID-20260728T134507Z-413268",
+      "top_competing_class": "CC2541SensorTag",
+      "top_competing_class_share": 0.14697406340057637
+    },
+    {
+      "accuracy": 0.012048192771084338,
+      "class_distribution": {
+        "CC2541SensorTag": 0.0,
+        "CC2650-UNIT-01": 0.0,
+        "keyfobdemo 01": 0.9879518072289156,
+        "keyfobdemo 02": 0.012048192771084338
+      },
+      "feature_iqrs_within_session": {
+        "amplitude_kurtosis": 0.23190689086914062,
+        "amplitude_skewness": 0.10199565440416336,
+        "cfo_estimate_hz": 372.205078125,
+        "mean_abs_amplitude": 0.00022252090275287628,
+        "mean_power_dbfs": 0.5792654897857048,
+        "papr_db": 0.33728221033425143,
+        "spectral_bandwidth_hz": 18267.364870471298,
+        "spectral_centroid_hz": 22490.274338373245,
+        "std_abs_amplitude": 1.9680068362504244e-05,
+        "std_power_db": 0.07667219638824463
+      },
+      "feature_medians": {
+        "amplitude_kurtosis": -0.02154850959777832,
+        "amplitude_skewness": -0.005621853284537792,
+        "cfo_estimate_hz": 30501.609375,
+        "mean_abs_amplitude": 0.003298969939351082,
+        "mean_power_dbfs": -49.58395573833884,
+        "papr_db": 2.4288379352231724,
+        "spectral_bandwidth_hz": 622628.8704688089,
+        "spectral_centroid_hz": 39888.315865426965,
+        "std_abs_amplitude": 0.0003495138371363282,
+        "std_power_db": 0.9334872961044312
+      },
+      "median_correct_class_score": 0.21,
+      "n_examples": 83,
+      "physical_unit_id": "keyfobdemo 02",
+      "physical_unit_pseudonym": "TX-04",
+      "recall": 0.012048192771084338,
+      "session_id": "BLE-HYBRID-20260729T141323Z-055798",
+      "top_competing_class": "keyfobdemo 01",
+      "top_competing_class_share": 0.9879518072289156
+    },
+    {
+      "accuracy": 0.0,
+      "class_distribution": {
+        "CC2541SensorTag": 0.0,
+        "CC2650-UNIT-01": 0.0,
+        "keyfobdemo 01": 1.0,
+        "keyfobdemo 02": 0.0
+      },
+      "feature_iqrs_within_session": {
+        "amplitude_kurtosis": 0.25239992141723633,
+        "amplitude_skewness": 0.13390713604167104,
+        "cfo_estimate_hz": 347.2080078125,
+        "mean_abs_amplitude": 0.00012215133756399155,
+        "mean_power_dbfs": 0.16626832047518292,
+        "papr_db": 0.22710170655728712,
+        "spectral_bandwidth_hz": 16135.319422231056,
+        "spectral_centroid_hz": 17148.565935838327,
+        "std_abs_amplitude": 3.1460440368391573e-05,
+        "std_power_db": 0.03916773200035095
+      },
+      "feature_medians": {
+        "amplitude_kurtosis": -0.06835556030273438,
+        "amplitude_skewness": 0.0496450699865818,
+        "cfo_estimate_hz": 30522.27734375,
+        "mean_abs_amplitude": 0.006486187223345041,
+        "mean_power_dbfs": -43.741497766425745,
+        "papr_db": 1.5467559852618646,
+        "spectral_bandwidth_hz": 592299.2880166717,
+        "spectral_centroid_hz": 40305.47728199818,
+        "std_abs_amplitude": 0.00039749022107571363,
+        "std_power_db": 0.5351846218109131
+      },
+      "median_correct_class_score": 0.27,
+      "n_examples": 77,
+      "physical_unit_id": "keyfobdemo 02",
+      "physical_unit_pseudonym": "TX-04",
+      "recall": 0.0,
+      "session_id": "BLE-HYBRID-20260729T141457Z-c5b022",
+      "top_competing_class": "keyfobdemo 01",
+      "top_competing_class_share": 1.0
+    },
+    {
+      "accuracy": 0.9157894736842105,
+      "class_distribution": {
+        "CC2541SensorTag": 0.0,
+        "CC2650-UNIT-01": 0.9157894736842105,
+        "keyfobdemo 01": 0.010526315789473684,
+        "keyfobdemo 02": 0.07368421052631578
+      },
+      "feature_iqrs_within_session": {
+        "amplitude_kurtosis": 47.92485737800598,
+        "amplitude_skewness": 6.887788001447916,
+        "cfo_estimate_hz": 7080.4921875,
+        "mean_abs_amplitude": 0.0005552768707275391,
+        "mean_power_dbfs": 0.16891398778771105,
+        "papr_db": 0.23700454989176412,
+        "spectral_bandwidth_hz": 30161.72043121804,
+        "spectral_centroid_hz": 23198.04133256586,
+        "std_abs_amplitude": 0.002712055400479585,
+        "std_power_db": 5.219445556402206
+      },
+      "feature_medians": {
+        "amplitude_kurtosis": 19.188615798950195,
+        "amplitude_skewness": -4.558266639709473,
+        "cfo_estimate_hz": -32289.015625,
+        "mean_abs_amplitude": 0.02105008438229561,
+        "mean_power_dbfs": -33.48989807435488,
+        "papr_db": 0.7935441801262398,
+        "spectral_bandwidth_hz": 557799.4884914838,
+        "spectral_centroid_hz": -19227.372184778003,
+        "std_abs_amplitude": 0.001301509328186512,
+        "std_power_db": 2.6194941997528076
+      },
+      "median_correct_class_score": 0.89,
+      "n_examples": 95,
+      "physical_unit_id": "CC2650-UNIT-01",
+      "physical_unit_pseudonym": "TX-05",
+      "recall": 0.9157894736842105,
+      "session_id": "BLE-HYBRID-20260730T132508Z-e26c0b",
+      "top_competing_class": "keyfobdemo 02",
+      "top_competing_class_share": 0.07368421052631578
+    },
+    {
+      "accuracy": 1.0,
+      "class_distribution": {
+        "CC2541SensorTag": 0.0,
+        "CC2650-UNIT-01": 1.0,
+        "keyfobdemo 01": 0.0,
+        "keyfobdemo 02": 0.0
+      },
+      "feature_iqrs_within_session": {
+        "amplitude_kurtosis": 33.05494475364685,
+        "amplitude_skewness": 4.2931594625115395,
+        "cfo_estimate_hz": 2191.29296875,
+        "mean_abs_amplitude": 0.002962850034236908,
+        "mean_power_dbfs": 0.18125149680685482,
+        "papr_db": 0.18782636533543573,
+        "spectral_bandwidth_hz": 35524.39760318911,
+        "spectral_centroid_hz": 22490.094471820885,
+        "std_abs_amplitude": 0.015205830917693675,
+        "std_power_db": 7.347634233534336
+      },
+      "feature_medians": {
+        "amplitude_kurtosis": 23.195637702941895,
+        "amplitude_skewness": -4.987730026245117,
+        "cfo_estimate_hz": -30777.7939453125,
+        "mean_abs_amplitude": 0.10455184057354927,
+        "mean_power_dbfs": -19.551845877861787,
+        "papr_db": 0.7426079775469814,
+        "spectral_bandwidth_hz": 557147.986528127,
+        "spectral_centroid_hz": -28092.929329972096,
+        "std_abs_amplitude": 0.01425224682316184,
+        "std_power_db": 6.722270965576172
+      },
+      "median_correct_class_score": 0.91,
+      "n_examples": 24,
+      "physical_unit_id": "CC2650-UNIT-01",
+      "physical_unit_pseudonym": "TX-05",
+      "recall": 1.0,
+      "session_id": "BLE-HYBRID-20260730T134110Z-96da87",
+      "top_competing_class": null,
+      "top_competing_class_share": 0.0
+    },
+    {
+      "accuracy": 1.0,
+      "class_distribution": {
+        "CC2541SensorTag": 0.0,
+        "CC2650-UNIT-01": 1.0,
+        "keyfobdemo 01": 0.0,
+        "keyfobdemo 02": 0.0
+      },
+      "feature_iqrs_within_session": {
+        "amplitude_kurtosis": 52.04464054107666,
+        "amplitude_skewness": 6.088206402957439,
+        "cfo_estimate_hz": 8129.986328125,
+        "mean_abs_amplitude": 0.0023689568042755127,
+        "mean_power_dbfs": 0.15248905548972402,
+        "papr_db": 0.40964989140328867,
+        "spectral_bandwidth_hz": 49297.94084671943,
+        "spectral_centroid_hz": 23889.641718646515,
+        "std_abs_amplitude": 0.01008906017523259,
+        "std_power_db": 7.828675538301468
+      },
+      "feature_medians": {
+        "amplitude_kurtosis": 19.45639991760254,
+        "amplitude_skewness": -4.60232400894165,
+        "cfo_estimate_hz": -32414.947265625,
+        "mean_abs_amplitude": 0.06771259009838104,
+        "mean_power_dbfs": -23.313838663935066,
+        "papr_db": 0.6921127900849905,
+        "spectral_bandwidth_hz": 557746.3959545427,
+        "spectral_centroid_hz": -25882.86283484837,
+        "std_abs_amplitude": 0.008213108405470848,
+        "std_power_db": 5.382125377655029
+      },
+      "median_correct_class_score": 0.91,
+      "n_examples": 47,
+      "physical_unit_id": "CC2650-UNIT-01",
+      "physical_unit_pseudonym": "TX-05",
+      "recall": 1.0,
+      "session_id": "BLE-HYBRID-20260730T134310Z-5bc966",
+      "top_competing_class": null,
+      "top_competing_class_share": 0.0
+    }
+  ],
+  "tx04_focus": {
+    "all_sessions_recall_below_0_10": true,
+    "error_concentrated_in_single_class": true,
+    "n_sessions": 2,
+    "per_session_recall": {
+      "BLE-HYBRID-20260729T141323Z-055798": 0.012048192771084338,
+      "BLE-HYBRID-20260729T141457Z-c5b022": 0.0
+    },
+    "physical_unit_id": "keyfobdemo 02",
+    "physical_unit_pseudonym": "TX-04",
+    "top_competing_classes_across_sessions": {
+      "keyfobdemo 01": 2
+    }
+  }
+}

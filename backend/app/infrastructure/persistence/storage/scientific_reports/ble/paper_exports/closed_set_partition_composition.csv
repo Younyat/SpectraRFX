@@ -1,0 +1,4 @@
+domain,n_examples,n_captures,n_sessions
+TRAIN,3561,34,34
+VALIDATION,2203,12,12
+TEST,2464,12,12

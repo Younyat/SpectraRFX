@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0",
+  "acceptance_scope": "real_iq_capture_and_visualization",
+  "target_hardware": "usrp_b200",
+  "physical_hardware_used": true,
+  "fake_sdr_used": false,
+  "device": {
+    "driver": "uhd",
+    "label": "USRP B200",
+    "serial_masked": "*****Z1B2",
+    "soapy_find_passed": true,
+    "soapy_probe_passed": true
+  },
+  "capture": {
+    "capture_id": "BLE-IQ-18e58422f746",
+    "center_frequency_hz": 2402000000,
+    "sample_rate_sps": 4000000,
+    "bandwidth_hz": 2000000,
+    "stored_datatype": "cf32_le",
+    "duration_seconds": 3.0,
+    "samples_received": 12000000,
+    "bytes_written": 96000000,
+    "overflow_count": 0,
+    "input_discontinuities": 0,
+    "capture_complete": true,
+    "sigmf_valid": true,
+    "data_sha256": "de74bc5e2dda3ddfb276994dde57808d0f363ece3640591bd01a2dc81e997204",
+    "metadata_sha256": "1ecec7f6b3016547e7cac680b3f88e41bbd0a9aa28f6d15a7ff2813731fe403a"
+  },
+  "controlled_comparison": {
+    "conditions_held_constant": [
+      "center_frequency_hz",
+      "sample_rate_sps",
+      "bandwidth_hz",
+      "stored_datatype",
+      "antenna",
+      "gain_db",
+      "duration_seconds",
+      "physical_position"
+    ],
+    "background_control_A": {
+      "capture_id": "BLE-IQ-8f31009519a3",
+      "controlled_transmitter_state": "off",
+      "operator_confirmed": true,
+      "confirmation_method": "physical_manual_verification",
+      "samples_received": 12000000,
+      "bytes_written": 96000000,
+      "overflow_count": 7,
+      "input_discontinuities": 7,
+      "data_sha256": "c1cb5ad9d0888896def882f818e7e0c8a039b3b80d1685bf15e127736d69abd1",
+      "metadata_sha256": "ca26d58894e91accc5cbf28c8fa1d58b07131ed6cae3b641acc3689158cfbe96",
+      "visualization_sha256": "184a8375589e78a3d150505275ae1fc2fdcd4c2ab00c3f2bb879c6b433efab5e"
+    },
+    "controlled_transmitter_active_B": {
+      "capture_id": "BLE-IQ-18e58422f746",
+      "controlled_transmitter_state": "on",
+      "operator_confirmed": true,
+      "confirmation_method": "physical_manual_verification",
+      "samples_received": 12000000,
+      "bytes_written": 96000000,
+      "overflow_count": 0,
+      "input_discontinuities": 0,
+      "data_sha256": "de74bc5e2dda3ddfb276994dde57808d0f363ece3640591bd01a2dc81e997204",
+      "metadata_sha256": "1ecec7f6b3016547e7cac680b3f88e41bbd0a9aa28f6d15a7ff2813731fe403a",
+      "visualization_sha256": "0033bbd26a136d192bb8bb5874e01099665f0d771e8c070d3f7d43dd63c40ecb"
+    },
+    "interpretation": "The controlled transmitter state changed. Ambient BLE or other RF activity may be present in either recording; no visible variation is asserted to be a decoded BLE packet."
+  },
+  "visualization": {
+    "spectrum_generated": true,
+    "waterfall_generated": true,
+    "power_timeline_generated": true,
+    "iq_preview_generated": true,
+    "reopened_from_catalog": true
+  },
+  "ble_decode_attempted": false,
+  "capture_and_decode_enabled": false,
+  "gate2a2_promoted": false,
+  "iq_recovery_validated": false,
+  "ota_validated": false
+}

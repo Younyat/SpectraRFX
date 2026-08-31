@@ -1,0 +1,106 @@
+{
+  "dataset_composition": {
+    "channel_counts": {
+      "37": 8228,
+      "38": 1663
+    },
+    "dataset_id": "IDENTITY-c52850a953",
+    "dataset_version": "20260814T224525.782975Z",
+    "day_counts": {
+      "2026-07-28": 2358,
+      "2026-07-29": 2566,
+      "2026-07-30": 1806,
+      "2026-07-31": 3161
+    },
+    "physical_unit_counts": {
+      "CC2541SensorTag": 1199,
+      "CC2650-UNIT-01": 1487,
+      "keyfobdemo 01": 5763,
+      "keyfobdemo 02": 1442
+    },
+    "session_count": 79,
+    "total_examples": 9891
+  },
+  "dataset_id": "IDENTITY-c52850a953",
+  "dataset_version": "20260814T224525.782975Z",
+  "generated_at": "2026-08-23T13:29:58.539168Z",
+  "label_provenance": {
+    "counts": {
+      "AMBIGUOUS": 28,
+      "NONE": 5525,
+      "PHYSICAL_ISOLATION_DECLARED": 4338
+    },
+    "dataset_id": "IDENTITY-c52850a953",
+    "dataset_version": "20260814T224525.782975Z",
+    "fractions": {
+      "AMBIGUOUS": 0.0028,
+      "NONE": 0.5586,
+      "PHYSICAL_ISOLATION_DECLARED": 0.4386
+    },
+    "strong_fraction": 0.0,
+    "total_examples": 9891
+  },
+  "note": "Persisted snapshot for public technical-evidence-audit purposes. label_provenance_report()/dataset_composition_report() are normally computed on demand from the live dataset and are not otherwise saved as a standalone file; this file freezes their output at the time TECHNICAL_EVIDENCE_AUDIT.md was written, over the same frozen dataset.example_ids referenced by dataset_manifest_IDENTITY-c52850a953.json.",
+  "per_unit_channel_breakdown": [
+    {
+      "channel": 37,
+      "n_examples": 850,
+      "n_sessions": 9,
+      "physical_unit_id": "CC2541SensorTag"
+    },
+    {
+      "channel": 38,
+      "n_examples": 349,
+      "n_sessions": 5,
+      "physical_unit_id": "CC2541SensorTag"
+    },
+    {
+      "channel": 37,
+      "n_examples": 913,
+      "n_sessions": 13,
+      "physical_unit_id": "CC2650-UNIT-01"
+    },
+    {
+      "channel": 38,
+      "n_examples": 574,
+      "n_sessions": 7,
+      "physical_unit_id": "CC2650-UNIT-01"
+    },
+    {
+      "channel": 37,
+      "n_examples": 5290,
+      "n_sessions": 24,
+      "physical_unit_id": "keyfobdemo 01"
+    },
+    {
+      "channel": 38,
+      "n_examples": 473,
+      "n_sessions": 6,
+      "physical_unit_id": "keyfobdemo 01"
+    },
+    {
+      "channel": 37,
+      "n_examples": 1175,
+      "n_sessions": 12,
+      "physical_unit_id": "keyfobdemo 02"
+    },
+    {
+      "channel": 38,
+      "n_examples": 267,
+      "n_sessions": 3,
+      "physical_unit_id": "keyfobdemo 02"
+    }
+  ],
+  "schema_version": "ble-technical-evidence-audit-snapshot-v1",
+  "session_device_structure": {
+    "sessions_per_unit": {
+      "CC2541SensorTag": 14,
+      "CC2650-UNIT-01": 20,
+      "keyfobdemo 01": 30,
+      "keyfobdemo 02": 15
+    },
+    "sessions_with_more_than_one_enrolled_unit": 0,
+    "total_sessions": 79
+  },
+  "source_function": "StudioRepository.label_provenance_report / .dataset_composition_report (backend/app/modules/ble_rffi_studio/api/studio_repository.py)"
+}

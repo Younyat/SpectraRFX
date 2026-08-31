@@ -1,0 +1,176 @@
+{
+  "schema_version": "1.0",
+  "environment": {
+    "python": "3.12.9",
+    "pip": "26.1.2",
+    "pytest": "9.1.1",
+    "pydantic": "2.13.4",
+    "dependency_source": "backend/requirements.dev-windows.txt",
+    "pythonhashseed": "0",
+    "pytest_command": "python -m pytest --tb=short -ra --junitxml=<run-specific-path>"
+  },
+  "baseline": {
+    "commit": "12e3ac193123e128a555ea6cc24b1b765c08f4cb",
+    "collected": 88,
+    "passed": 69,
+    "skipped": 2,
+    "failed": 17,
+    "duration_seconds": 20.584
+  },
+  "ble_working_tree": {
+    "base_commit": "12e3ac193123e128a555ea6cc24b1b765c08f4cb",
+    "collected": 102,
+    "passed": 83,
+    "skipped": 2,
+    "failed": 17,
+    "duration_seconds": 21.740
+  },
+  "collection_delta": {
+    "tests_added": 14,
+    "explanation": "The BLE working tree adds fourteen passing BLE hardening tests; the clean baseline predates them."
+  },
+  "failure_sets_identical": true,
+  "failure_causes_identical": true,
+  "new_failures_introduced": [],
+  "resolved_failures": [],
+  "ble_related_failures": [],
+  "unchanged_failures": [
+    {
+      "test_node_id": "app.tests.integration.test_rf_experiment_lab.RFExperimentLabIntegrationTest::test_benchmark_report_compares_e1_e3_e5_and_sorts_macro_f1",
+      "module": "rf_experiment_lab",
+      "exception_type": "ValueError",
+      "first_relevant_error_line": "E5 requires at least two classes; only signal_type 'wifi' remains after scientific_strict filtering.",
+      "baseline_result": "failed",
+      "current_result": "failed"
+    },
+    {
+      "test_node_id": "app.tests.integration.test_rf_experiment_lab.RFExperimentLabIntegrationTest::test_benchmark_report_identifies_best_fastest_and_exports",
+      "module": "rf_experiment_lab",
+      "exception_type": "ValueError",
+      "first_relevant_error_line": "E5 requires at least two classes; only signal_type 'wifi' remains after scientific_strict filtering.",
+      "baseline_result": "failed",
+      "current_result": "failed"
+    },
+    {
+      "test_node_id": "app.tests.integration.test_rf_experiment_lab.RFExperimentLabIntegrationTest::test_benchmark_report_warnings_for_dataset_and_split_mismatch",
+      "module": "rf_experiment_lab",
+      "exception_type": "ValueError",
+      "first_relevant_error_line": "E5 requires at least two classes; only signal_type 'wifi' remains after scientific_strict filtering.",
+      "baseline_result": "failed",
+      "current_result": "failed"
+    },
+    {
+      "test_node_id": "app.tests.integration.test_rf_experiment_lab.RFExperimentLabIntegrationTest::test_e1_and_e5_compare_together",
+      "module": "rf_experiment_lab",
+      "exception_type": "ValueError",
+      "first_relevant_error_line": "E5 requires at least two classes; only signal_type 'wifi' remains after scientific_strict filtering.",
+      "baseline_result": "failed",
+      "current_result": "failed"
+    },
+    {
+      "test_node_id": "app.tests.integration.test_rf_experiment_lab.RFExperimentLabIntegrationTest::test_e3_listing_detail_and_comparison_with_e1_e5",
+      "module": "rf_experiment_lab",
+      "exception_type": "ValueError",
+      "first_relevant_error_line": "E5 requires at least two classes; only signal_type 'wifi' remains after scientific_strict filtering.",
+      "baseline_result": "failed",
+      "current_result": "failed"
+    },
+    {
+      "test_node_id": "app.tests.integration.test_rf_experiment_lab.RFExperimentLabIntegrationTest::test_e5_all_model_comparison_produces_metrics_per_model",
+      "module": "rf_experiment_lab",
+      "exception_type": "ValueError",
+      "first_relevant_error_line": "E5 requires at least two classes; only signal_type 'wifi' remains after scientific_strict filtering.",
+      "baseline_result": "failed",
+      "current_result": "failed"
+    },
+    {
+      "test_node_id": "app.tests.integration.test_rf_experiment_lab.RFExperimentLabIntegrationTest::test_e5_normalized_confusion_matrix_and_predictions_columns",
+      "module": "rf_experiment_lab",
+      "exception_type": "ValueError",
+      "first_relevant_error_line": "E5 requires at least two classes; only signal_type 'wifi' remains after scientific_strict filtering.",
+      "baseline_result": "failed",
+      "current_result": "failed"
+    },
+    {
+      "test_node_id": "app.tests.integration.test_rf_experiment_lab.RFExperimentLabIntegrationTest::test_e5_preview_accepts_rf_experiment_dataset_manifest",
+      "module": "rf_experiment_lab",
+      "exception_type": "AssertionError",
+      "first_relevant_error_line": "Expected 12 samples, received 0.",
+      "baseline_result": "failed",
+      "current_result": "failed"
+    },
+    {
+      "test_node_id": "app.tests.integration.test_rf_experiment_lab.RFExperimentLabIntegrationTest::test_e5_random_forest_feature_importance_exported",
+      "module": "rf_experiment_lab",
+      "exception_type": "ValueError",
+      "first_relevant_error_line": "E5 requires at least two classes; only signal_type 'wifi' remains after scientific_strict filtering.",
+      "baseline_result": "failed",
+      "current_result": "failed"
+    },
+    {
+      "test_node_id": "app.tests.integration.test_rf_experiment_lab.RFExperimentLabIntegrationTest::test_e5_result_package_records_manifest_reproducibility_and_inference_persistence",
+      "module": "rf_experiment_lab",
+      "exception_type": "ValueError",
+      "first_relevant_error_line": "E5 found no eligible captures under scientific_strict.",
+      "baseline_result": "failed",
+      "current_result": "failed"
+    },
+    {
+      "test_node_id": "app.tests.integration.test_rf_experiment_lab.RFExperimentLabIntegrationTest::test_e5_result_package_written_when_training_succeeds",
+      "module": "rf_experiment_lab",
+      "exception_type": "ValueError",
+      "first_relevant_error_line": "E5 requires at least two classes; only signal_type 'wifi' remains after scientific_strict filtering.",
+      "baseline_result": "failed",
+      "current_result": "failed"
+    },
+    {
+      "test_node_id": "app.tests.integration.test_rf_experiment_lab.RFExperimentLabIntegrationTest::test_experiment_comparison_sorts_by_macro_f1",
+      "module": "rf_experiment_lab",
+      "exception_type": "ValueError",
+      "first_relevant_error_line": "E5 requires at least two classes; only signal_type 'wifi' remains after scientific_strict filtering.",
+      "baseline_result": "failed",
+      "current_result": "failed"
+    },
+    {
+      "test_node_id": "app.tests.integration.test_rf_experiment_lab.RFExperimentLabIntegrationTest::test_experiment_listing_and_detail_load_e5",
+      "module": "rf_experiment_lab",
+      "exception_type": "ValueError",
+      "first_relevant_error_line": "E5 requires at least two classes; only signal_type 'wifi' remains after scientific_strict filtering.",
+      "baseline_result": "failed",
+      "current_result": "failed"
+    },
+    {
+      "test_node_id": "app.tests.integration.test_rf_experiment_lab.RFExperimentLabIntegrationTest::test_internal_dataset_sample_review_export_and_random_debug_warning",
+      "module": "rf_experiment_lab",
+      "exception_type": "IndexError",
+      "first_relevant_error_line": "Sample list is empty when index 0 is accessed.",
+      "baseline_result": "failed",
+      "current_result": "failed"
+    },
+    {
+      "test_node_id": "app.tests.integration.test_rf_experiment_lab.RFExperimentLabIntegrationTest::test_region_comparison_returns_agreement_disagreement_fields",
+      "module": "rf_experiment_lab",
+      "exception_type": "ValueError",
+      "first_relevant_error_line": "E5 requires at least two classes; only signal_type 'wifi' remains after scientific_strict filtering.",
+      "baseline_result": "failed",
+      "current_result": "failed"
+    },
+    {
+      "test_node_id": "app.tests.integration.test_rf_experiment_lab.RFExperimentLabIntegrationTest::test_rf_experiment_dataset_v1_internal_export_and_e1_preview",
+      "module": "rf_experiment_lab",
+      "exception_type": "AssertionError",
+      "first_relevant_error_line": "Expected 12 samples, received 0.",
+      "baseline_result": "failed",
+      "current_result": "failed"
+    },
+    {
+      "test_node_id": "app.tests.unit.test_rf_intelligence::test_rf_intelligence_detects_fm_broadcast_candidate",
+      "module": "rf_intelligence",
+      "exception_type": "AssertionError",
+      "first_relevant_error_line": "Expected 'WFM broadcast candidate', received 'Commercial FM Broadcast'.",
+      "baseline_result": "failed",
+      "current_result": "failed"
+    }
+  ],
+  "conclusion": "The complete backend suite is not globally green. The same 17 non-BLE tests fail with matching primary causes on the clean baseline and on the BLE working tree. No new backend test failure was introduced by the BLE integration."
+}

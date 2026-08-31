@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ble-campaign-manifest-v1",
+  "type": "object",
+  "required": ["campaign_intent", "target"],
+  "properties": {
+    "campaign_intent": {"enum": ["positive_target_validation", "negative_control", "exploratory_target_search", "POSITIVE_TARGET_VALIDATION", "NEGATIVE_CONTROL", "EXPLORATORY_TARGET_SEARCH"]},
+    "negative_control_type": {"enum": ["target_powered_off", "target_physically_absent", "other_device_substituted", "ambient_only", "TARGET_POWERED_OFF", "TARGET_PHYSICALLY_ABSENT", "OTHER_DEVICE_SUBSTITUTED", "AMBIENT_ONLY", null]},
+    "operator_confirmation": {"type": "boolean"},
+    "operational_visibility": {"enum": ["operator", "internal_validation"]},
+    "target": {"type": "object"}
+  },
+  "allOf": [{"if": {"properties": {"campaign_intent": {"enum": ["negative_control", "NEGATIVE_CONTROL"]}}}, "then": {"required": ["negative_control_type", "operator_confirmation"], "properties": {"operator_confirmation": {"const": true}}}}]
+}

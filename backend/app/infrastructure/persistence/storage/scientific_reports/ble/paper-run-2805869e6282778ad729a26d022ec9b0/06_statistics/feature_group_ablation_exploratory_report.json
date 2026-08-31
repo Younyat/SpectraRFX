@@ -1,0 +1,1408 @@
+{
+  "confirmations": {
+    "no_new_iq_acquisition": {
+      "evidence": "No new capture, no new I/Q file, no dataset/split modification -- reuses the frozen IDENTITY-c52850a953 dataset and its existing split manifest exactly.",
+      "value": true
+    },
+    "no_tuning_no_model_selection": {
+      "evidence": "variant_run = base_run.model_copy(update=...) with only training_run_id/status/timestamps/contract fields overridden -- model_type, hyperparameters, random_seed, representation_profile_id, base_preprocessing_profile_id inherited unchanged from PRIMARY. No GridSearchCV/RandomizedSearchCV/candidate comparison anywhere in this path.",
+      "value": true
+    },
+    "primary_untouched": {
+      "evidence": "All 29 real files backing the PRIMARY training run and bundle (training_runs/TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd/*, bundles/CLOSED-SET-4DEVICES-random_forest-bundle/*) were SHA-256-hashed before and after this ablation; every hash is identical.",
+      "value": true
+    },
+    "scaler_fit_train_only_no_leakage": {
+      "evidence": "training_service.py run_baseline: TrainOnlyScaler.fit(X['TRAIN'], split='TRAIN') on the (already column-restricted) TRAIN feature matrix; VALIDATION/TEST are only ever transformed. Same code path PRIMARY itself uses.",
+      "value": true
+    },
+    "test_never_opened": {
+      "evidence": "Both new bundles report approval_status=TEST_NOT_EXECUTED. holdout_access_log.jsonl line count unchanged: 9 before, 9 after this ablation.",
+      "value": true
+    }
+  },
+  "contrasts": {
+    "FULL_minus_POWER_AMPLITUDE_LEVEL": {
+      "ci_high": 0.5081803235692274,
+      "ci_low": 0.2756919206323338,
+      "confidence_level": 0.95,
+      "n_resamples": 2000,
+      "point_estimate": 0.3957426315949492
+    },
+    "FULL_minus_REMAINING_SIX": {
+      "ci_high": -0.13935015388444016,
+      "ci_low": -0.1647860445765876,
+      "confidence_level": 0.95,
+      "n_resamples": 2000,
+      "point_estimate": -0.15296855336575876
+    },
+    "REMAINING_SIX_minus_POWER_AMPLITUDE_LEVEL": {
+      "ci_high": 0.6554640753476252,
+      "ci_low": 0.4338890360169491,
+      "confidence_level": 0.95,
+      "n_resamples": 2000,
+      "point_estimate": 0.548711184960708
+    },
+    "method": "bootstrap_balanced_accuracy_delta_ci_matched_by_class (Evaluator) -- genuinely matched, class-stratified, session-clustered bootstrap: the same resampled session indices per class stratum per replicate are applied jointly to both populations being contrasted, since all three conditions score the identical VALIDATION example_ids/sessions under different feature subsets of the same evidence. n_resamples=2000, seed=12345 (function default, never overridden), percentile 95% CI. No confirmatory significance test or p-value is computed.",
+    "no_confirmatory_significance_test_performed": true
+  },
+  "evidence_status": "DEVELOPMENT_EXPLORATORY",
+  "feature_groups": {
+    "FULL": {
+      "feature_indices": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "feature_names": [
+        "mean_power_dbfs",
+        "std_power_db",
+        "mean_abs_amplitude",
+        "std_abs_amplitude",
+        "spectral_centroid_hz",
+        "spectral_bandwidth_hz",
+        "cfo_estimate_hz",
+        "papr_db",
+        "amplitude_kurtosis",
+        "amplitude_skewness"
+      ]
+    },
+    "POWER_AMPLITUDE_LEVEL": {
+      "feature_indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "feature_names": [
+        "mean_power_dbfs",
+        "std_power_db",
+        "mean_abs_amplitude",
+        "std_abs_amplitude"
+      ]
+    },
+    "REMAINING_SIX": {
+      "feature_indices": [
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "feature_names": [
+        "spectral_centroid_hz",
+        "spectral_bandwidth_hz",
+        "cfo_estimate_hz",
+        "papr_db",
+        "amplitude_kurtosis",
+        "amplitude_skewness"
+      ]
+    }
+  },
+  "generated_at": "2026-08-23T20:00:12.323970Z",
+  "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+  "population": {
+    "note": "Identical TRAIN and VALIDATION example_id sets and order verified programmatically across all three conditions before any statistic below was computed.",
+    "train_n_examples": 3561,
+    "train_n_sessions": 34,
+    "train_validation_ids_identical_across_conditions": true,
+    "validation_n_examples": 2203,
+    "validation_n_sessions": 12,
+    "validation_per_unit": {
+      "CC2541SensorTag": {
+        "n_examples": 187,
+        "n_sessions": 2
+      },
+      "CC2650-UNIT-01": {
+        "n_examples": 166,
+        "n_sessions": 3
+      },
+      "keyfobdemo 01": {
+        "n_examples": 1690,
+        "n_sessions": 5
+      },
+      "keyfobdemo 02": {
+        "n_examples": 160,
+        "n_sessions": 2
+      }
+    }
+  },
+  "provenance": {
+    "base_preprocessing_profile_id": "base-v1",
+    "dataset_id": "IDENTITY-c52850a953",
+    "dataset_version": "20260814T224525.782975Z",
+    "model_configuration": {
+      "hyperparameters_declared": {},
+      "model_type": "random_forest",
+      "random_seed": 42,
+      "sklearn_config": "RandomForestClassifier(random_state=42, n_estimators=100, max_depth=None) -- identical to PRIMARY for all three conditions"
+    },
+    "power_amplitude_level_bundle_id": "FEATGRP-a598bd-power-amp-bundle",
+    "power_amplitude_level_training_run_id": "FEATGRP-a598bd-power-amp",
+    "primary_bundle_id": "CLOSED-SET-4DEVICES-random_forest-bundle",
+    "primary_training_run_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+    "primary_untouched": true,
+    "remaining_six_bundle_id": "FEATGRP-a598bd-remaining6-bundle",
+    "remaining_six_training_run_id": "FEATGRP-a598bd-remaining6",
+    "scaler": "TrainOnlyScaler fit exclusively on TRAIN for each condition's own feature-column subset (fresh fit for POWER_AMPLITUDE_LEVEL/REMAINING_SIX; PRIMARY's own already-fit scaler reused for FULL, no recomputation)",
+    "split_manifest_id": "IDENTITY-c52850a953__20260814T224525.782975Z__MULTI_DEVICE_CLASSIFICATION"
+  },
+  "question": "How much of the current Random Forest's VALIDATION performance can be obtained from the power/amplitude-level engineered descriptors alone, versus the remaining six descriptors, over the existing corpus -- not a model-improvement or model-selection exercise.",
+  "results": {
+    "FULL": {
+      "accuracy": 0.7494325919201089,
+      "balanced_accuracy": 0.6338138990398197,
+      "balanced_accuracy_ci": {
+        "ci_high": 0.6850857789866278,
+        "ci_low": 0.5912219610540254,
+        "confidence_level": 0.95,
+        "n_resamples": 2000,
+        "point_estimate": 0.6338138990398197
+      },
+      "confusion_matrix": {
+        "CC2541SensorTag": {
+          "CC2541SensorTag": 146,
+          "CC2650-UNIT-01": 0,
+          "keyfobdemo 01": 15,
+          "keyfobdemo 02": 26
+        },
+        "CC2650-UNIT-01": {
+          "CC2541SensorTag": 0,
+          "CC2650-UNIT-01": 158,
+          "keyfobdemo 01": 1,
+          "keyfobdemo 02": 7
+        },
+        "keyfobdemo 01": {
+          "CC2541SensorTag": 185,
+          "CC2650-UNIT-01": 13,
+          "keyfobdemo 01": 1346,
+          "keyfobdemo 02": 146
+        },
+        "keyfobdemo 02": {
+          "CC2541SensorTag": 0,
+          "CC2650-UNIT-01": 0,
+          "keyfobdemo 01": 159,
+          "keyfobdemo 02": 1
+        }
+      },
+      "evaluation_validity": "VALID",
+      "f1_per_class": {
+        "CC2541SensorTag": 0.5637065637065637,
+        "CC2650-UNIT-01": 0.9376854599406528,
+        "keyfobdemo 01": 0.8383681096231703,
+        "keyfobdemo 02": 0.0058823529411764705
+      },
+      "macro_f1": 0.5864106215528908,
+      "n_comparable_to_known_classes": 2203,
+      "n_examples": 2203,
+      "precision_per_class": {
+        "CC2541SensorTag": 0.44108761329305135,
+        "CC2650-UNIT-01": 0.9239766081871345,
+        "keyfobdemo 01": 0.8849441157133465,
+        "keyfobdemo 02": 0.005555555555555556
+      },
+      "recall_per_class": {
+        "CC2541SensorTag": 0.7807486631016043,
+        "CC2650-UNIT-01": 0.9518072289156626,
+        "keyfobdemo 01": 0.7964497041420119,
+        "keyfobdemo 02": 0.00625
+      },
+      "risk_coverage": [
+        {
+          "coverage": 0.016341352700862462,
+          "risk": 0.0,
+          "threshold": 1.0
+        },
+        {
+          "coverage": 0.026781661370857923,
+          "risk": 0.0,
+          "threshold": 0.99
+        },
+        {
+          "coverage": 0.03767589650476623,
+          "risk": 0.0,
+          "threshold": 0.98
+        },
+        {
+          "coverage": 0.05447117566954154,
+          "risk": 0.0,
+          "threshold": 0.97
+        },
+        {
+          "coverage": 0.06763504312301408,
+          "risk": 0.0,
+          "threshold": 0.96
+        },
+        {
+          "coverage": 0.08216068996822515,
+          "risk": 0.0,
+          "threshold": 0.95
+        },
+        {
+          "coverage": 0.10304130730821606,
+          "risk": 0.004405286343612335,
+          "threshold": 0.94
+        },
+        {
+          "coverage": 0.1230140717203813,
+          "risk": 0.0036900369003690036,
+          "threshold": 0.93
+        },
+        {
+          "coverage": 0.13890149795733092,
+          "risk": 0.006535947712418301,
+          "threshold": 0.92
+        },
+        {
+          "coverage": 0.165229232864276,
+          "risk": 0.01098901098901099,
+          "threshold": 0.91
+        },
+        {
+          "coverage": 0.18338629142078983,
+          "risk": 0.017326732673267328,
+          "threshold": 0.9
+        },
+        {
+          "coverage": 0.1979119382660009,
+          "risk": 0.020642201834862386,
+          "threshold": 0.89
+        },
+        {
+          "coverage": 0.20835224693599638,
+          "risk": 0.02178649237472767,
+          "threshold": 0.88
+        },
+        {
+          "coverage": 0.21788470267816615,
+          "risk": 0.022916666666666665,
+          "threshold": 0.87
+        },
+        {
+          "coverage": 0.23241034952337722,
+          "risk": 0.0234375,
+          "threshold": 0.86
+        },
+        {
+          "coverage": 0.24648206990467544,
+          "risk": 0.029465930018416207,
+          "threshold": 0.85
+        },
+        {
+          "coverage": 0.265546981389015,
+          "risk": 0.03418803418803419,
+          "threshold": 0.84
+        },
+        {
+          "coverage": 0.2873354516568316,
+          "risk": 0.04107424960505529,
+          "threshold": 0.83
+        },
+        {
+          "coverage": 0.3023150249659555,
+          "risk": 0.05105105105105105,
+          "threshold": 0.82
+        },
+        {
+          "coverage": 0.33136631865637767,
+          "risk": 0.057534246575342465,
+          "threshold": 0.81
+        },
+        {
+          "coverage": 0.36177939173853835,
+          "risk": 0.06900878293601004,
+          "threshold": 0.8
+        },
+        {
+          "coverage": 0.38629142078983203,
+          "risk": 0.06933019976498238,
+          "threshold": 0.79
+        },
+        {
+          "coverage": 0.4117113027689514,
+          "risk": 0.0782800441014333,
+          "threshold": 0.78
+        },
+        {
+          "coverage": 0.44212437585111214,
+          "risk": 0.08624229979466119,
+          "threshold": 0.77
+        },
+        {
+          "coverage": 0.46981389014979574,
+          "risk": 0.08985507246376812,
+          "threshold": 0.76
+        },
+        {
+          "coverage": 0.4929641398093509,
+          "risk": 0.08931860036832412,
+          "threshold": 0.75
+        },
+        {
+          "coverage": 0.5156604630049932,
+          "risk": 0.0897887323943662,
+          "threshold": 0.74
+        },
+        {
+          "coverage": 0.5320018157058557,
+          "risk": 0.08959044368600683,
+          "threshold": 0.73
+        },
+        {
+          "coverage": 0.5478892419428053,
+          "risk": 0.08947804473902236,
+          "threshold": 0.72
+        },
+        {
+          "coverage": 0.5615070358601907,
+          "risk": 0.08973322554567502,
+          "threshold": 0.71
+        },
+        {
+          "coverage": 0.5769405356332274,
+          "risk": 0.08811959087332809,
+          "threshold": 0.7
+        },
+        {
+          "coverage": 0.5928279618701771,
+          "risk": 0.08728943338437979,
+          "threshold": 0.69
+        },
+        {
+          "coverage": 0.6073536087153881,
+          "risk": 0.08819133034379671,
+          "threshold": 0.68
+        },
+        {
+          "coverage": 0.6246028143440763,
+          "risk": 0.09302325581395349,
+          "threshold": 0.67
+        },
+        {
+          "coverage": 0.643213799364503,
+          "risk": 0.0995059985885674,
+          "threshold": 0.66
+        },
+        {
+          "coverage": 0.6631865637766682,
+          "risk": 0.10472279260780287,
+          "threshold": 0.65
+        },
+        {
+          "coverage": 0.6822514752610077,
+          "risk": 0.10911510312707917,
+          "threshold": 0.64
+        },
+        {
+          "coverage": 0.6999546073536087,
+          "risk": 0.11219195849546044,
+          "threshold": 0.63
+        },
+        {
+          "coverage": 0.7172038129822969,
+          "risk": 0.11455696202531646,
+          "threshold": 0.62
+        },
+        {
+          "coverage": 0.7271901951883795,
+          "risk": 0.11735330836454431,
+          "threshold": 0.61
+        },
+        {
+          "coverage": 0.7371765773944621,
+          "risk": 0.12130541871921183,
+          "threshold": 0.6
+        },
+        {
+          "coverage": 0.7480708125283704,
+          "risk": 0.12196601941747573,
+          "threshold": 0.59
+        },
+        {
+          "coverage": 0.7594189741261915,
+          "risk": 0.12313209802749552,
+          "threshold": 0.58
+        },
+        {
+          "coverage": 0.7707671357240127,
+          "risk": 0.12603062426383982,
+          "threshold": 0.57
+        },
+        {
+          "coverage": 0.7852927825692237,
+          "risk": 0.12658959537572254,
+          "threshold": 0.56
+        },
+        {
+          "coverage": 0.7952791647753064,
+          "risk": 0.13013698630136986,
+          "threshold": 0.55
+        },
+        {
+          "coverage": 0.8016341352700862,
+          "risk": 0.13306908267270667,
+          "threshold": 0.54
+        },
+        {
+          "coverage": 0.8129822968679074,
+          "risk": 0.13344500279173646,
+          "threshold": 0.53
+        },
+        {
+          "coverage": 0.8243304584657285,
+          "risk": 0.13656387665198239,
+          "threshold": 0.52
+        },
+        {
+          "coverage": 0.8311393554244212,
+          "risk": 0.13981430912069906,
+          "threshold": 0.51
+        },
+        {
+          "coverage": 0.8347707671357241,
+          "risk": 0.1408374116367591,
+          "threshold": 0.5
+        },
+        {
+          "coverage": 0.8406718111665911,
+          "risk": 0.14308855291576675,
+          "threshold": 0.49
+        },
+        {
+          "coverage": 0.8452110758057195,
+          "risk": 0.1439312567132116,
+          "threshold": 0.48
+        },
+        {
+          "coverage": 0.8533817521561508,
+          "risk": 0.1473404255319149,
+          "threshold": 0.47
+        },
+        {
+          "coverage": 0.861552428506582,
+          "risk": 0.14963119072708114,
+          "threshold": 0.46
+        },
+        {
+          "coverage": 0.8706309577848389,
+          "risk": 0.1548488008342023,
+          "threshold": 0.45
+        },
+        {
+          "coverage": 0.8815251929187472,
+          "risk": 0.1611740473738414,
+          "threshold": 0.44
+        },
+        {
+          "coverage": 0.8865183840217885,
+          "risk": 0.1633384536610343,
+          "threshold": 0.43
+        },
+        {
+          "coverage": 0.891057648660917,
+          "risk": 0.1660723382577687,
+          "threshold": 0.42
+        },
+        {
+          "coverage": 0.8955969133000454,
+          "risk": 0.16827166751140396,
+          "threshold": 0.41
+        },
+        {
+          "coverage": 0.9046754425783023,
+          "risk": 0.17511289513296538,
+          "threshold": 0.4
+        },
+        {
+          "coverage": 0.9133000453926464,
+          "risk": 0.18290258449304175,
+          "threshold": 0.39
+        },
+        {
+          "coverage": 0.9201089423513391,
+          "risk": 0.1879625061667489,
+          "threshold": 0.38
+        },
+        {
+          "coverage": 0.9319110304130731,
+          "risk": 0.19678519240136386,
+          "threshold": 0.37
+        },
+        {
+          "coverage": 0.94416704493872,
+          "risk": 0.20625,
+          "threshold": 0.36
+        },
+        {
+          "coverage": 0.9559691330004539,
+          "risk": 0.21604938271604937,
+          "threshold": 0.35
+        },
+        {
+          "coverage": 0.9691330004539265,
+          "risk": 0.22669789227166276,
+          "threshold": 0.34
+        },
+        {
+          "coverage": 0.9804811620517476,
+          "risk": 0.23564814814814813,
+          "threshold": 0.33
+        },
+        {
+          "coverage": 0.9859282796187018,
+          "risk": 0.23987108655616943,
+          "threshold": 0.32
+        },
+        {
+          "coverage": 0.9927371765773945,
+          "risk": 0.24508459076360312,
+          "threshold": 0.31
+        },
+        {
+          "coverage": 0.9972764412165229,
+          "risk": 0.2485207100591716,
+          "threshold": 0.3
+        },
+        {
+          "coverage": 0.9990921470721743,
+          "risk": 0.24988641526578828,
+          "threshold": 0.29
+        },
+        {
+          "coverage": 1.0,
+          "risk": 0.2505674080798911,
+          "threshold": 0.27
+        }
+      ],
+      "split": "VALIDATION"
+    },
+    "POWER_AMPLITUDE_LEVEL": {
+      "accuracy": 0.4298683613254653,
+      "balanced_accuracy": 0.23807126744487045,
+      "balanced_accuracy_ci": {
+        "ci_high": 0.33302874860803106,
+        "ci_low": 0.15835265512366165,
+        "confidence_level": 0.95,
+        "n_resamples": 2000,
+        "point_estimate": 0.23807126744487045
+      },
+      "confusion_matrix": {
+        "CC2541SensorTag": {
+          "CC2541SensorTag": 47,
+          "CC2650-UNIT-01": 96,
+          "keyfobdemo 01": 11,
+          "keyfobdemo 02": 33
+        },
+        "CC2650-UNIT-01": {
+          "CC2541SensorTag": 21,
+          "CC2650-UNIT-01": 31,
+          "keyfobdemo 01": 46,
+          "keyfobdemo 02": 68
+        },
+        "keyfobdemo 01": {
+          "CC2541SensorTag": 63,
+          "CC2650-UNIT-01": 386,
+          "keyfobdemo 01": 869,
+          "keyfobdemo 02": 372
+        },
+        "keyfobdemo 02": {
+          "CC2541SensorTag": 0,
+          "CC2650-UNIT-01": 76,
+          "keyfobdemo 01": 84,
+          "keyfobdemo 02": 0
+        }
+      },
+      "evaluation_validity": "VALID",
+      "f1_per_class": {
+        "CC2541SensorTag": 0.29559748427672955,
+        "CC2650-UNIT-01": 0.08211920529801324,
+        "keyfobdemo 01": 0.6437037037037037,
+        "keyfobdemo 02": 0.0
+      },
+      "macro_f1": 0.2553550983196116,
+      "n_comparable_to_known_classes": 2203,
+      "n_examples": 2203,
+      "precision_per_class": {
+        "CC2541SensorTag": 0.35877862595419846,
+        "CC2650-UNIT-01": 0.05263157894736842,
+        "keyfobdemo 01": 0.8603960396039604,
+        "keyfobdemo 02": 0.0
+      },
+      "recall_per_class": {
+        "CC2541SensorTag": 0.25133689839572193,
+        "CC2650-UNIT-01": 0.18674698795180722,
+        "keyfobdemo 01": 0.5142011834319526,
+        "keyfobdemo 02": 0.0
+      },
+      "risk_coverage": [
+        {
+          "coverage": 0.3041307308216069,
+          "risk": 0.42686567164179107,
+          "threshold": 1.0
+        },
+        {
+          "coverage": 0.3753971856559237,
+          "risk": 0.40386940749697703,
+          "threshold": 0.99
+        },
+        {
+          "coverage": 0.4148887880163413,
+          "risk": 0.3862144420131291,
+          "threshold": 0.98
+        },
+        {
+          "coverage": 0.42850658193372676,
+          "risk": 0.3866525423728814,
+          "threshold": 0.97
+        },
+        {
+          "coverage": 0.43849296413980937,
+          "risk": 0.38509316770186336,
+          "threshold": 0.96
+        },
+        {
+          "coverage": 0.4498411257376305,
+          "risk": 0.39354187689202824,
+          "threshold": 0.95
+        },
+        {
+          "coverage": 0.4607353608715388,
+          "risk": 0.4,
+          "threshold": 0.94
+        },
+        {
+          "coverage": 0.46981389014979574,
+          "risk": 0.4028985507246377,
+          "threshold": 0.93
+        },
+        {
+          "coverage": 0.48252383113935543,
+          "risk": 0.40921919096895576,
+          "threshold": 0.92
+        },
+        {
+          "coverage": 0.4929641398093509,
+          "risk": 0.4134438305709024,
+          "threshold": 0.91
+        },
+        {
+          "coverage": 0.5102133454380391,
+          "risk": 0.4225978647686833,
+          "threshold": 0.9
+        },
+        {
+          "coverage": 0.5270086246028144,
+          "risk": 0.4289405684754522,
+          "threshold": 0.89
+        },
+        {
+          "coverage": 0.5433499773036768,
+          "risk": 0.4352548036758563,
+          "threshold": 0.88
+        },
+        {
+          "coverage": 0.5587834770767136,
+          "risk": 0.4427294882209586,
+          "threshold": 0.87
+        },
+        {
+          "coverage": 0.572401270994099,
+          "risk": 0.44726407613005553,
+          "threshold": 0.86
+        },
+        {
+          "coverage": 0.584203359055833,
+          "risk": 0.45376845376845376,
+          "threshold": 0.85
+        },
+        {
+          "coverage": 0.5991829323649569,
+          "risk": 0.4492424242424242,
+          "threshold": 0.84
+        },
+        {
+          "coverage": 0.604630049931911,
+          "risk": 0.4527027027027027,
+          "threshold": 0.83
+        },
+        {
+          "coverage": 0.607807535179301,
+          "risk": 0.4548170276325616,
+          "threshold": 0.82
+        },
+        {
+          "coverage": 0.6141625056740808,
+          "risk": 0.4567627494456763,
+          "threshold": 0.81
+        },
+        {
+          "coverage": 0.622333182024512,
+          "risk": 0.4617067833698031,
+          "threshold": 0.8
+        },
+        {
+          "coverage": 0.6273263731275533,
+          "risk": 0.4638205499276411,
+          "threshold": 0.79
+        },
+        {
+          "coverage": 0.6354970494779846,
+          "risk": 0.46714285714285714,
+          "threshold": 0.78
+        },
+        {
+          "coverage": 0.6627326373127553,
+          "risk": 0.4863013698630137,
+          "threshold": 0.77
+        },
+        {
+          "coverage": 0.6718111665910123,
+          "risk": 0.48986486486486486,
+          "threshold": 0.76
+        },
+        {
+          "coverage": 0.6808896958692692,
+          "risk": 0.49533333333333335,
+          "threshold": 0.75
+        },
+        {
+          "coverage": 0.6904221516114389,
+          "risk": 0.5003287310979618,
+          "threshold": 0.74
+        },
+        {
+          "coverage": 0.7054017249205629,
+          "risk": 0.5083655083655083,
+          "threshold": 0.73
+        },
+        {
+          "coverage": 0.7090331366318656,
+          "risk": 0.5089628681177977,
+          "threshold": 0.72
+        },
+        {
+          "coverage": 0.7258284157966409,
+          "risk": 0.5140712945590994,
+          "threshold": 0.71
+        },
+        {
+          "coverage": 0.7362687244666364,
+          "risk": 0.5184956843403206,
+          "threshold": 0.7
+        },
+        {
+          "coverage": 0.7603268270540172,
+          "risk": 0.5313432835820896,
+          "threshold": 0.69
+        },
+        {
+          "coverage": 0.7666817975487971,
+          "risk": 0.5316755476613381,
+          "threshold": 0.68
+        },
+        {
+          "coverage": 0.7725828415796641,
+          "risk": 0.5340775558166863,
+          "threshold": 0.67
+        },
+        {
+          "coverage": 0.8029959146618247,
+          "risk": 0.5488976823063878,
+          "threshold": 0.66
+        },
+        {
+          "coverage": 0.8102587380844303,
+          "risk": 0.5490196078431373,
+          "threshold": 0.65
+        },
+        {
+          "coverage": 0.8179754879709487,
+          "risk": 0.5482796892341842,
+          "threshold": 0.64
+        },
+        {
+          "coverage": 0.8216068996822514,
+          "risk": 0.5480662983425414,
+          "threshold": 0.63
+        },
+        {
+          "coverage": 0.8293236495687698,
+          "risk": 0.5489874110563766,
+          "threshold": 0.62
+        },
+        {
+          "coverage": 0.8411257376305039,
+          "risk": 0.5520777118186724,
+          "threshold": 0.61
+        },
+        {
+          "coverage": 0.849750340444848,
+          "risk": 0.5544871794871795,
+          "threshold": 0.6
+        },
+        {
+          "coverage": 0.8592827961870178,
+          "risk": 0.5573164289487585,
+          "threshold": 0.59
+        },
+        {
+          "coverage": 0.8683613254652747,
+          "risk": 0.5588081547307894,
+          "threshold": 0.58
+        },
+        {
+          "coverage": 0.8778937812074444,
+          "risk": 0.5568769389865563,
+          "threshold": 0.57
+        },
+        {
+          "coverage": 0.8847026781661371,
+          "risk": 0.5572088250384812,
+          "threshold": 0.56
+        },
+        {
+          "coverage": 0.9042215161143895,
+          "risk": 0.5522088353413654,
+          "threshold": 0.55
+        },
+        {
+          "coverage": 0.914661824784385,
+          "risk": 0.5548387096774193,
+          "threshold": 0.54
+        },
+        {
+          "coverage": 0.9219246482069905,
+          "risk": 0.5539143279172821,
+          "threshold": 0.53
+        },
+        {
+          "coverage": 0.9328188833408988,
+          "risk": 0.5571776155717761,
+          "threshold": 0.52
+        },
+        {
+          "coverage": 0.9423513390830686,
+          "risk": 0.558766859344894,
+          "threshold": 0.51
+        },
+        {
+          "coverage": 0.9500680889695869,
+          "risk": 0.5613951266125179,
+          "threshold": 0.5
+        },
+        {
+          "coverage": 0.9568769859282796,
+          "risk": 0.562618595825427,
+          "threshold": 0.49
+        },
+        {
+          "coverage": 0.9618701770313209,
+          "risk": 0.5634733364794714,
+          "threshold": 0.48
+        },
+        {
+          "coverage": 0.9686790739900136,
+          "risk": 0.5641986879100281,
+          "threshold": 0.47
+        },
+        {
+          "coverage": 0.9732183386291421,
+          "risk": 0.5643656716417911,
+          "threshold": 0.46
+        },
+        {
+          "coverage": 0.9768497503404449,
+          "risk": 0.5659851301115242,
+          "threshold": 0.45
+        },
+        {
+          "coverage": 0.9804811620517476,
+          "risk": 0.5666666666666667,
+          "threshold": 0.44
+        },
+        {
+          "coverage": 0.9827507943713119,
+          "risk": 0.566743648960739,
+          "threshold": 0.43
+        },
+        {
+          "coverage": 0.9863822060826146,
+          "risk": 0.5674183156925909,
+          "threshold": 0.42
+        },
+        {
+          "coverage": 0.9900136177939174,
+          "risk": 0.5680880330123796,
+          "threshold": 0.41
+        },
+        {
+          "coverage": 0.9922832501134816,
+          "risk": 0.5686184812442818,
+          "threshold": 0.4
+        },
+        {
+          "coverage": 0.9950068088969587,
+          "risk": 0.5693430656934306,
+          "threshold": 0.39
+        },
+        {
+          "coverage": 0.9959146618247844,
+          "risk": 0.5692798541476755,
+          "threshold": 0.38
+        },
+        {
+          "coverage": 0.9968225147526101,
+          "risk": 0.569216757741348,
+          "threshold": 0.37
+        },
+        {
+          "coverage": 0.9972764412165229,
+          "risk": 0.569412835685025,
+          "threshold": 0.36
+        },
+        {
+          "coverage": 0.9990921470721743,
+          "risk": 0.5701953657428441,
+          "threshold": 0.35
+        },
+        {
+          "coverage": 0.9995460735360872,
+          "risk": 0.5699364214350591,
+          "threshold": 0.34
+        },
+        {
+          "coverage": 1.0,
+          "risk": 0.5701316386745348,
+          "threshold": 0.32
+        }
+      ],
+      "split": "VALIDATION"
+    },
+    "REMAINING_SIX": {
+      "accuracy": 0.5501588742623695,
+      "balanced_accuracy": 0.7867824524055784,
+      "balanced_accuracy_ci": {
+        "ci_high": 0.830536443702588,
+        "ci_low": 0.7489249584802024,
+        "confidence_level": 0.95,
+        "n_resamples": 2000,
+        "point_estimate": 0.7867824524055784
+      },
+      "confusion_matrix": {
+        "CC2541SensorTag": {
+          "CC2541SensorTag": 158,
+          "CC2650-UNIT-01": 0,
+          "keyfobdemo 01": 14,
+          "keyfobdemo 02": 15
+        },
+        "CC2650-UNIT-01": {
+          "CC2541SensorTag": 0,
+          "CC2650-UNIT-01": 159,
+          "keyfobdemo 01": 2,
+          "keyfobdemo 02": 5
+        },
+        "keyfobdemo 01": {
+          "CC2541SensorTag": 225,
+          "CC2650-UNIT-01": 458,
+          "keyfobdemo 01": 751,
+          "keyfobdemo 02": 256
+        },
+        "keyfobdemo 02": {
+          "CC2541SensorTag": 1,
+          "CC2650-UNIT-01": 0,
+          "keyfobdemo 01": 15,
+          "keyfobdemo 02": 144
+        }
+      },
+      "evaluation_validity": "VALID",
+      "f1_per_class": {
+        "CC2541SensorTag": 0.553415061295972,
+        "CC2650-UNIT-01": 0.4061302681992337,
+        "keyfobdemo 01": 0.6076051779935275,
+        "keyfobdemo 02": 0.496551724137931
+      },
+      "macro_f1": 0.515925557906666,
+      "n_comparable_to_known_classes": 2203,
+      "n_examples": 2203,
+      "precision_per_class": {
+        "CC2541SensorTag": 0.4114583333333333,
+        "CC2650-UNIT-01": 0.2576985413290113,
+        "keyfobdemo 01": 0.9603580562659847,
+        "keyfobdemo 02": 0.34285714285714286
+      },
+      "recall_per_class": {
+        "CC2541SensorTag": 0.8449197860962567,
+        "CC2650-UNIT-01": 0.9578313253012049,
+        "keyfobdemo 01": 0.4443786982248521,
+        "keyfobdemo 02": 0.9
+      },
+      "risk_coverage": [
+        {
+          "coverage": 0.04857013163867453,
+          "risk": 0.0,
+          "threshold": 1.0
+        },
+        {
+          "coverage": 0.06718111665910123,
+          "risk": 0.0,
+          "threshold": 0.99
+        },
+        {
+          "coverage": 0.08533817521561507,
+          "risk": 0.005319148936170213,
+          "threshold": 0.98
+        },
+        {
+          "coverage": 0.09759418974126191,
+          "risk": 0.004651162790697674,
+          "threshold": 0.97
+        },
+        {
+          "coverage": 0.10939627780299592,
+          "risk": 0.008298755186721992,
+          "threshold": 0.96
+        },
+        {
+          "coverage": 0.12256014525646845,
+          "risk": 0.007407407407407408,
+          "threshold": 0.95
+        },
+        {
+          "coverage": 0.13254652746255108,
+          "risk": 0.010273972602739725,
+          "threshold": 0.94
+        },
+        {
+          "coverage": 0.1407172038129823,
+          "risk": 0.00967741935483871,
+          "threshold": 0.93
+        },
+        {
+          "coverage": 0.14616432137993646,
+          "risk": 0.009316770186335404,
+          "threshold": 0.92
+        },
+        {
+          "coverage": 0.153427144802542,
+          "risk": 0.011834319526627219,
+          "threshold": 0.91
+        },
+        {
+          "coverage": 0.16023604176123468,
+          "risk": 0.014164305949008499,
+          "threshold": 0.9
+        },
+        {
+          "coverage": 0.16568315932818883,
+          "risk": 0.019178082191780823,
+          "threshold": 0.89
+        },
+        {
+          "coverage": 0.1693145710394916,
+          "risk": 0.021447721179624665,
+          "threshold": 0.88
+        },
+        {
+          "coverage": 0.1811166591012256,
+          "risk": 0.020050125313283207,
+          "threshold": 0.87
+        },
+        {
+          "coverage": 0.19473445301861098,
+          "risk": 0.018648018648018648,
+          "threshold": 0.86
+        },
+        {
+          "coverage": 0.20245120290512936,
+          "risk": 0.02242152466367713,
+          "threshold": 0.85
+        },
+        {
+          "coverage": 0.212437585111212,
+          "risk": 0.027777777777777776,
+          "threshold": 0.84
+        },
+        {
+          "coverage": 0.2224239673172946,
+          "risk": 0.04285714285714286,
+          "threshold": 0.83
+        },
+        {
+          "coverage": 0.23195642305946437,
+          "risk": 0.05675146771037182,
+          "threshold": 0.82
+        },
+        {
+          "coverage": 0.24421243758511121,
+          "risk": 0.07434944237918216,
+          "threshold": 0.81
+        },
+        {
+          "coverage": 0.2555605991829324,
+          "risk": 0.08348134991119005,
+          "threshold": 0.8
+        },
+        {
+          "coverage": 0.26600090785292785,
+          "risk": 0.08532423208191127,
+          "threshold": 0.79
+        },
+        {
+          "coverage": 0.2823422605537903,
+          "risk": 0.10610932475884244,
+          "threshold": 0.78
+        },
+        {
+          "coverage": 0.29505220154335,
+          "risk": 0.11384615384615385,
+          "threshold": 0.77
+        },
+        {
+          "coverage": 0.3077621425329097,
+          "risk": 0.12094395280235988,
+          "threshold": 0.76
+        },
+        {
+          "coverage": 0.32319564230594644,
+          "risk": 0.1348314606741573,
+          "threshold": 0.75
+        },
+        {
+          "coverage": 0.33726736268724467,
+          "risk": 0.1426648721399731,
+          "threshold": 0.74
+        },
+        {
+          "coverage": 0.3463458919655016,
+          "risk": 0.14809960681520315,
+          "threshold": 0.73
+        },
+        {
+          "coverage": 0.35678620063549704,
+          "risk": 0.15903307888040713,
+          "threshold": 0.72
+        },
+        {
+          "coverage": 0.3763050385837494,
+          "risk": 0.17611580217129072,
+          "threshold": 0.71
+        },
+        {
+          "coverage": 0.392192464820699,
+          "risk": 0.18287037037037038,
+          "threshold": 0.7
+        },
+        {
+          "coverage": 0.41034952337721287,
+          "risk": 0.19358407079646017,
+          "threshold": 0.69
+        },
+        {
+          "coverage": 0.4289605083976396,
+          "risk": 0.19894179894179895,
+          "threshold": 0.68
+        },
+        {
+          "coverage": 0.44893327280980483,
+          "risk": 0.2082912032355915,
+          "threshold": 0.67
+        },
+        {
+          "coverage": 0.46799818429414436,
+          "risk": 0.21823472356935014,
+          "threshold": 0.66
+        },
+        {
+          "coverage": 0.4929641398093509,
+          "risk": 0.23756906077348067,
+          "threshold": 0.65
+        },
+        {
+          "coverage": 0.5115751248297776,
+          "risk": 0.2502218278615794,
+          "threshold": 0.64
+        },
+        {
+          "coverage": 0.5315478892419429,
+          "risk": 0.2698548249359522,
+          "threshold": 0.63
+        },
+        {
+          "coverage": 0.5506128007262824,
+          "risk": 0.28359439406430337,
+          "threshold": 0.62
+        },
+        {
+          "coverage": 0.5751248297775761,
+          "risk": 0.292817679558011,
+          "threshold": 0.61
+        },
+        {
+          "coverage": 0.596005447117567,
+          "risk": 0.3000761614623001,
+          "threshold": 0.6
+        },
+        {
+          "coverage": 0.6100771674988652,
+          "risk": 0.30654761904761907,
+          "threshold": 0.59
+        },
+        {
+          "coverage": 0.6336813436223332,
+          "risk": 0.3173352435530086,
+          "threshold": 0.58
+        },
+        {
+          "coverage": 0.6559237403540626,
+          "risk": 0.3197231833910035,
+          "threshold": 0.57
+        },
+        {
+          "coverage": 0.6795279164775306,
+          "risk": 0.3259853039412158,
+          "threshold": 0.56
+        },
+        {
+          "coverage": 0.6958692691783931,
+          "risk": 0.3294194390084801,
+          "threshold": 0.55
+        },
+        {
+          "coverage": 0.7099409895596913,
+          "risk": 0.32928388746803067,
+          "threshold": 0.54
+        },
+        {
+          "coverage": 0.7231048570131638,
+          "risk": 0.33019460138104206,
+          "threshold": 0.53
+        },
+        {
+          "coverage": 0.7362687244666364,
+          "risk": 0.3347718865598027,
+          "threshold": 0.52
+        },
+        {
+          "coverage": 0.7517022242396731,
+          "risk": 0.33756038647342995,
+          "threshold": 0.51
+        },
+        {
+          "coverage": 0.76395823876532,
+          "risk": 0.33868092691622104,
+          "threshold": 0.5
+        },
+        {
+          "coverage": 0.7766681797548797,
+          "risk": 0.34015195791934544,
+          "threshold": 0.49
+        },
+        {
+          "coverage": 0.7857467090331366,
+          "risk": 0.3437319468515309,
+          "threshold": 0.48
+        },
+        {
+          "coverage": 0.7975487970948706,
+          "risk": 0.34889015367103016,
+          "threshold": 0.47
+        },
+        {
+          "coverage": 0.8093508851566046,
+          "risk": 0.3567021873247336,
+          "threshold": 0.46
+        },
+        {
+          "coverage": 0.8225147526100771,
+          "risk": 0.3631346578366446,
+          "threshold": 0.45
+        },
+        {
+          "coverage": 0.8325011348161597,
+          "risk": 0.3680479825517993,
+          "threshold": 0.44
+        },
+        {
+          "coverage": 0.843849296413981,
+          "risk": 0.3743948359332975,
+          "threshold": 0.43
+        },
+        {
+          "coverage": 0.8579210167952792,
+          "risk": 0.37883597883597886,
+          "threshold": 0.42
+        },
+        {
+          "coverage": 0.8683613254652747,
+          "risk": 0.38212232096184007,
+          "threshold": 0.41
+        },
+        {
+          "coverage": 0.8815251929187472,
+          "risk": 0.38928939237899074,
+          "threshold": 0.4
+        },
+        {
+          "coverage": 0.8906037221970041,
+          "risk": 0.3934760448521916,
+          "threshold": 0.39
+        },
+        {
+          "coverage": 0.9051293690422152,
+          "risk": 0.40070210631895686,
+          "threshold": 0.38
+        },
+        {
+          "coverage": 0.9223785746709033,
+          "risk": 0.4094488188976378,
+          "threshold": 0.37
+        },
+        {
+          "coverage": 0.9450748978665456,
+          "risk": 0.42219020172910665,
+          "threshold": 0.36
+        },
+        {
+          "coverage": 0.964593735814798,
+          "risk": 0.4315294117647059,
+          "threshold": 0.35
+        },
+        {
+          "coverage": 0.9786654561960962,
+          "risk": 0.439239332096475,
+          "threshold": 0.34
+        },
+        {
+          "coverage": 0.9877439854743532,
+          "risk": 0.44347426470588236,
+          "threshold": 0.33
+        },
+        {
+          "coverage": 0.9945528824330458,
+          "risk": 0.4472843450479233,
+          "threshold": 0.32
+        },
+        {
+          "coverage": 0.9995460735360872,
+          "risk": 0.4500454132606721,
+          "threshold": 0.31
+        },
+        {
+          "coverage": 1.0,
+          "risk": 0.4498411257376305,
+          "threshold": 0.29
+        }
+      ],
+      "split": "VALIDATION"
+    }
+  },
+  "schema_version": "ble-scientific-results-feature-group-ablation-exploratory-v1"
+}

@@ -1,0 +1,47 @@
+{
+  "CC2541SensorTag": {
+    "active_windows": 24,
+    "calibration_eligible_or_better_captures": 14,
+    "capture_count": 24,
+    "crc_valid_packet_count": 8453,
+    "eligible_windows": 14,
+    "native_event_count": 7107,
+    "strong_association_count": 0
+  },
+  "CC2650-UNIT-01": {
+    "active_windows": 30,
+    "calibration_eligible_or_better_captures": 21,
+    "capture_count": 30,
+    "crc_valid_packet_count": 10637,
+    "eligible_windows": 21,
+    "native_event_count": 9696,
+    "strong_association_count": 0
+  },
+  "SHELLY-PLUG-01": {
+    "active_windows": 19,
+    "calibration_eligible_or_better_captures": 11,
+    "capture_count": 19,
+    "crc_valid_packet_count": 2788,
+    "eligible_windows": 9,
+    "native_event_count": 2092,
+    "strong_association_count": 0
+  },
+  "keyfobdemo 01": {
+    "active_windows": 40,
+    "calibration_eligible_or_better_captures": 30,
+    "capture_count": 40,
+    "crc_valid_packet_count": 15926,
+    "eligible_windows": 30,
+    "native_event_count": 13410,
+    "strong_association_count": 0
+  },
+  "keyfobdemo 02": {
+    "active_windows": 25,
+    "calibration_eligible_or_better_captures": 15,
+    "capture_count": 25,
+    "crc_valid_packet_count": 9376,
+    "eligible_windows": 15,
+    "native_event_count": 7406,
+    "strong_association_count": 0
+  }
+}

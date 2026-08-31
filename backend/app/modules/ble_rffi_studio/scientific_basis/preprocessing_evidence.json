@@ -1,0 +1,63 @@
+{
+  "schema_version": "ble-rffi-studio-preprocessing-evidence-v1",
+  "steps": [
+    {
+      "step_id": "cfo_correction",
+      "removes_variation": "Desplazamiento de frecuencia por offset de oscilador local (CFO) entre unidades y entre sesiones.",
+      "may_erase_physical_fingerprint": "El CFO en si mismo es una de las huellas fisicas mas citadas en literatura RFFI; corregirlo puede eliminar la senal que se quiere clasificar.",
+      "justified_by_technique_id": "ble-rffi-industry5-2026",
+      "justification_note": "Correccion 2026-08-08 (punto 3): esta es una implementacion HEURISTICA (pendiente de fase media sobre toda la ventana), NO la Eq.(6)-(7) del paper (sin referencia q[n], sin I_b congelado, sin regresion conjunta). Se conserva por utilidad historica/ablacion bajo el perfil cfo-compensated-v1; ver paper_eq6_7_compensation para la implementacion real.",
+      "default_enabled": false,
+      "requires_declared_profile_version": true,
+      "status": "OPT_IN_JUSTIFIED"
+    },
+    {
+      "step_id": "phase_normalization",
+      "removes_variation": "Offset de fase inicial entre capturas.",
+      "may_erase_physical_fingerprint": "Puede eliminar diferencias de fase relacionadas con el hardware de RF si estas fueran parte de la huella.",
+      "justified_by_technique_id": "ble-rffi-industry5-2026",
+      "justification_note": "No es una segunda afirmacion bibliografica independiente: 'CFO-compensated' en el protocolo citado implica un modelo de fase afin phase(n) = phase_0 + 2*pi*cfo*n; cfo_correction ya remueve el termino de pendiente (frecuencia), phase_normalization remueve el termino de ordenada (fase inicial) de ESA MISMA operacion. Aplicar solo la pendiente dejaria la compensacion incompleta.",
+      "default_enabled": false,
+      "requires_declared_profile_version": true,
+      "status": "OPT_IN_JUSTIFIED"
+    },
+    {
+      "step_id": "amplitude_normalization",
+      "removes_variation": "Diferencias de ganancia/potencia recibida entre capturas.",
+      "may_erase_physical_fingerprint": "Puede eliminar variaciones de potencia de transmision especificas del hardware del emisor.",
+      "justified_by_technique_id": null,
+      "default_enabled": false,
+      "requires_declared_profile_version": true,
+      "status": "NOT_YET_JUSTIFIED"
+    },
+    {
+      "step_id": "temporal_alignment",
+      "removes_variation": "Jitter en el instante de inicio detectado del paquete/preambulo.",
+      "may_erase_physical_fingerprint": "Bajo riesgo si se alinea solo el instante de inicio (no la forma de la transitoria), pero debe declararse igualmente.",
+      "justified_by_technique_id": null,
+      "default_enabled": false,
+      "requires_declared_profile_version": true,
+      "status": "NOT_YET_JUSTIFIED"
+    },
+    {
+      "step_id": "paper_eq6_7_compensation",
+      "removes_variation": "Desplazamiento conjunto de frecuencia (f_b) y fase inicial (phi_b0) por offset de oscilador local, estimados por regresion de minimos cuadrados conjunta sobre el indice congelado I_b (preambulo+direccion de acceso) usando una referencia BLE congelada q[n] (Eq. 6-7 del paper).",
+      "may_erase_physical_fingerprint": "Mismo riesgo que cfo_correction/phase_normalization -- el CFO es una huella fisica citada en literatura RFFI; corregirlo puede eliminar la senal que se quiere clasificar.",
+      "justified_by_technique_id": "ble-rffi-industry5-2026",
+      "justification_note": "Correccion 2026-08-08 (punto 3): esta es la implementacion REAL de la Eq.(6)-(7) citada por ble-rffi-industry5-2026 (protocol: 'CFO-compensated pre-PDU raw I/Q') -- ver preprocessing/paper_compliant_cfo.py. Este es el perfil primario del paper (paper-eq6-7-v1), no cfo-compensated-v1.",
+      "default_enabled": false,
+      "requires_declared_profile_version": true,
+      "status": "OPT_IN_JUSTIFIED"
+    },
+    {
+      "step_id": "transient_removal",
+      "removes_variation": "Muestras de la rampa de encendido del transmisor (turn-on transient).",
+      "may_erase_physical_fingerprint": "La transitoria de encendido es, junto al CFO, una de las huellas fisicas de RFFI mas estudiadas; eliminarla por defecto es de alto riesgo cientifico.",
+      "justified_by_technique_id": null,
+      "default_enabled": false,
+      "requires_declared_profile_version": true,
+      "status": "NOT_YET_JUSTIFIED"
+    }
+  ],
+  "policy": "Ningun paso de esta lista se activa por defecto en base_preprocessing_profile_id. Activarlo exige un PreprocessingStepJustification que referencie un technique_id de technique_registry.json con applicability_status != NOT_APPLICABLE, y una nueva version de perfil congelada."
+}

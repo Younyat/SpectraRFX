@@ -1,0 +1,110 @@
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+dist/
+.validation-build/
+.idea/
+.vscode/
+.claude/
+*.cfile
+*.wav
+*.jsonl
+backend/venv/
+backend/.venv-validation/
+# Extra virtual environments
+*/.venv/
+*/venv/
+*/env/
+*/ENV/
+*/myenv/
+*/virtualenv/
+*/.virtualenv/
+.venv-validation/
+
+# RF capture storage
+spectrum-lab/backend/app/infrastructure/persistence/storage/recordings/modulated_signal_captures/*
+spectrum-lab/backend/app/infrastructure/persistence/storage/recordings/modulated_signal_iq_captures/*
+!.gitkeep
+
+
+spectrum-lab/backend/app/infrastructure/persistence/storage/recordings/modulated_signal_iq_captures/*
+   
+
+backend/app/infrastructure/persistence/storage/recordings/modulated_signal_iq_captures/*
+
+
+
+backend/app/infrastructure/persistence/storage/recordings/
+backend/app/infrastructure/persistence/storage/fingerprinting/captures/
+backend/app/infrastructure/persistence/storage/mlops/data/rf_dataset/
+backend/app/infrastructure/persistence/storage/temp/
+
+
+
+# RF captures and generated learning artifacts
+
+*.iq
+*.cfile
+*.cf32
+*.bin
+*.pcap
+*.pcapng
+*.h5
+*.hdf5
+*.npy
+*.npz
+*.pkl
+*.pt
+*.pth
+*.onnx
+*.joblib
+*.wav
+*.complex
+
+
+# RF captures and large signal files
+*.iq
+*.cfile
+*.sigmf-data
+*.bin
+*.h5
+*.hdf5
+*.npy
+*.npz
+*.wav
+*.dat
+
+# Local generated recordings
+backend/app/infrastructure/persistence/storage/recordings/
+backend/app/infrastructure/persistence/storage/datasets/
+backend/app/infrastructure/persistence/storage/exports/
+
+
+
+# Storage tree: bulk-ignored (raw IQ, per-run canonical burst/window
+# records under 01_inputs/canonical_records/ -- 100-250MB per paper run) but
+# the LIGHT canonical scientific-results reports the paper cites (2026-08-18,
+# DEVELOPMENT EVIDENCE closure, see docs/ble/PAPER_EVIDENCE_MAP.md) must stay
+# versioned: 06_statistics/*.json (RQ1/RQ2/coverage_analysis/sensitivity
+# reports, ~170KB across every real run) and paper_exports/ (CSV/figures,
+# ~800KB). `*` (not a trailing `/`) at each level, never a bare directory
+# pattern, so git still walks in and evaluates the negations below --
+# excluding a directory with a trailing `/` stops git from ever looking
+# inside it again, which would make re-including anything below impossible.
+backend/app/infrastructure/persistence/storage/*
+!backend/app/infrastructure/persistence/storage/scientific_reports
+backend/app/infrastructure/persistence/storage/scientific_reports/*
+!backend/app/infrastructure/persistence/storage/scientific_reports/ble
+backend/app/infrastructure/persistence/storage/scientific_reports/ble/*
+!backend/app/infrastructure/persistence/storage/scientific_reports/ble/paper_exports
+!backend/app/infrastructure/persistence/storage/scientific_reports/ble/paper-run-*
+backend/app/infrastructure/persistence/storage/scientific_reports/ble/paper-run-*/*
+!backend/app/infrastructure/persistence/storage/scientific_reports/ble/paper-run-*/06_statistics
+!backend/app/infrastructure/persistence/storage/scientific_reports/ble/paper-run-*/run.json
+backend/app/modules/rf_signal_understanding/models/mlp_spectral_classifier/model.npz
+backend/app/modules/rf_signal_understanding/models/mlp_spectral_classifier/metadata.json
+
+
+
+backend.venv-validation/

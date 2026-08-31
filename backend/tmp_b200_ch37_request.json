@@ -1,0 +1,20 @@
+{
+  "capture_id": "BLE-IQ-B200-CH37-SENSORTAG-01",
+  "device_args": {"driver": "uhd", "serial": "E3R04Z1B2", "type": "b200"},
+  "device_serial_masked": "E3R***1B2",
+  "ble_channel": 37,
+  "center_frequency_hz": 2402000000,
+  "sample_rate_sps": 4000000,
+  "bandwidth_hz": 2000000,
+  "sample_format": "cf32_le",
+  "gain_mode": "manual",
+  "gain_db": 20.0,
+  "antenna": "RX2",
+  "duration_seconds": 3.0,
+  "expected_size_bytes": 96000000,
+  "purpose": "CH37 real OTA SensorTag advertising decode",
+  "controlled_transmitter_state": "unknown",
+  "operator_confirmed": false,
+  "capture_role": "controlled_transmitter_active_B",
+  "description": "BLE LE 1M fixed-channel CH37 B200 validation capture"
+}

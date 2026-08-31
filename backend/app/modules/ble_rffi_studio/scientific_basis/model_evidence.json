@@ -1,0 +1,50 @@
+{
+  "schema_version": "ble-rffi-studio-model-evidence-v1",
+  "models": [
+    {
+      "model_type": "logistic_regression",
+      "implementation_status": "REFERENCE_ARCHITECTURE_IMPLEMENTED",
+      "validated_on": "SYNTHETIC_TOY_DATA_ONLY",
+      "note": "training/baseline_models.py + training_service.py (Fase 3). Mechanically verified to converge on a synthetic multi-unit CFO-separable signal. NOT yet validated on any real BLE-RFFI dataset -- the only real capture available (BLE-IQ-e8edc49b59a0) has a single physical unit and a single session, so Fase 2's SplitBuilder correctly reports NOT_FEASIBLE for every scientific_task and no real dataset has reached ACCEPTED_FOR_TRAINING yet.",
+      "scientific_justification_pending": true
+    },
+    {
+      "model_type": "svm_rbf",
+      "implementation_status": "REFERENCE_ARCHITECTURE_IMPLEMENTED",
+      "validated_on": "SYNTHETIC_TOY_DATA_ONLY",
+      "note": "Same status as logistic_regression above.",
+      "scientific_justification_pending": true
+    },
+    {
+      "model_type": "random_forest",
+      "implementation_status": "REFERENCE_ARCHITECTURE_IMPLEMENTED",
+      "validated_on": "SYNTHETIC_TOY_DATA_ONLY",
+      "note": "Same status as logistic_regression above.",
+      "scientific_justification_pending": true
+    },
+    {
+      "model_type": "cnn1d",
+      "implementation_status": "REFERENCE_ARCHITECTURE_IMPLEMENTED",
+      "validated_on": "SYNTHETIC_TOY_DATA_ONLY",
+      "note": "training/cnn_models.py (Fase 4): 2-conv-layer CNN over raw I/Q [2,N] with adaptive pooling. Mechanically verified to train (real backprop, real Adam steps) and beat chance accuracy on synthetic CFO-separable data. Same real-dataset gap as the baselines above.",
+      "scientific_justification_pending": true
+    },
+    {
+      "model_type": "cnn2d",
+      "implementation_status": "REFERENCE_ARCHITECTURE_IMPLEMENTED",
+      "validated_on": "SYNTHETIC_TOY_DATA_ONLY",
+      "note": "Same as cnn1d, over a numeric STFT magnitude spectrogram [1,H,W] instead of raw I/Q.",
+      "scientific_justification_pending": true
+    }
+  ],
+  "empirical_findings": [
+    {
+      "finding": "Max-softmax-probability UNKNOWN-rejection calibration (evaluation/evaluator.py) can fail against far-out-of-distribution inputs: in a controlled test (test_evaluator.py::test_end_to_end_unknown_device_rejection_on_real_trained_model), a synthetic 'unknown device' signal received HIGHER classifier confidence than genuine known-class predictions, which is the well-documented softmax-overconfidence-on-OOD failure mode.",
+      "implication": "calibrate_unknown_threshold responds safely (it raises the threshold until it can no longer be fooled, at the cost of rejecting more), but this is empirical confirmation of design correction #16's warning: no single UNKNOWN-rejection technique should be treated as automatically validated. An embedding-distance-to-centroid approach or a dedicated OOD-detection technique should be evaluated against this same failure mode before being trusted for a live pilot."
+    }
+  ],
+  "pending_research": [
+    "No hay todavia ningun paper o protocolo real que respalde por que estas arquitecturas de referencia (LR/SVM/RF/CNN1D/CNN2D) son apropiadas especificamente para RFFI sobre BLE. La unica referencia con texto completo disponible (ble-rffi-industry5-2026 en technique_registry.json) respalda decisiones de particionado y preprocesamiento, no la eleccion de arquitectura de modelo -- investigacion bibliografica real pendiente antes de marcar cualquier modelo como cientificamente justificado.",
+    "Ningun modelo debe pasar de REFERENCE_ARCHITECTURE_IMPLEMENTED a un estado 'validado' hasta que exista un dataset real que supere el gate de Fase 2 (ACCEPTED_FOR_TRAINING con split READY), lo cual requiere capturar mas de una unidad fisica y mas de una sesion independiente por unidad."
+  ]
+}

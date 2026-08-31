@@ -1,0 +1,16 @@
+{
+  "generated_at_utc": "2026-08-28T13:42:06.609395+00:00",
+  "capture_type": "simultaneous_iq_and_fm_audio",
+  "center_freq_hz": 89400000.0,
+  "center_freq_mhz": 89.4,
+  "duration_seconds": 1.0,
+  "sample_rate_hz": 4000000.0,
+  "audio_rate_hz": 48000,
+  "gain_db": 20.0,
+  "agc_enabled": false,
+  "antenna": "RX2",
+  "device_addr": "",
+  "iq_file": "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\temp\\connect_probe.cfile",
+  "iq_format": "complex64_fc32_interleaved",
+  "wav_file": "C:\\Users\\Usuario\\Desktop\\NICS\\RF-Fingerprint-Lab\\spectrum-lab\\backend\\app\\infrastructure\\persistence\\storage\\temp\\connect_probe.wav"
+}

@@ -1,0 +1,14 @@
+{
+  "contract_version": "ble-gate2a2-offline-job-v1",
+  "job_id": "BLE-G2A2-B200-CH37-BURST-000002",
+  "iq_file_path": "C:/Users/Usuario/Desktop/NICS/RF-Fingerprint-Lab/spectrum-lab/backend/app/infrastructure/persistence/storage/ble_lab/sessions/B200-CH37-VALIDATION-02/sdr/iq_bursts/burst-000002.cf32",
+  "channel_index": 37,
+  "chunk_samples": 262144,
+  "overlap_samples": 8192,
+  "dc_removal": true,
+  "channel_filter": true,
+  "cfo_correction": true,
+  "timing_recovery": true
+  ,"minimum_burst_samples": 80
+  ,"maximum_burst_samples": 4096
+}

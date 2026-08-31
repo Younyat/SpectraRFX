@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0.0",
+  "intents": {
+    "positive_target_validation": {"human": "Validación positiva del objetivo", "requires": ["specific_target", "target_seen_now"], "claim": "Demostrar que Windows y B200 observaron el objetivo durante la misma campaña."},
+    "negative_control": {"human": "Control negativo", "requires": ["specific_target", "negative_control_type", "operator_confirmation"], "claim": "Comprobar que no se atribuye falsamente tráfico al objetivo bajo una condición negativa declarada."},
+    "exploratory_target_search": {"human": "Búsqueda exploratoria", "requires": [], "claim": "Buscar un objetivo sin afirmar previamente presencia ni ausencia física."}
+  },
+  "negative_control_types": ["target_powered_off", "target_physically_absent", "other_device_substituted", "ambient_only"]
+}

@@ -1,0 +1,5 @@
+true_label,predicted_CC2541SensorTag,predicted_CC2650-UNIT-01,predicted_keyfobdemo 01,predicted_keyfobdemo 02
+CC2541SensorTag,2,0,0,0
+CC2650-UNIT-01,0,3,0,0
+keyfobdemo 01,0,0,5,0
+keyfobdemo 02,0,0,1,1

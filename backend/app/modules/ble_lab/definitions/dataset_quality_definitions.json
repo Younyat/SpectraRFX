@@ -1,0 +1,23 @@
+{
+  "schema_version": "1.1.0",
+  "target_relations": {
+    "NEGATIVE_BY_EXPERIMENTAL_CONTRACT": {"human": "Negativo por contrato experimental", "definition": "La muestra no pertenece al objetivo bajo una condición negativa declarada y confirmada antes de capturar; no identifica al transmisor ambiental."}
+  },
+  "negative_ground_truth_sources": {
+    "OPERATOR_DECLARED_TARGET_POWERED_OFF": {"human": "Objetivo declarado apagado", "definition": "Condición física confirmada por el operador; no inferida de la ausencia RF."}
+  },
+  "states": {
+    "QUARANTINED_SESSION_LOSS": {"human": "Cuarentena por pérdidas de sesión", "definition": "La sesión registró overflows o discontinuidades sin intervalos exactos de pérdida; todos sus ejemplos permanecen en cuarentena."},
+    "INCLUDED_STRONG": {"human": "Incluido con evidencia fuerte", "definition": "CRC válido, correlación fuerte y calidad compatible."},
+    "INCLUDED_PROTOCOL_ONLY": {"human": "Incluido sólo como evidencia protocolaria", "definition": "Paquete válido sin corroboración suficiente."},
+    "INCLUDED_NEGATIVE": {"human": "Ejemplo negativo incluido", "definition": "Negativo documentado mediante diseño experimental e identidad justificable."},
+    "EXCLUDED_OVERFLOW_OVERLAP": {"human": "Excluido por solapamiento de overflow demostrado", "definition": "La posición del ejemplo solapa un intervalo exacto y auditable de overflow."},
+    "EXCLUDED_DISCONTINUITY_OVERLAP": {"human": "Excluido por solapamiento de discontinuidad demostrado", "definition": "La posición del ejemplo solapa un intervalo exacto y auditable de discontinuidad."},
+    "LOCALLY_CONTINUOUS_IN_LOSSY_SESSION": {"human": "Continuo localmente en una sesión con pérdidas", "definition": "Existen intervalos exactos y el ejemplo queda fuera de todos ellos; la sesión global continúa marcada con pérdidas."},
+    "EXCLUDED_OVERFLOW": {"human": "Estado legado de overflow", "definition": "Código anterior que debe migrarse según la disponibilidad real de intervalos exactos."},
+    "EXCLUDED_DISCONTINUITY": {"human": "Estado legado de discontinuidad", "definition": "Código anterior que debe migrarse según la disponibilidad real de intervalos exactos."},
+    "EXCLUDED_AMBIGUOUS": {"human": "Cuarentena por ambigüedad", "definition": "No existe asociación única."},
+    "EXCLUDED_UNKNOWN_TARGET": {"human": "Cuarentena por objetivo desconocido", "definition": "No puede vincularse con el objetivo."},
+    "EXCLUDED_DUPLICATE": {"human": "Cuarentena por duplicado", "definition": "No aporta independencia según la política."}
+  }
+}

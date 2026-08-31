@@ -1,0 +1,80 @@
+{
+  "enrolled_population_class_exclusion_sensitivity": {
+    "analysis_role": "SENSITIVITY",
+    "full_set_balanced_accuracy": 0.6338138990398197,
+    "method": "Post-hoc metric recomputation from the PRIMARY model's own already-scored VALIDATION predictions, excluding one physical class's examples from the balanced-accuracy computation at a time. The model itself was trained WITH every class, including the one excluded per row -- this is NOT a retrained leave-one-device-out cross-validation and must never be presented as one.",
+    "rows": [
+      {
+        "accuracy": 0.7465277777777778,
+        "coverage": null,
+        "delta_vs_full_set": -0.04897825468726147,
+        "estimate": 0.5848356443525582,
+        "n_comparable": 2016,
+        "omitted_physical_unit": "CC2541SensorTag"
+      },
+      {
+        "accuracy": 0.7329405989199803,
+        "coverage": null,
+        "delta_vs_full_set": -0.10599777662528098,
+        "estimate": 0.5278161224145387,
+        "n_comparable": 2037,
+        "omitted_physical_unit": "CC2650-UNIT-01"
+      },
+      {
+        "accuracy": 0.594541910331384,
+        "coverage": null,
+        "delta_vs_full_set": -0.054211935034064074,
+        "estimate": 0.5796019640057556,
+        "n_comparable": 513,
+        "omitted_physical_unit": "keyfobdemo 01"
+      },
+      {
+        "accuracy": 0.8076358296622613,
+        "coverage": null,
+        "delta_vs_full_set": 0.20918796634660664,
+        "estimate": 0.8430018653864263,
+        "n_comparable": 2043,
+        "omitted_physical_unit": "keyfobdemo 02"
+      }
+    ]
+  },
+  "generated_at": "2026-08-21T22:53:44.147148Z",
+  "offset_retaining": {
+    "analysis_role": "OFFSET_RETAINING_SENSITIVITY",
+    "base_preprocessing_profile_id": "offset-retaining-v1",
+    "base_run_training_run_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd",
+    "coverage": null,
+    "delta_vs_primary": 0.0,
+    "estimate": 0.6338138990398197,
+    "interpretive_note": "PRIMARY's own base_preprocessing_profile_id='base-v1' resolves to the SAME enabled preprocessing steps as offset-retaining-v1 ([] both) -- this is NOT a real test of whether retaining CFO/phase offset changes the result; PRIMARY never applied any CFO/phase compensation to begin with, so this delta is trivially ~0 by construction, not evidence of CFO-compensation insensitivity.",
+    "interpretive_validity": "NOT_INFORMATIVE_IDENTICAL_PREPROCESSING_PROFILES",
+    "primary_base_preprocessing_profile_id": "base-v1",
+    "profiles_behaviorally_identical": true,
+    "training_run_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd-offset-retaining"
+  },
+  "paper_run_id": "paper-run-2805869e6282778ad729a26d022ec9b0",
+  "primary": {
+    "analysis_role": "PRIMARY",
+    "balanced_accuracy": 0.6338138990398197,
+    "branch": "engineered_rf",
+    "training_run_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd"
+  },
+  "schema_version": "ble-scientific-results-sensitivity-analysis-v1",
+  "seed_variability": {
+    "analysis_role": "SENSITIVITY",
+    "rows": [
+      {
+        "seed": 137,
+        "training_run_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd-seed-137",
+        "validation_accuracy": 0.7421697684975034,
+        "validation_balanced_accuracy": 0.6288999706305525
+      },
+      {
+        "seed": 2024,
+        "training_run_id": "TRAIN-20260814T224700-4DEVICES-5d06e404-random_forest-a598bd-seed-2024",
+        "validation_accuracy": 0.7262823422605538,
+        "validation_balanced_accuracy": 0.6211189154300968
+      }
+    ]
+  }
+}

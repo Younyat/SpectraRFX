@@ -1,0 +1,1 @@
+{"compilerOptions":{"target":"ES2022","module":"NodeNext","moduleResolution":"NodeNext","outDir":".ble-validation","strict":true,"skipLibCheck":true},"include":["src/presentation/views/ble/bleTargetModel.ts","src/presentation/views/ble/datasetStudioModel.ts","src/presentation/views/ble/campaignPolicy.ts"]}

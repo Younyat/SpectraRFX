@@ -1,0 +1,18 @@
+{
+  "train_sessions": {
+    "Commercial FM Broadcast": [
+      "session_001"
+    ],
+    "Commercial FM Broadcast_2": [
+      "session_001"
+    ]
+  },
+  "test_sessions": {
+    "Commercial FM Broadcast": [
+      "session_001"
+    ],
+    "Commercial FM Broadcast_2": [
+      "session_001"
+    ]
+  }
+}

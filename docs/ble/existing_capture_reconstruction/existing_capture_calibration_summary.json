@@ -1,0 +1,102 @@
+{
+  "CC2541SensorTag": {
+    "capture_count": 24,
+    "calibration_eligible_captures": 14,
+    "pilot_eligible_captures": 0,
+    "native_event_count": 7107,
+    "crc_valid_packet_count": 8453,
+    "strong_association_count_raw_ledger": 0,
+    "ambiguous_pair_count": 1720,
+    "unmatched_native_proxy_count": 3577,
+    "record_build_result": {
+      "schema_version": "ble-scientific-results-records-v2",
+      "paper_run_id": "paper-run-49cf777772faf96de2968d23f07fd181",
+      "generated_at": "2026-08-06T12:50:09.631574Z",
+      "capture_record_count": 24,
+      "burst_record_count": 52507,
+      "decision_window_record_count": 24,
+      "campaign_deviation_count": 5,
+      "captures_without_replay": []
+    }
+  },
+  "SHELLY-PLUG-01": {
+    "capture_count": 19,
+    "calibration_eligible_captures": 11,
+    "pilot_eligible_captures": 0,
+    "native_event_count": 2092,
+    "crc_valid_packet_count": 2788,
+    "strong_association_count_raw_ledger": 0,
+    "ambiguous_pair_count": 534,
+    "unmatched_native_proxy_count": 1353,
+    "record_build_result": {
+      "schema_version": "ble-scientific-results-records-v2",
+      "paper_run_id": "paper-run-e5f845a38f5a071ce28ccd5966032abb",
+      "generated_at": "2026-08-06T12:50:12.260214Z",
+      "capture_record_count": 19,
+      "burst_record_count": 6246,
+      "decision_window_record_count": 19,
+      "campaign_deviation_count": 5,
+      "captures_without_replay": []
+    }
+  },
+  "keyfobdemo 01": {
+    "capture_count": 40,
+    "calibration_eligible_captures": 30,
+    "pilot_eligible_captures": 0,
+    "native_event_count": 13410,
+    "crc_valid_packet_count": 15926,
+    "strong_association_count_raw_ledger": 0,
+    "ambiguous_pair_count": 4010,
+    "unmatched_native_proxy_count": 8655,
+    "record_build_result": {
+      "schema_version": "ble-scientific-results-records-v2",
+      "paper_run_id": "paper-run-885a5c7ee1fb5649ce8cf0a3bd5caf04",
+      "generated_at": "2026-08-06T12:50:24.511435Z",
+      "capture_record_count": 40,
+      "burst_record_count": 128017,
+      "decision_window_record_count": 40,
+      "campaign_deviation_count": 5,
+      "captures_without_replay": []
+    }
+  },
+  "keyfobdemo 02": {
+    "capture_count": 25,
+    "calibration_eligible_captures": 15,
+    "pilot_eligible_captures": 0,
+    "native_event_count": 7406,
+    "crc_valid_packet_count": 9376,
+    "strong_association_count_raw_ledger": 0,
+    "ambiguous_pair_count": 2002,
+    "unmatched_native_proxy_count": 4261,
+    "record_build_result": {
+      "schema_version": "ble-scientific-results-records-v2",
+      "paper_run_id": "paper-run-ae43d1f504f67fb266a6c50852e7ef1f",
+      "generated_at": "2026-08-06T12:50:33.201166Z",
+      "capture_record_count": 25,
+      "burst_record_count": 54010,
+      "decision_window_record_count": 25,
+      "campaign_deviation_count": 5,
+      "captures_without_replay": []
+    }
+  },
+  "CC2650-UNIT-01": {
+    "capture_count": 30,
+    "calibration_eligible_captures": 21,
+    "pilot_eligible_captures": 0,
+    "native_event_count": 9696,
+    "crc_valid_packet_count": 10637,
+    "strong_association_count_raw_ledger": 0,
+    "ambiguous_pair_count": 2370,
+    "unmatched_native_proxy_count": 5147,
+    "record_build_result": {
+      "schema_version": "ble-scientific-results-records-v2",
+      "paper_run_id": "paper-run-2d82d46eb0b8f1e3417895a1edc473e6",
+      "generated_at": "2026-08-06T12:50:36.815029Z",
+      "capture_record_count": 30,
+      "burst_record_count": 17529,
+      "decision_window_record_count": 30,
+      "campaign_deviation_count": 5,
+      "captures_without_replay": []
+    }
+  }
+}
