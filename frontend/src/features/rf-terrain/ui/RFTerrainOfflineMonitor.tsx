@@ -19,6 +19,40 @@ const STAGE_LABELS: Record<OfflineReconstructionStage, string> = {
   DONE: 'Done',
 };
 
+// One real, plain-language sentence per stage -- what is actually
+// happening right now and, where relevant, the real bound on how long it
+// can take before something is genuinely wrong (each chunk download times
+// out and fails with a clear error after 30s -- see captureClient.ts's
+// DEFAULT_CHUNK_TIMEOUT_MS -- so "how long do I wait" always has a real
+// answer: at most ~30s of silence per chunk before either progress or an
+// error appears).
+const STAGE_EXPLANATIONS: Record<OfflineReconstructionStage, string> = {
+  IDLE: '',
+  FETCHING_CHUNK: 'Downloading the next 16 MB piece of the raw capture from the backend. Fails with a clear error after 30s if the connection stalls -- it will never hang silently forever.',
+  PARSING_CHUNK: 'Decoding the downloaded bytes into I/Q samples. Fast (well under a second per chunk).',
+  ANALYZING_FRAMES: 'Running the FFT and terrain engine (noise floor, persistence, occupancy) on this chunk\'s samples. Fast.',
+  SEGMENTING: 'One-time pass identifying terrain objects across every reconstructed row. Runs once, after all chunks are downloaded.',
+  COMPUTING_CONTEXT_AUDIT: 'Computing the C1/C2/C4 acquisition-context summary from the already-processed rows.',
+  COMPUTING_HASHES: 'Computing the reproducibility fingerprint (SHA-256 of the profile and source data). Near-instant.',
+  DONE: 'Reconstruction finished -- use the playback controls in the Offline Reconstruction panel to scrub through it.',
+};
+
+const FIELD_HELP: Record<string, string> = {
+  Elapsed: 'Real wall-clock time since RECONSTRUCT was pressed. Keeps ticking even mid-download.',
+  Progress: 'Bytes downloaded so far, as a percentage of the whole capture file.',
+  Bytes: 'How much of the raw capture has been downloaded vs. its total real size on disk.',
+  Chunk: 'Which 16 MB download is in flight, out of the total needed to cover the whole capture.',
+  'Rows produced': 'How many terrain rows have been computed from the chunks downloaded so far.',
+  Throughput: 'Real download speed, measured from bytes actually received -- appears once the first chunk completes.',
+  ETA: 'Estimated time left, from current throughput × remaining bytes -- appears once the first chunk completes, and improves as more chunks land.',
+};
+
+// A stuck FIRST chunk (no bytes at all yet) past this point is worth
+// flagging proactively -- the real 30s per-chunk timeout (captureClient.ts)
+// will still fire and produce a clear error either way, but this gives
+// the operator an earlier, honest heads-up rather than silent waiting.
+const STUCK_FIRST_CHUNK_WARNING_MS = 15_000;
+
 // mm:ss.mmm -- millisecond precision, since the whole point of this panel
 // is a PRECISE read of real elapsed time, not a rounded approximation.
 const formatDurationPrecise = (ms: number): string => {
@@ -103,36 +137,46 @@ export const RFTerrainOfflineMonitor: React.FC<RFTerrainOfflineMonitorProps> = (
               </span>
             </div>
 
+            {state.status !== 'ERROR_LOCAL' && STAGE_EXPLANATIONS[state.stage] && (
+              <p className="text-[9px] leading-snug app-muted-text">{STAGE_EXPLANATIONS[state.stage]}</p>
+            )}
+
             {state.error && <p className="text-[10px] text-red-400">{state.error}</p>}
 
-            <div className="h-2 w-full overflow-hidden rounded bg-white/10">
+            {state.status === 'RECONSTRUCTING' && state.chunksProcessed === 0 && state.elapsedMs > STUCK_FIRST_CHUNK_WARNING_MS && (
+              <p className="rounded border border-amber-500/60 bg-amber-500/10 p-1 text-[9px] text-amber-300">
+                No bytes received yet after {Math.round(state.elapsedMs / 1000)}s -- if this keeps going, it will fail with a clear error at 30s (never hang forever). This usually means the backend or network stalled.
+              </p>
+            )}
+
+            <div className="h-2 w-full overflow-hidden rounded bg-white/10" title="Bytes downloaded so far, as a share of the whole capture file.">
               <div className="h-full transition-all" style={{ width: `${percent}%`, background: HUD_ACCENT_BRIGHT }} />
             </div>
 
             <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[10px]">
-              <span className="app-muted-text">Elapsed</span>
+              <span className="app-muted-text" title={FIELD_HELP.Elapsed}>Elapsed</span>
               <span className="text-right font-mono">{formatDurationPrecise(state.elapsedMs)}</span>
 
-              <span className="app-muted-text">Progress</span>
+              <span className="app-muted-text" title={FIELD_HELP.Progress}>Progress</span>
               <span className="text-right font-mono">{percent.toFixed(2)}%</span>
 
-              <span className="app-muted-text">Bytes</span>
+              <span className="app-muted-text" title={FIELD_HELP.Bytes}>Bytes</span>
               <span className="text-right font-mono">{formatBytes(state.bytesProcessed)} / {formatBytes(state.totalBytes)}</span>
 
-              <span className="app-muted-text">Chunk</span>
+              <span className="app-muted-text" title={FIELD_HELP.Chunk}>Chunk</span>
               <span className="text-right font-mono">{state.chunksProcessed} / {state.totalChunks}</span>
 
-              <span className="app-muted-text">Rows produced</span>
+              <span className="app-muted-text" title={FIELD_HELP['Rows produced']}>Rows produced</span>
               <span className="text-right font-mono">{state.totalRows.toLocaleString()}</span>
 
-              <span className="app-muted-text">Throughput</span>
+              <span className="app-muted-text" title={FIELD_HELP.Throughput}>Throughput</span>
               <span className="text-right font-mono">
-                {state.throughputBytesPerSecond === null ? '—' : `${formatBytes(state.throughputBytesPerSecond)}/s`}
+                {state.throughputBytesPerSecond === null ? 'not yet known' : `${formatBytes(state.throughputBytesPerSecond)}/s`}
               </span>
 
-              <span className="app-muted-text">ETA</span>
+              <span className="app-muted-text" title={FIELD_HELP.ETA}>ETA</span>
               <span className="text-right font-mono">
-                {state.estimatedRemainingMs === null ? '—' : `~${formatDurationApprox(state.estimatedRemainingMs)}`}
+                {state.estimatedRemainingMs === null ? 'not yet known' : `~${formatDurationApprox(state.estimatedRemainingMs)}`}
               </span>
             </div>
 

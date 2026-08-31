@@ -52,6 +52,33 @@ describe('OfflineCaptureClient', () => {
     await expect(client.fetchIqByteRange('cap', 0, 7)).rejects.toThrow(/500/);
   });
 
+  // A hung fetch that respects AbortSignal (like the real browser fetch)
+  // never resolves on its own -- only the signal firing settles it, which
+  // is exactly what a stuck connection/proxy/antivirus-scan looks like in
+  // practice. Real regression coverage for "stuck at Fetching I/Q chunk
+  // forever with zero feedback".
+  const hangingFetchImpl = () =>
+    vi.fn((_url: string, init?: RequestInit) => new Promise<Response>((_resolve, reject) => {
+      init?.signal?.addEventListener('abort', () => reject(new DOMException('The operation was aborted.', 'AbortError')));
+    }));
+
+  it('times out with a clear, actionable error when a chunk fetch hangs instead of waiting forever', async () => {
+    const fetchImpl = hangingFetchImpl();
+    const client = new OfflineCaptureClient({ fetchImpl: fetchImpl as unknown as typeof fetch });
+    await expect(client.fetchIqByteRange('cap', 0, 15, undefined, 50)).rejects.toThrow(/Timed out after/);
+  });
+
+  it('propagates a real caller-initiated cancellation as a plain abort, never relabeled as a timeout', async () => {
+    const controller = new AbortController();
+    const fetchImpl = hangingFetchImpl();
+    const client = new OfflineCaptureClient({ fetchImpl: fetchImpl as unknown as typeof fetch });
+
+    const promise = client.fetchIqByteRange('cap', 0, 15, controller.signal, 60_000);
+    controller.abort();
+
+    await expect(promise).rejects.toMatchObject({ name: 'AbortError' });
+  });
+
   it('lists recent capture manifests from the real, read-only /recordings endpoint', async () => {
     const fetchImpl = vi.fn().mockResolvedValue(jsonResponse({ captures: [{ capture_id: 'a' }, { capture_id: 'b' }] }));
     const client = new OfflineCaptureClient({ baseUrl: 'http://test.local', fetchImpl: fetchImpl as unknown as typeof fetch });

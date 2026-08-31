@@ -17,6 +17,13 @@ export interface OfflineCaptureClientConfig {
 }
 
 const DEFAULT_BASE_URL = 'http://localhost:8000';
+// Real, disclosed limitation being fixed here: without this, a `fetch()`
+// that never settles (a hung connection, a proxy/antivirus intercepting
+// the request, a backend that stops responding mid-stream) leaves the
+// operator staring at "Fetching I/Q chunk" forever with zero feedback and
+// no way to know whether it is slow or actually broken. A per-chunk
+// timeout guarantees a real, visible error instead of an indefinite hang.
+const DEFAULT_CHUNK_TIMEOUT_MS = 30_000;
 
 export class OfflineCaptureClient {
   private readonly baseUrl: string;
@@ -61,22 +68,50 @@ export class OfflineCaptureClient {
   }
 
   // Inclusive byte range, matching HTTP Range semantics exactly (so the
-  // caller's byte-offset arithmetic maps 1:1 onto the request).
-  async fetchIqByteRange(captureId: string, startByteInclusive: number, endByteInclusive: number, signal?: AbortSignal): Promise<ArrayBuffer> {
+  // caller's byte-offset arithmetic maps 1:1 onto the request). Bounded by
+  // a real timeout (see DEFAULT_CHUNK_TIMEOUT_MS) -- a stuck request fails
+  // with a clear, actionable error instead of hanging forever.
+  async fetchIqByteRange(
+    captureId: string,
+    startByteInclusive: number,
+    endByteInclusive: number,
+    signal?: AbortSignal,
+    timeoutMs: number = DEFAULT_CHUNK_TIMEOUT_MS,
+  ): Promise<ArrayBuffer> {
     if (startByteInclusive < 0 || endByteInclusive < startByteInclusive) {
       throw new Error(`Invalid byte range [${startByteInclusive}, ${endByteInclusive}]`);
     }
     const url = `${this.baseUrl}/api/ble/capture/recordings/${encodeURIComponent(captureId)}/iq`;
-    const response = await this.fetchImpl(url, {
-      headers: { Range: `bytes=${startByteInclusive}-${endByteInclusive}` },
-      signal,
-    });
-    // A 200 (full-file response, some servers/proxies strip Range
-    // support) is still usable by a caller that only wanted the first
-    // range starting at byte 0 -- anything else is a real failure.
-    if (response.status !== 206 && response.status !== 200) {
-      throw new Error(`Failed to fetch I/Q range [${startByteInclusive}, ${endByteInclusive}] for "${captureId}": HTTP ${response.status}`);
+    const timeoutSignal = AbortSignal.timeout(timeoutMs);
+    const combinedSignal = signal ? AbortSignal.any([signal, timeoutSignal]) : timeoutSignal;
+
+    try {
+      const response = await this.fetchImpl(url, {
+        headers: { Range: `bytes=${startByteInclusive}-${endByteInclusive}` },
+        signal: combinedSignal,
+      });
+      // A 200 (full-file response, some servers/proxies strip Range
+      // support) is still usable by a caller that only wanted the first
+      // range starting at byte 0 -- anything else is a real failure.
+      if (response.status !== 206 && response.status !== 200) {
+        throw new Error(`Failed to fetch I/Q range [${startByteInclusive}, ${endByteInclusive}] for "${captureId}": HTTP ${response.status}`);
+      }
+      // Covered by the same timeout as the request above -- a body stream
+      // that stalls partway through (headers arrived, bytes stop coming)
+      // is exactly as "stuck" as a connection that never opens at all.
+      return await response.arrayBuffer();
+    } catch (error) {
+      // Only relabel a REAL timeout -- a caller-initiated cancellation
+      // (signal.aborted on the caller's own AbortController) must still
+      // propagate as a plain AbortError so it is handled as a clean stop,
+      // not an error (see OfflineReconstructionController.reconstruct()).
+      if (timeoutSignal.aborted && !(signal?.aborted)) {
+        throw new Error(
+          `Timed out after ${(timeoutMs / 1000).toFixed(0)}s waiting for bytes [${startByteInclusive}, ${endByteInclusive}] of "${captureId}" -- `
+          + `the backend or network stopped responding (either the connection never opened, or the transfer stalled partway through).`,
+        );
+      }
+      throw error;
     }
-    return response.arrayBuffer();
   }
 }
