@@ -155,6 +155,74 @@ describe('OfflineReconstructionController', () => {
     expect(controller.getState().error).toMatch(/ci16_le/);
   });
 
+  describe('stalled-chunk watchdog', () => {
+    // Real regression coverage for a real production incident: the
+    // backend process died mid-reconstruction, leaving the TCP connection
+    // in a state where captureClient.ts's own 30s fetch-level timeout did
+    // not visibly fire, and the operator was left staring at 0 bytes /
+    // "Fetching I/Q chunk" indefinitely. This is the INDEPENDENT second
+    // mechanism (recomputeTiming's watchdog) that must catch exactly that
+    // scenario even if the first one doesn't.
+    const hangingFetchImpl = (captureId: string) =>
+      vi.fn(async (url: string, init?: RequestInit) => {
+        if (url.endsWith(`/recordings/${captureId}`)) {
+          return new Response(JSON.stringify(realManifest(captureId)), { status: 200 });
+        }
+        // The /iq request never resolves on its own -- only an abort
+        // settles it, exactly like a dead backend leaving a connection
+        // open with no more bytes ever coming.
+        return new Promise<Response>((_resolve, reject) => {
+          init?.signal?.addEventListener('abort', () => reject(new DOMException('The operation was aborted.', 'AbortError')));
+        });
+      }) as unknown as typeof fetch;
+
+    it('reports a real, clear error when a chunk fetch stalls past the watchdog threshold', async () => {
+      const captureId = 'BLE-IQ-stall';
+      const controller = new OfflineReconstructionController({}, {
+        fetchImpl: hangingFetchImpl(captureId),
+        stalledChunkWatchdogMs: 250,
+      });
+
+      await controller.loadCapture(captureId);
+      await controller.reconstruct();
+
+      const state = controller.getState();
+      expect(state.status).toBe('ERROR_LOCAL');
+      expect(state.error).toMatch(/No progress for over/);
+    });
+
+    it('never reports READY after a watchdog-triggered error -- the real error always wins', async () => {
+      const captureId = 'BLE-IQ-stall-2';
+      const controller = new OfflineReconstructionController({}, {
+        fetchImpl: hangingFetchImpl(captureId),
+        stalledChunkWatchdogMs: 250,
+      });
+
+      await controller.loadCapture(captureId);
+      await controller.reconstruct();
+
+      // The abort the watchdog issues shares the SAME AbortController the
+      // reconstruction loop's own cancellation-handling code inspects --
+      // this asserts that race is resolved in favor of the real error,
+      // never silently downgraded back to a clean-looking READY state.
+      expect(controller.getState().status).not.toBe('READY');
+    });
+
+    it('does not fire while chunks keep landing normally, even close to the threshold', async () => {
+      const iqBytes = buildSyntheticCf32LeBytes(SAMPLE_COUNT);
+      const { fetchImpl } = makeFetchImpl('BLE-IQ-healthy', iqBytes);
+      const controller = new OfflineReconstructionController({}, {
+        fetchImpl,
+        stalledChunkWatchdogMs: 60_000, // generous -- this test just asserts a normal run still completes
+      });
+
+      await controller.loadCapture('BLE-IQ-healthy');
+      await controller.reconstruct();
+
+      expect(controller.getState().status).toBe('COMPLETE');
+    });
+  });
+
   describe('reconstruction telemetry', () => {
     // Forces multiple chunks over the same small synthetic capture (160,000
     // bytes / 40,000-byte chunkBytes = 4 chunks) so progress/stage

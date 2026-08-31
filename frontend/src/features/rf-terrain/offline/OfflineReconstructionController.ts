@@ -88,6 +88,17 @@ export interface OfflineReconstructionCallbacks {
 // exercise multi-chunk progress deterministically with a tiny buffer.
 const DEFAULT_CHUNK_BYTES = 16 * 1024 * 1024;
 const PROGRESS_TICK_INTERVAL_MS = 200;
+// Independent safety net on top of captureClient.ts's own 30s per-chunk
+// fetch timeout -- deliberately a SEPARATE mechanism (wall-clock time
+// since the last real byte of progress, checked by the same ticker that
+// already runs every 200ms) rather than trusting the fetch-level timeout
+// alone. If the backend dies mid-request in a way that leaves the
+// underlying connection in a state the browser doesn't promptly surface
+// as an error (observed: a backend process crashing can leave TCP
+// connections lingering in FIN_WAIT2 rather than closing cleanly), this
+// still guarantees a real, visible error within a bounded time instead of
+// silently trusting the first mechanism to have caught it.
+const STALLED_CHUNK_WATCHDOG_MS = 45_000;
 
 // Additive, isolated orchestrator for Offline Spectral Reconstruction.
 // Owns its OWN instance of the SAME pure engine LIVE's terrain.worker.ts
@@ -109,6 +120,7 @@ export class OfflineReconstructionController {
   private readonly client: OfflineCaptureClient;
   private readonly profile: OfflineReconstructionProfile;
   private readonly chunkBytes: number;
+  private readonly stalledChunkWatchdogMs: number;
   private callbacks: OfflineReconstructionCallbacks;
   private engine: ReturnType<typeof createTerrainWorkerState> | null = null;
   private generation = 1;
@@ -117,6 +129,9 @@ export class OfflineReconstructionController {
   private abortController: AbortController | null = null;
   private reconstructionStartedAtMs: number | null = null;
   private progressTicker: ReturnType<typeof setInterval> | null = null;
+  // Wall-clock time of the last real byte of progress (or reconstruction
+  // start) -- the watchdog input; see STALLED_CHUNK_WATCHDOG_MS.
+  private lastProgressAtMs: number | null = null;
 
   private state: OfflineReconstructionState = {
     status: 'NO_CAPTURE',
@@ -147,12 +162,16 @@ export class OfflineReconstructionController {
 
   constructor(
     callbacks: OfflineReconstructionCallbacks = {},
-    config: { baseUrl?: string; fetchImpl?: typeof fetch; profile?: OfflineReconstructionProfile; softwareCommit?: string; chunkBytes?: number } = {},
+    config: {
+      baseUrl?: string; fetchImpl?: typeof fetch; profile?: OfflineReconstructionProfile;
+      softwareCommit?: string; chunkBytes?: number; stalledChunkWatchdogMs?: number;
+    } = {},
   ) {
     this.callbacks = callbacks;
     this.client = new OfflineCaptureClient({ baseUrl: config.baseUrl, fetchImpl: config.fetchImpl });
     this.profile = config.profile ?? OFFLINE_RECONSTRUCTION_PROFILE_V1;
     this.chunkBytes = config.chunkBytes ?? DEFAULT_CHUNK_BYTES;
+    this.stalledChunkWatchdogMs = config.stalledChunkWatchdogMs ?? STALLED_CHUNK_WATCHDOG_MS;
     // No build step in this project wires in a real git commit today
     // (confirmed: no `define`/`import.meta.env` plumbing for it in
     // vite.config.ts) -- 'unknown' is an honest value, never a fabricated
@@ -188,6 +207,25 @@ export class OfflineReconstructionController {
   // still in flight, instead of looking frozen between updates.
   private recomputeTiming() {
     if (this.reconstructionStartedAtMs === null) return;
+
+    // Independent watchdog (see stalledChunkWatchdogMs) -- checked on
+    // every tick, not just relying on captureClient.ts's own per-chunk
+    // fetch timeout to always fire cleanly.
+    if (
+      this.state.status === 'RECONSTRUCTING'
+      && this.lastProgressAtMs !== null
+      && Date.now() - this.lastProgressAtMs > this.stalledChunkWatchdogMs
+    ) {
+      this.abortController?.abort();
+      this.stopProgressTicker();
+      this.setState({
+        status: 'ERROR_LOCAL',
+        stage: 'IDLE',
+        error: `No progress for over ${Math.round(this.stalledChunkWatchdogMs / 1000)}s -- the backend or connection appears to have stopped responding. Check that the backend is still running, then try again.`,
+      });
+      return;
+    }
+
     const elapsedMs = Date.now() - this.reconstructionStartedAtMs;
     const elapsedSeconds = elapsedMs / 1000;
     const throughputBytesPerSecond = this.state.bytesProcessed > 0 && elapsedSeconds > 0
@@ -203,6 +241,7 @@ export class OfflineReconstructionController {
   private startProgressTicker() {
     this.stopProgressTicker();
     this.reconstructionStartedAtMs = Date.now();
+    this.lastProgressAtMs = Date.now();
     this.progressTicker = setInterval(() => this.recomputeTiming(), PROGRESS_TICK_INTERVAL_MS);
   }
 
@@ -212,6 +251,7 @@ export class OfflineReconstructionController {
       this.progressTicker = null;
     }
     this.reconstructionStartedAtMs = null;
+    this.lastProgressAtMs = null;
   }
 
   private ensureEngine(): ReturnType<typeof createTerrainWorkerState> {
@@ -344,6 +384,15 @@ export class OfflineReconstructionController {
         try {
           buffer = await pendingFetch;
         } catch (error) {
+          // The stall watchdog (recomputeTiming) already transitioned us
+          // to ERROR_LOCAL and aborted this same controller before this
+          // rejection was ever observed here -- that real error must win,
+          // never get silently overwritten back to a "clean" READY just
+          // because the abort that caused THIS rejection happened to share
+          // the same AbortController.
+          if (this.state.status === 'ERROR_LOCAL') {
+            return;
+          }
           // A pipelined fetch already in flight when cancel() aborts it
           // rejects here -- treated as a clean stop, never surfaced as a
           // reconstruction error. Always awaited (never abandoned) so
@@ -373,6 +422,7 @@ export class OfflineReconstructionController {
 
         cursor = nextCursor;
         chunksProcessed += 1;
+        this.lastProgressAtMs = Date.now(); // a real chunk just landed -- resets the stall watchdog
         this.setState({
           totalRows: this.rows.length,
           progressFraction: totalBytes > 0 ? cursor / totalBytes : 1,
