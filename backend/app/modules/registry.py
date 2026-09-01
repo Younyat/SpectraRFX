@@ -26,6 +26,7 @@ from app.modules.rf_signal_understanding.module import rf_signal_understanding_m
 from app.modules.runtime_settings.module import runtime_settings_module
 from app.modules.sessions.module import sessions_module
 from app.modules.spectrum.module import spectrum_module
+from app.modules.storage_management.module import storage_management_module
 from app.modules.types import BackendModuleDefinition
 from app.modules.waterfall.module import waterfall_module
 
@@ -62,6 +63,7 @@ backend_modules: list[BackendModuleDefinition] = [
     presets_module,
     sessions_module,
     ai_research_plugin_module,
+    storage_management_module,
 ]
 
 

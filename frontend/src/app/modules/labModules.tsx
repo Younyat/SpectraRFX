@@ -20,6 +20,7 @@ import { validationModule } from './validation/module';
 import { waterfallModule } from './waterfall/module';
 import { rfTerrainModule } from './rf-terrain/module';
 import { aiResearchPluginModule } from './ai-research-plugin/module';
+import { storageManagementModule } from './storage-management/module';
 import { bleLabModule } from './ble-lab/module';
 import { bleRffiStageOneModule } from './ble-rffi-stage-one/module';
 import { blePacketAnalysisLabModule } from './ble-packet-analysis-lab/module';
@@ -57,6 +58,7 @@ export const labModules: LabModuleDefinition[] = [
   kiwiSdrMapModule,
   settingsModule,
   aiResearchPluginModule,
+  storageManagementModule,
 ];
 
 export const activeLabModules = labModules
