@@ -163,6 +163,24 @@ disclosed scope decision, not a silent gap.
     Enable" stay separate, manual steps (only Import — via the existing `.onnx`
     upload — and Test/Enable are actually implemented; Download and Convert are the
     operator's own step against the linked source, by design).
+  - `download_url` is set on 9 of the 16 curated entries — a real, individually
+    verified direct-file link (`raw.githubusercontent.com`/`huggingface.co/.../
+    resolve/main/...`), each confirmed with a real HTTP 200 during development, never
+    a guessed path. Two entries had a `paper_url` that was plain citation text
+    (e.g. `"IEEE Access 2024"`) rather than a URL — a real broken-`<a href>` bug,
+    caught via browser automation and fixed with the real DOI; a regression test
+    (`test_paper_url_is_always_a_real_url_never_a_citation_string`) now guards this.
+  - **Portal fix (2026-09-01)**: the modal is rendered via `createPortal(..., document.body)`,
+    not inline in RF Terrain's own DOM tree. Reported bug: filters and the "ONNX
+    available" checkbox were unusable. Root-caused via browser automation
+    (`document.elementFromPoint()` at the checkbox's own coordinates returned RF
+    Terrain's WebGL `<canvas>`, not the checkbox) — a `position: fixed` overlay
+    nested under a Three.js canvas tree does not reliably escape it for
+    hit-testing even at a high `z-index`. Same fix already used by
+    `SpectrumToolsPanel`'s tooltip for the identical class of bug. Verified live,
+    end-to-end, against the real running dev server: Task/Input/Kind filters and
+    the ONNX checkbox now correctly change the entry list (confirmed 16 → 2 entries
+    filtering by `RF_FINGERPRINTING`, 16 → 3 filtering by `onnx_available`).
 
 **Explicitly not implemented in this pass** (real, disclosed gaps):
 
@@ -219,7 +237,7 @@ and `GET /api/ai-research-plugin/status` returns `{"enabled": true, ...}`.
 
 ## 5. Testing
 
-`backend/app/tests/unit/ai_research_plugin/` — 92 tests (71 core plugin + 21 in
+`backend/app/tests/unit/ai_research_plugin/` — 95 tests (71 core plugin + 24 in
 `catalog/`), run via:
 
 ```bash

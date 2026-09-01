@@ -37,6 +37,31 @@ def test_unverified_entry_is_explicitly_flagged_and_never_marked_ready():
         assert entry.notes
 
 
+def test_paper_url_is_always_a_real_url_never_a_citation_string():
+    # Regression: paper_url was briefly set to plain citation text (e.g.
+    # "IEEE Access 2024") on two entries, which the frontend renders
+    # directly as an <a href> -- a real broken-link bug, not just a
+    # cosmetic one.
+    entries = curated_catalog_entries()
+    for entry in entries:
+        if entry.paper_url is not None:
+            assert entry.paper_url.startswith("http"), entry.id
+
+
+def test_download_url_when_present_is_a_real_url():
+    entries = curated_catalog_entries()
+    with_download = [entry for entry in entries if entry.download_url is not None]
+    assert len(with_download) >= 8
+    for entry in with_download:
+        assert entry.download_url.startswith("http"), entry.id
+
+
+def test_source_url_is_always_a_real_url():
+    entries = curated_catalog_entries()
+    for entry in entries:
+        assert entry.source_url.startswith("http"), entry.id
+
+
 def test_no_entry_invents_classes_it_does_not_have_evidence_for():
     entries = curated_catalog_entries()
     # A foundation model with no confirmed downstream head must not carry

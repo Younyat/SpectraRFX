@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { AlertTriangle, ExternalLink, Search, ShieldAlert, ShieldCheck, X } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { AlertTriangle, Download, ExternalLink, Search, ShieldAlert, ShieldCheck, X } from 'lucide-react';
 import { CatalogApiError, ModelCatalogClient } from '../api/catalogClient';
 import type {
   CatalogEntryKind, CatalogInputRepresentation, CatalogStatus, CatalogTask, RFModelCatalogEntry,
@@ -104,7 +105,18 @@ export const RFModelCatalogModal: React.FC<RFModelCatalogModalProps> = ({ onClos
   const filteredCount = entries.length;
   const modelCount = useMemo(() => entries.filter((entry) => entry.kind === 'MODEL').length, [entries]);
 
-  return (
+  // Portalled directly to document.body: this component is mounted deep
+  // inside RF Terrain's own DOM tree, which sits alongside a WebGL
+  // <canvas> (Three.js). A `position: fixed` overlay nested under that
+  // tree does not reliably escape it for HIT-TESTING purposes even with a
+  // high z-index -- confirmed via browser automation that the canvas was
+  // intercepting pointer events at the exact coordinates of this modal's
+  // own controls (elementFromPoint() returned the <canvas>, not the
+  // control), which is what made the filters/checkboxes unusable. A real
+  // DOM portal to <body> sidesteps the ancestor stacking context
+  // entirely, matching the same fix already used by SpectrumToolsPanel's
+  // tooltip for the identical class of bug.
+  return createPortal(
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/60 p-4">
       <div className="flex max-h-[88vh] w-full max-w-5xl flex-col rounded-2xl bg-white shadow-2xl">
         <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3">
@@ -191,7 +203,8 @@ export const RFModelCatalogModal: React.FC<RFModelCatalogModalProps> = ({ onClos
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 
@@ -214,6 +227,7 @@ const CatalogCard: React.FC<{ entry: RFModelCatalogEntry; expanded: boolean; onT
       {entry.task !== 'UNKNOWN' && <span className="rounded bg-indigo-50 px-1.5 py-0.5 font-medium text-indigo-700">{entry.task.replaceAll('_', ' ')}</span>}
       {entry.input_representation !== 'UNKNOWN' && <span className="rounded bg-sky-50 px-1.5 py-0.5 font-medium text-sky-700">{entry.input_representation.replaceAll('_', ' ')}</span>}
       {entry.onnx_available && <span className="rounded bg-emerald-50 px-1.5 py-0.5 font-medium text-emerald-700">ONNX</span>}
+      {entry.download_url && <span className="flex items-center gap-0.5 rounded bg-indigo-50 px-1.5 py-0.5 font-medium text-indigo-700"><Download className="h-2.5 w-2.5" /> Download available</span>}
     </div>
 
     {entry.signal_domain && <p className="text-xs text-slate-600">{entry.signal_domain}</p>}
@@ -245,6 +259,16 @@ const CatalogCard: React.FC<{ entry: RFModelCatalogEntry; expanded: boolean; onT
         )}
         {entry.notes && <p className="rounded bg-slate-50 p-1.5 text-slate-500">{entry.notes}</p>}
         <div className="flex flex-wrap gap-3 pt-1">
+          {entry.download_url && (
+            <a
+              href={entry.download_url}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center gap-1 rounded-lg bg-indigo-600 px-2.5 py-1 font-semibold text-white hover:bg-indigo-700"
+            >
+              <Download className="h-3 w-3" /> Download
+            </a>
+          )}
           <a href={entry.source_url} target="_blank" rel="noreferrer" className="flex items-center gap-1 font-medium text-indigo-600 hover:underline">
             Source <ExternalLink className="h-3 w-3" />
           </a>
@@ -255,8 +279,10 @@ const CatalogCard: React.FC<{ entry: RFModelCatalogEntry; expanded: boolean; onT
           )}
         </div>
         <p className="text-slate-400">
-          This catalog links to and describes the source -- it does not download or auto-import anything. Download the artifact
-          yourself from the source above, then use "Import .onnx model" once you have a real ONNX file.
+          {entry.download_url
+            ? 'Download opens the real artifact file (or, if gated/unclear, the exact file listing) directly from its host -- nothing is proxied or auto-imported through this platform.'
+            : 'No direct download link could be verified for this entry -- open Source and locate the artifact yourself.'}
+          {' '}Once you have a real ONNX file, use "Import .onnx model" above to bring it into this plugin.
         </p>
       </div>
     )}
