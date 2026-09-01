@@ -28,8 +28,8 @@ This is enforced **structurally**, not just by convention, on both sides:
   and `onnx`/`onnxruntime` are never even imported (all such imports are deferred to
   inside `module.py`'s `_build()`, never at module top-level). Verified directly
   against the real `app.main.app` object: zero `ai-research-plugin` routes exist when
-  the flag is off; all 11 exist when it is on
-  (`app/tests/unit/ai_research_plugin/test_module_registration.py`).
+  the flag is off; all 12 real paths exist when it is on (some serving multiple HTTP
+  methods) (`app/tests/unit/ai_research_plugin/test_module_registration.py`).
 - **Frontend**: `VITE_AI_RESEARCH_PLUGIN_ENABLED` defaults to `false`. When false, the
   module is filtered out of `activeLabModules`/`navigationModules`/`moduleRoutes` —
   zero route, zero nav entry, and the view's own JS chunk (confirmed via
@@ -124,7 +124,45 @@ disclosed scope decision, not a silent gap.
   check compatibility, run inference against **one or more selected models
   simultaneously** (spec §17's model comparison — the same RF region against
   different models, side by side), see raw output / interpretation / RF evidence kept
-  in three visually separate blocks (spec §12), and browse inference history.
+  in three visually separate blocks (spec §12), and browse inference history. This
+  standalone `/ai-research-plugin` page still exists and still works, but the primary
+  surface an operator actually reaches this from today is the **"FSEI -- AI"
+  floating panel inside RF Terrain 3D** (`frontend/src/features/rf-terrain/ui/
+  RFTerrainAiPluginPanel.tsx`) — a compact panel matching RF Terrain's own
+  Layers-button convention, supporting both OFFLINE (capture + time window) and
+  LIVE (a bounded raw I/Q snapshot from the same live SDR stream Live Monitor/RF
+  Terrain already use) inference against imported models.
+- **RF Model Discovery Catalog** (`backend/app/modules/ai_research_plugin/catalog/`,
+  `frontend/src/features/ai-research-plugin/catalog/`): replaces the earlier "four
+  static links" (ONNX Model Zoo / TorchSig / DeepSig / rfml) with a real catalog —
+  reachable via "Discover RF Models" in the FSEI panel. Two sources:
+  - A **curated seed catalog** (`catalog/seed_catalog.py`) of 16 real, individually
+    verified entries (via a live fetch against each source, not from memory) spanning
+    modulation classification, RF fingerprinting, wideband detection, protocol
+    identification, and foundation models — each with a real taxonomy (`task`,
+    `input_representation`, `conversion_status`) rather than being lumped into one
+    generic "Signal classification" bucket, and with model/framework/dataset kept
+    structurally distinct (`kind: MODEL | FRAMEWORK_TOOLKIT | DATASET`) so a dataset
+    like DeepSig RadioML can never appear as a downloadable model. One entry (INRIA
+    RFFI) could not be independently located and is explicitly flagged
+    `independently_verified: false` rather than dropped or guessed at.
+  - A **live search against the public Hugging Face Hub API**
+    (`catalog/huggingface_provider.py`) — real, unauthenticated, and honestly
+    disclosed as name/author-substring matching only (confirmed: multi-word queries
+    like "modulation classification" return 0 results; short fragments like "rf" or
+    a known repo name return real matches). Detects `onnx`/`safetensors`/`pt`/`pth`/
+    `ckpt`/`bin`/`h5`/`keras`/`tflite` files directly from the repo's real file
+    listing (`siblings`) to set `onnx_available`/`original_format`, but never
+    invents `task`/`classes` — those stay `UNKNOWN`/`null` until a human reviews the
+    model card.
+  - GitHub code search, Zenodo, arXiv, Papers with Code, and Kaggle discovery (spec
+    sections 14-15 of the catalog extension) are **not implemented** — a disclosed
+    gap, not a silently-skipped source.
+  - The catalog only links to and describes external sources; it never downloads,
+    converts, or auto-imports anything. "Download → Convert → Import → Test →
+    Enable" stay separate, manual steps (only Import — via the existing `.onnx`
+    upload — and Test/Enable are actually implemented; Download and Convert are the
+    operator's own step against the linked source, by design).
 
 **Explicitly not implemented in this pass** (real, disclosed gaps):
 
@@ -174,10 +212,15 @@ and `GET /api/ai-research-plugin/status` returns `{"enabled": true, ...}`.
 | `POST /inference` | Full run: read region, adapt, infer, interpret, persist an `InferenceRecord` |
 | `GET /inference` | List past inference records |
 | `GET /inference/{record_id}` | Get one past record |
+| `POST /inference/live` | Capture a bounded live I/Q snapshot from the shared SDR stream and run inference |
+| `GET /catalog` | List the curated model/framework/dataset catalog, with optional `task`/`input_representation`/`kind`/`onnx_available`/`conversion_status`/`source_kind` filters |
+| `GET /catalog/{entry_id}` | Get one curated catalog entry |
+| `GET /catalog/search/huggingface?q=...` | Live search against the public Hugging Face Hub API, mapped into the same catalog shape |
 
 ## 5. Testing
 
-`backend/app/tests/unit/ai_research_plugin/` — 58 tests, run via:
+`backend/app/tests/unit/ai_research_plugin/` — 92 tests (71 core plugin + 21 in
+`catalog/`), run via:
 
 ```bash
 cd backend
@@ -193,17 +236,24 @@ duck-typed fake matching the real manager's exact read-only interface, the
 compatibility verdict matrix, output interpretation (classification/embedding/
 not-interpretable, logit-vs-probability labeling), a full real ONNX forward pass
 end-to-end against a synthetic 5-class toy model fixture (determinism verified:
-identical raw output across two independent runs over the same region), and the
-disabled-by-default module-registration/isolation guarantee itself, checked directly
-against `app.main.app`'s real route table.
+identical raw output across two independent runs over the same region), the LIVE
+I/Q snapshot bridge, and the disabled-by-default module-registration/isolation
+guarantee itself, checked directly against `app.main.app`'s real route table.
+`catalog/` additionally covers: filter combinations, the curated seed catalog's own
+internal invariants (unique IDs, `DATASET` entries never `onnx_available`, `READY`
+entries always really `onnx_available`, the one unverified entry never `READY`), and
+the Hugging Face live-search response mapping (pure, mocked — no real network call in
+the test suite; the real integration was separately exercised by hand against the
+live public API during development).
 
-`frontend/src/features/ai-research-plugin/tests/` — 6 tests (API client URL/payload
-correctness and error propagation; disabled-by-default module registration checked
+`frontend/src/features/ai-research-plugin/tests/` plus `catalog/tests/` — 11 tests
+(API client URL/payload correctness and error propagation for both the core plugin
+client and the catalog client; disabled-by-default module registration checked
 directly against `activeLabModules`/`navigationModules`/`moduleRoutes`).
 
 Full existing suites confirmed unaffected by this addition:
-`pytest app/tests/unit -q` → 1070 passed, 36 skipped, 2 failed (both pre-existing,
-unrelated: `test_rf_intelligence_detects_fm_broadcast_candidate`,
+`pytest app/tests/unit -q` → 1098 passed, 36 skipped, 3 failed (all pre-existing,
+unrelated to this plugin: `test_preflight_real_data`,
+`test_rf_intelligence_detects_fm_broadcast_candidate`,
 `test_ir_temperature_object_and_ambient_are_distinct_measurements`); frontend
-`npx vitest run` → all passing; `npx tsc --noEmit` clean; `npm run build` succeeds
-with `AiResearchPluginView` as its own separate lazy chunk.
+`npx vitest run` → all passing; `npx tsc --noEmit` clean; `npm run build` succeeds.

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Brain, ChevronDown, ChevronUp, ExternalLink, RefreshCw, UploadCloud } from 'lucide-react';
+import { Brain, Compass, RefreshCw, UploadCloud } from 'lucide-react';
 import { HudFrame } from './hud/HudFrame';
 import { HUD_ACCENT_BRIGHT, HUD_BORDER_COLOR, HUD_PANEL_BACKGROUND, hudLabelClass } from './hud/hudTheme';
 import { AiResearchPluginApiError, AiResearchPluginClient } from '../../ai-research-plugin/api/aiResearchPluginClient';
+import { RFModelCatalogModal } from '../../ai-research-plugin/catalog/ui/RFModelCatalogModal';
 import type {
   AiPluginCaptureSummary,
   CompatibilityResult,
@@ -27,18 +28,6 @@ const verdictColor: Record<CompatibilityResult['verdict'], string> = {
   INCOMPATIBLE: '#f87171',
   UNKNOWN: HUD_BORDER_COLOR,
 };
-
-// Real, independently verified repositories/resources for pretrained RF
-// signal-classification models -- never invented URLs. Format/caveats are
-// stated honestly: most of these ship PyTorch weights, not ready-made
-// ONNX files, and would need `torch.onnx.export` before they can be
-// imported here.
-const MODEL_SOURCES: Array<{ name: string; url: string; note: string }> = [
-  { name: 'ONNX Model Zoo', url: 'https://github.com/onnx/models', note: 'Official ONNX-format models -- general-purpose, not RF-specific, but ready to import as-is.' },
-  { name: 'TorchSig (TorchDSP)', url: 'https://github.com/TorchDSP/torchsig', note: 'Actively maintained; models pretrained on the Sig53/WidebandSig53 signal datasets. PyTorch -- export to ONNX first.' },
-  { name: 'DeepSig RadioML', url: 'https://www.deepsig.ai/datasets', note: 'The standard AMC dataset (not a model download) -- most published AMC models are trained on this.' },
-  { name: 'IQTLabs rfml', url: 'https://github.com/IQTLabs/rfml', note: 'RF machine-learning toolkit and reference models. PyTorch -- export to ONNX first.' },
-];
 
 const shapeText = (shape: (number | null)[] | null) => (shape ? `[${shape.map((d) => (d === null ? '?' : d)).join(', ')}]` : 'unknown');
 
@@ -67,7 +56,7 @@ export const RFTerrainAiPluginPanel: React.FC<RFTerrainAiPluginPanelProps> = ({ 
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<'idle' | 'importing' | 'checking' | 'running'>('idle');
   const [liveAvailable, setLiveAvailable] = useState<boolean | null>(null);
-  const [sourcesOpen, setSourcesOpen] = useState(false);
+  const [catalogOpen, setCatalogOpen] = useState(false);
 
   const refreshModels = () => client.listModels().then(setModels).catch((e) => setError(String(e)));
   const refreshCaptures = () => client.listCaptures().then(setCaptures).catch((e) => setError(String(e)));
@@ -135,24 +124,14 @@ export const RFTerrainAiPluginPanel: React.FC<RFTerrainAiPluginPanelProps> = ({ 
             />
           </label>
 
-          <div>
-            <button onClick={() => setSourcesOpen((prev) => !prev)} className="flex w-full items-center justify-between text-[10px] app-muted-text">
-              <span>Where to find models</span>
-              {sourcesOpen ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-            </button>
-            {sourcesOpen && (
-              <div className="mt-1 flex flex-col gap-1.5 rounded border p-1.5" style={{ borderColor: HUD_BORDER_COLOR }}>
-                {MODEL_SOURCES.map((s) => (
-                  <a key={s.url} href={s.url} target="_blank" rel="noreferrer" className="group">
-                    <span className="flex items-center gap-1 text-[10px] font-semibold" style={{ color: HUD_ACCENT_BRIGHT }}>
-                      {s.name} <ExternalLink className="h-2.5 w-2.5" />
-                    </span>
-                    <span className="text-[9px] app-muted-text">{s.note}</span>
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
+          <button
+            onClick={() => setCatalogOpen(true)}
+            className="flex items-center justify-center gap-2 rounded border px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wide"
+            style={{ borderColor: HUD_BORDER_COLOR }}
+          >
+            <Compass className="h-3.5 w-3.5" />
+            Discover RF Models
+          </button>
 
           <label className="flex flex-col gap-1 text-[10px] app-muted-text">
             Model
@@ -297,6 +276,8 @@ export const RFTerrainAiPluginPanel: React.FC<RFTerrainAiPluginPanelProps> = ({ 
         <Brain className="h-3.5 w-3.5" />
         FSEI -- AI
       </button>
+
+      {catalogOpen && <RFModelCatalogModal onClose={() => setCatalogOpen(false)} />}
     </div>
   );
 };

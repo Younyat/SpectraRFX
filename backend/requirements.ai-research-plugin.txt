@@ -4,3 +4,7 @@
 # AI_RESEARCH_PLUGIN_ENABLED=true, per its own isolation requirement.
 onnx>=1.16.0
 onnxruntime>=1.18.0
+# Only used by catalog/huggingface_provider.py's live model search
+# (spec section 13) -- imported lazily inside that function, so the rest
+# of the plugin (including the curated static catalog) works without it.
+requests>=2.31.0

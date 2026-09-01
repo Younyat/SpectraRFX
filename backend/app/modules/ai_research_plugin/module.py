@@ -32,6 +32,7 @@ def _build(context):
     # Deferred on purpose -- see module docstring.
     from app.infrastructure.sdr.real_spectrum_stream import real_spectrum_stream
     from app.modules.ai_research_plugin.capture_bridge import ReadOnlyCaptureBridge
+    from app.modules.ai_research_plugin.catalog.catalog_service import ModelCatalogService
     from app.modules.ai_research_plugin.inference_service import AiInferenceService
     from app.modules.ai_research_plugin.live_bridge import LiveIqBridge
     from app.modules.ai_research_plugin.model_registry import ModelRegistry
@@ -65,7 +66,8 @@ def _build(context):
     inference_service = AiInferenceService(
         registry=registry, capture_bridge=capture_bridge, storage=storage, live_bridge=live_bridge,
     )
-    return build_ai_research_plugin_router(registry, capture_bridge, inference_service)
+    catalog_service = ModelCatalogService()
+    return build_ai_research_plugin_router(registry, capture_bridge, inference_service, catalog_service)
 
 
 ai_research_plugin_module = BackendModuleDefinition(

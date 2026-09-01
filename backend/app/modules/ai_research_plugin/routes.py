@@ -13,6 +13,15 @@ from fastapi import APIRouter, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel, Field
 
 from app.modules.ai_research_plugin.capture_bridge import CaptureBridgeError, ReadOnlyCaptureBridge
+from app.modules.ai_research_plugin.catalog.catalog_service import HuggingFaceProviderError, ModelCatalogService
+from app.modules.ai_research_plugin.catalog.contracts import (
+    CatalogEntryKind,
+    CatalogFilters,
+    CatalogInputRepresentation,
+    CatalogSourceKind,
+    CatalogStatus,
+    CatalogTask,
+)
 from app.modules.ai_research_plugin.contracts import InputRepresentation, RFTask
 from app.modules.ai_research_plugin.inference_service import AiInferenceService, InferenceError
 from app.modules.ai_research_plugin.model_registry import ModelImportError, ModelRegistry
@@ -51,8 +60,10 @@ def build_ai_research_plugin_router(
     registry: ModelRegistry,
     capture_bridge: ReadOnlyCaptureBridge,
     inference_service: AiInferenceService,
+    catalog_service: ModelCatalogService | None = None,
 ) -> APIRouter:
     router = APIRouter(prefix="/ai-research-plugin", tags=["ai-research-plugin-experimental"])
+    catalog = catalog_service or ModelCatalogService()
 
     @router.get("/status")
     def status() -> dict:
@@ -148,5 +159,36 @@ def build_ai_research_plugin_router(
         if record is None:
             raise HTTPException(404, f"Unknown record_id: {record_id}")
         return record
+
+    @router.get("/catalog")
+    def list_catalog(
+        task: CatalogTask | None = None,
+        input_representation: CatalogInputRepresentation | None = None,
+        kind: CatalogEntryKind | None = None,
+        onnx_available: bool | None = None,
+        conversion_status: CatalogStatus | None = None,
+        source_kind: CatalogSourceKind | None = None,
+    ):
+        filters = CatalogFilters(
+            task=task, input_representation=input_representation, kind=kind,
+            onnx_available=onnx_available, conversion_status=conversion_status, source_kind=source_kind,
+        )
+        entries = catalog.list_curated(filters)
+        return {"entries": entries, "total": len(entries)}
+
+    @router.get("/catalog/search/huggingface")
+    def search_catalog_huggingface(q: str, limit: int = 20):
+        try:
+            entries = catalog.search_huggingface(q, limit=limit)
+        except HuggingFaceProviderError as error:
+            raise HTTPException(502, str(error)) from error
+        return {"entries": entries, "total": len(entries)}
+
+    @router.get("/catalog/{entry_id}")
+    def get_catalog_entry(entry_id: str):
+        entry = catalog.get_curated(entry_id)
+        if entry is None:
+            raise HTTPException(404, f"Unknown catalog entry_id: {entry_id}")
+        return entry
 
     return router
