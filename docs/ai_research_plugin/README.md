@@ -132,6 +132,39 @@ disclosed scope decision, not a silent gap.
   Layers-button convention, supporting both OFFLINE (capture + time window) and
   LIVE (a bounded raw I/Q snapshot from the same live SDR stream Live Monitor/RF
   Terrain already use) inference against imported models.
+- **Continuous LIVE detection + 3D overlay** (`frontend/src/features/rf-terrain/ai/useAiLiveDetection.ts`,
+  `frontend/src/features/rf-terrain/render/AiDetectionOverlay.ts`): "Start continuous"
+  in the FSEI panel's LIVE tab repeats `runInferenceLive()` in a self-scheduling
+  loop (real backpressure -- never fires the next request before the previous
+  one resolves; a real 800ms floor on top of that) and keeps running after the
+  panel closes (state lives in `RFTerrainView`, same "outlives the panel" pattern
+  OFFLINE RECONSTRUCTION already established for its own objects). Each real
+  detection is rendered as an independently-aging wireframe box in the 3D
+  terrain, spanning the model's real analyzed frequency window, anchored at the
+  front/newest row (a live detection is "just now", not a historical range
+  lookup) and aging backward exactly like every other overlay.
+  - **Frequency applicability gating**: a model can declare
+    `expected_center_frequency_hz`/`expected_frequency_tolerance_hz` as an
+    OPERATOR OVERRIDE (never auto-discovered -- no ONNX graph knows physical RF
+    context). Checked on every loop tick against the REAL, currently-tuned
+    frequency before firing a request; when out of tolerance, the panel shows a
+    plain-language "this model isn't applicable here" message instead of
+    running inference, and automatically resumes once retuned back into range.
+    A model with no declared frequency stays "applicable" but with an honest
+    "unknown, not confirmed" disclaimer -- never silently treated as universal.
+  - **Real, measured latency**: `InferenceRecord.capture_latency_ms`/
+    `inference_latency_ms`/`total_latency_ms` are real wall-clock measurements
+    (never estimated) taken around the live-snapshot wait and the onnxruntime
+    call. The panel surfaces the real end-to-end number and an honest
+    "not real-time at this cadence" note above 1s, rather than implying
+    every model can keep up with the live stream.
+  - Caught and fixed a real bug during development: the frequency-applicability
+    `useEffect` originally depended on the `frequencyInfo` object itself, whose
+    identity changes on every live spectrum row (~10 Hz) even when the tuned
+    frequency hasn't changed -- an unbounded render→effect→setState loop that
+    reproduced as a genuine JS heap OOM in this hook's own test suite. Fixed by
+    depending on the real primitive (`centerFrequencyHz`) instead of object
+    identity.
 - **RF Model Discovery Catalog** (`backend/app/modules/ai_research_plugin/catalog/`,
   `frontend/src/features/ai-research-plugin/catalog/`): replaces the earlier "four
   static links" (ONNX Model Zoo / TorchSig / DeepSig / rfml) with a real catalog —
@@ -237,7 +270,7 @@ and `GET /api/ai-research-plugin/status` returns `{"enabled": true, ...}`.
 
 ## 5. Testing
 
-`backend/app/tests/unit/ai_research_plugin/` — 95 tests (71 core plugin + 24 in
+`backend/app/tests/unit/ai_research_plugin/` — 101 tests (77 core plugin + 24 in
 `catalog/`), run via:
 
 ```bash
@@ -268,10 +301,15 @@ live public API during development).
 (API client URL/payload correctness and error propagation for both the core plugin
 client and the catalog client; disabled-by-default module registration checked
 directly against `activeLabModules`/`navigationModules`/`moduleRoutes`).
+`frontend/src/features/rf-terrain/tests/aiDetectionOverlay.test.ts` +
+`tests/ai/useAiLiveDetection.test.ts` — 18 more tests covering the 3D overlay
+primitive (multi-detection independence, row-aging, expiry) and the continuous
+LIVE hook (frequency-applicability gating, real inference calls, latency/detection
+recording, error propagation).
 
 Full existing suites confirmed unaffected by this addition:
-`pytest app/tests/unit -q` → 1098 passed, 36 skipped, 3 failed (all pre-existing,
+`pytest app/tests/unit -q` → 1128 passed, 36 skipped, 3 failed (all pre-existing,
 unrelated to this plugin: `test_preflight_real_data`,
 `test_rf_intelligence_detects_fm_broadcast_candidate`,
 `test_ir_temperature_object_and_ambient_are_distinct_measurements`); frontend
-`npx vitest run` → all passing; `npx tsc --noEmit` clean; `npm run build` succeeds.
+`npx vitest run` → 281 passed; `npx tsc --noEmit` clean; `npm run build` succeeds.
