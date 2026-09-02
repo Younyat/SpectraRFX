@@ -282,10 +282,38 @@ interface ModelRowProps {
   onSaveOverrides: (overrides: { task?: RFTask; input_overrides?: Record<string, unknown>; output_overrides?: Record<string, unknown> }) => Promise<void>;
 }
 
+// "CLASS: description" per line -> {CLASS: description}. Blank lines and
+// lines without a colon are skipped rather than erroring -- a forgiving
+// parser for a plain-text editing convention, not a strict format.
+export const parseClassDescriptions = (text: string): Record<string, string> => {
+  const result: Record<string, string> = {};
+  for (const line of text.split('\n')) {
+    const colonIndex = line.indexOf(':');
+    if (colonIndex === -1) continue;
+    const className = line.slice(0, colonIndex).trim();
+    const description = line.slice(colonIndex + 1).trim();
+    if (className && description) result[className] = description;
+  }
+  return result;
+};
+
+export const formatClassDescriptions = (descriptions: Record<string, string> | null | undefined): string =>
+  Object.entries(descriptions ?? {}).map(([className, description]) => `${className}: ${description}`).join('\n');
+
 const ModelRow: React.FC<ModelRowProps> = ({ model, selected, expanded, onToggleSelect, onToggleExpand, onDelete, onSaveOverrides }) => {
   const [task, setTask] = useState<RFTask>(model.task);
   const [sampleRate, setSampleRate] = useState(model.input_overrides.sample_rate_hz ?? '');
   const [classes, setClasses] = useState((model.output_overrides.classes ?? model.output_discovered.classes ?? []).join(', '));
+  const [centerFrequencyMHz, setCenterFrequencyMHz] = useState<number | ''>(
+    model.input_overrides.expected_center_frequency_hz != null ? model.input_overrides.expected_center_frequency_hz / 1e6 : '',
+  );
+  const [toleranceMHz, setToleranceMHz] = useState<number | ''>(
+    model.input_overrides.expected_frequency_tolerance_hz != null ? model.input_overrides.expected_frequency_tolerance_hz / 1e6 : '',
+  );
+  const [signalBandwidthMHz, setSignalBandwidthMHz] = useState<number | ''>(
+    model.input_overrides.expected_signal_bandwidth_hz != null ? model.input_overrides.expected_signal_bandwidth_hz / 1e6 : '',
+  );
+  const [classDescriptionsText, setClassDescriptionsText] = useState(formatClassDescriptions(model.output_overrides.class_descriptions));
   const [saving, setSaving] = useState(false);
 
   const effectiveInput = useMemo(() => ({ ...model.input_discovered, ...Object.fromEntries(Object.entries(model.input_overrides).filter(([, v]) => v !== null)) }), [model]);
@@ -329,15 +357,63 @@ const ModelRow: React.FC<ModelRowProps> = ({ model, selected, expanded, onToggle
                 Classes (comma-separated, in output order)
                 <input value={classes} onChange={(e) => setClasses(e.target.value)} className="rounded border border-slate-300 px-1 py-0.5" />
               </label>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                <label className="flex flex-col gap-1">
+                  Expected center freq. (MHz)
+                  <input
+                    value={centerFrequencyMHz}
+                    onChange={(e) => setCenterFrequencyMHz(e.target.value === '' ? '' : Number(e.target.value))}
+                    placeholder="e.g. 2440"
+                    className="rounded border border-slate-300 px-1 py-0.5"
+                  />
+                </label>
+                <label className="flex flex-col gap-1">
+                  Tolerance (MHz)
+                  <input
+                    value={toleranceMHz}
+                    onChange={(e) => setToleranceMHz(e.target.value === '' ? '' : Number(e.target.value))}
+                    placeholder="e.g. 1"
+                    className="rounded border border-slate-300 px-1 py-0.5"
+                  />
+                </label>
+              </div>
+              <label className="mt-1 flex flex-col gap-1">
+                Real signal bandwidth (MHz) -- sizes the LIVE 3D highlight; leave blank if unknown
+                <input
+                  value={signalBandwidthMHz}
+                  onChange={(e) => setSignalBandwidthMHz(e.target.value === '' ? '' : Number(e.target.value))}
+                  placeholder="e.g. 2 for BLE, 20 for Wi-Fi"
+                  className="rounded border border-slate-300 px-1 py-0.5"
+                />
+              </label>
+              <label className="mt-1 flex flex-col gap-1">
+                Class meanings (one "NAME: description" per line -- shown automatically on every future prediction from this model)
+                <textarea
+                  value={classDescriptionsText}
+                  onChange={(e) => setClassDescriptionsText(e.target.value)}
+                  rows={3}
+                  placeholder={'BPSK: Binary Phase Shift Keying\nQPSK: Quadrature Phase Shift Keying'}
+                  className="rounded border border-slate-300 px-1 py-0.5 font-mono text-[11px]"
+                />
+              </label>
               <button
                 disabled={saving}
                 onClick={async () => {
                   setSaving(true);
                   try {
+                    const parsedDescriptions = parseClassDescriptions(classDescriptionsText);
                     await onSaveOverrides({
                       task,
-                      input_overrides: sampleRate === '' ? {} : { sample_rate_hz: sampleRate },
-                      output_overrides: classes.trim() === '' ? {} : { classes: classes.split(',').map((c) => c.trim()).filter(Boolean) },
+                      input_overrides: {
+                        ...(sampleRate === '' ? {} : { sample_rate_hz: sampleRate }),
+                        ...(centerFrequencyMHz === '' ? {} : { expected_center_frequency_hz: centerFrequencyMHz * 1e6 }),
+                        ...(toleranceMHz === '' ? {} : { expected_frequency_tolerance_hz: toleranceMHz * 1e6 }),
+                        ...(signalBandwidthMHz === '' ? {} : { expected_signal_bandwidth_hz: signalBandwidthMHz * 1e6 }),
+                      },
+                      output_overrides: {
+                        ...(classes.trim() === '' ? {} : { classes: classes.split(',').map((c) => c.trim()).filter(Boolean) }),
+                        ...(Object.keys(parsedDescriptions).length === 0 ? {} : { class_descriptions: parsedDescriptions }),
+                      },
                     });
                   } finally {
                     setSaving(false);

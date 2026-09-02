@@ -1,16 +1,25 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { checkFrequencyApplicability, checkRepresentationCompatibility, useAiLiveDetection } from '../../ai/useAiLiveDetection';
-import type { RFModelInputFields, RFModelManifest } from '../../../ai-research-plugin/types';
+import type { RFModelInputFields, RFModelManifest, RFModelOutputFields } from '../../../ai-research-plugin/types';
 import type { RFTerrainFrequencyInfo } from '../../ui/RFTerrainToolbar';
 
 const emptyInput: RFModelInputFields = {
   representation: null, tensor_shape: null, dtype: null, input_name: null,
   sample_rate_hz: null, bandwidth_hz: null, center_frequency_dependency: null,
   window_samples: null, overlap: null, expected_center_frequency_hz: null, expected_frequency_tolerance_hz: null,
+  expected_signal_bandwidth_hz: null,
 };
 
-const manifest = (overrides: Partial<RFModelInputFields> = {}, id = 'AI-MODEL-1'): RFModelManifest => ({
+const emptyOutput: RFModelOutputFields = {
+  output_type: null, tensor_shape: null, output_name: null, classes: null, class_descriptions: null,
+};
+
+const manifest = (
+  inputOverrides: Partial<RFModelInputFields> = {},
+  id = 'AI-MODEL-1',
+  outputOverrides: Partial<RFModelOutputFields> = {},
+): RFModelManifest => ({
   model_id: id,
   model_name: 'Toy Model',
   framework: 'onnx',
@@ -19,10 +28,10 @@ const manifest = (overrides: Partial<RFModelInputFields> = {}, id = 'AI-MODEL-1'
   imported_at_utc: '2026-01-01T00:00:00Z',
   task: 'other',
   input_discovered: emptyInput,
-  input_overrides: { ...emptyInput, ...overrides },
+  input_overrides: { ...emptyInput, ...inputOverrides },
   preprocessing: { normalization: null, fft_size: null, stft_window: null, stft_hop: null, scaling: null },
-  output_discovered: { output_type: null, tensor_shape: null, output_name: null, classes: null },
-  output_overrides: { output_type: null, tensor_shape: null, output_name: null, classes: null },
+  output_discovered: emptyOutput,
+  output_overrides: { ...emptyOutput, ...outputOverrides },
   provenance: { paper: null, authors: null, repository: null, dataset: null, model_version: null, notes: null },
 });
 
@@ -173,6 +182,81 @@ describe('useAiLiveDetection', () => {
     expect(result.current.detections[0].totalLatencyMs).toBe(20);
     expect(onDetection).toHaveBeenCalledTimes(1);
     expect(result.current.pollCount).toBe(1);
+    // Real bug this replaces: bandwidthHz used to be the CAPTURE's sample
+    // rate (2,000,000 in this fixture's compatibility check), which could
+    // span the entire visible terrain. With no expected_signal_bandwidth_hz
+    // override, it must be a small, disclosed marker -- never that value.
+    expect(result.current.detections[0].bandwidthHz).toBeLessThan(2_000_000);
+    expect(result.current.detections[0].bandwidthIsKnown).toBe(false);
+    expect(result.current.detections[0].predictedClass).toBe('QPSK');
+    // QPSK is a known standard term -- resolved automatically with no
+    // model override needed.
+    expect(result.current.detections[0].classDescription).toEqual({
+      text: expect.stringContaining('Quadrature Phase Shift Keying'),
+      source: 'KNOWN_TERM',
+    });
+  });
+
+  it('uses the model\'s real declared signal bandwidth for the detection box, never the capture sample rate', async () => {
+    const models = [manifest({ expected_signal_bandwidth_hz: 2_000_000 })];
+    const inferenceRecord = {
+      record_id: 'AI-INFER-1', model_id: 'AI-MODEL-1', model_sha256: 'a'.repeat(64), model_manifest_snapshot: models[0],
+      capture_id: 'LIVE', capture_data_sha256: 'hash', selected_time_seconds: [0, 0.002], selected_frequency_hz: null,
+      input_transformation: 'iq_tensor', input_tensor_shape: [1, 2, 4096], input_dtype: 'float32', normalization_applied: 'none',
+      inference_timestamp_utc: '2026-01-01T00:00:01Z', software_backend: 'onnxruntime==1.18.0',
+      raw_output: [0.1, 0.9], raw_output_shape: [1, 2],
+      interpretation: { kind: 'classification', predicted_class: 'BPSK', score: 0.5, score_type: 'probability' },
+      compatibility: { verdict: 'UNKNOWN', checks: [] },
+      capture_latency_ms: 12, inference_latency_ms: 8, total_latency_ms: 20,
+    };
+    const fetchImpl = vi.fn((url: string) => {
+      if (url.includes('/models')) return Promise.resolve(jsonResponse(models));
+      if (url.includes('/status')) return Promise.resolve(jsonResponse({ enabled: true, capture_bridge_available: true, live_inference_available: true }));
+      if (url.includes('/inference/live')) return Promise.resolve(jsonResponse(inferenceRecord));
+      return Promise.resolve(jsonResponse({}));
+    });
+    vi.stubGlobal('fetch', fetchImpl);
+
+    const { result } = renderHook(() => useAiLiveDetection({ frequencyInfo: freq(50_000_000) })); // a wide 50 MHz span
+    await waitFor(() => expect(result.current.models).toHaveLength(1));
+    act(() => result.current.setSelectedModelId('AI-MODEL-1'));
+
+    await act(async () => { await result.current.runOnce(); });
+
+    expect(result.current.detections[0].bandwidthHz).toBe(2_000_000);
+    expect(result.current.detections[0].bandwidthIsKnown).toBe(true);
+  });
+
+  it('prefers a model-specific class description over the standard-term reference', async () => {
+    const models = [manifest({}, 'AI-MODEL-1', { class_descriptions: { QPSK: 'This model\'s QPSK variant uses a custom pilot sequence.' } })];
+    const inferenceRecord = {
+      record_id: 'AI-INFER-1', model_id: 'AI-MODEL-1', model_sha256: 'a'.repeat(64), model_manifest_snapshot: models[0],
+      capture_id: 'LIVE', capture_data_sha256: 'hash', selected_time_seconds: [0, 0.002], selected_frequency_hz: null,
+      input_transformation: 'iq_tensor', input_tensor_shape: [1, 2, 4096], input_dtype: 'float32', normalization_applied: 'none',
+      inference_timestamp_utc: '2026-01-01T00:00:01Z', software_backend: 'onnxruntime==1.18.0',
+      raw_output: [0.1, 0.9], raw_output_shape: [1, 2],
+      interpretation: { kind: 'classification', predicted_class: 'QPSK', score: 0.9, score_type: 'probability' },
+      compatibility: { verdict: 'UNKNOWN', checks: [] },
+      capture_latency_ms: 12, inference_latency_ms: 8, total_latency_ms: 20,
+    };
+    const fetchImpl = vi.fn((url: string) => {
+      if (url.includes('/models')) return Promise.resolve(jsonResponse(models));
+      if (url.includes('/status')) return Promise.resolve(jsonResponse({ enabled: true, capture_bridge_available: true, live_inference_available: true }));
+      if (url.includes('/inference/live')) return Promise.resolve(jsonResponse(inferenceRecord));
+      return Promise.resolve(jsonResponse({}));
+    });
+    vi.stubGlobal('fetch', fetchImpl);
+
+    const { result } = renderHook(() => useAiLiveDetection({ frequencyInfo: freq(2_440_000_000) }));
+    await waitFor(() => expect(result.current.models).toHaveLength(1));
+    act(() => result.current.setSelectedModelId('AI-MODEL-1'));
+
+    await act(async () => { await result.current.runOnce(); });
+
+    expect(result.current.detections[0].classDescription).toEqual({
+      text: 'This model\'s QPSK variant uses a custom pilot sequence.',
+      source: 'MODEL_OVERRIDE',
+    });
   });
 
   it('surfaces a real API error via latestError without throwing', async () => {

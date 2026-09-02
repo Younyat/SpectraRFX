@@ -97,6 +97,21 @@ export interface AiDetectionInfo {
   // Real, measured end-to-end latency (backend total_latency_ms, or the
   // client round-trip fallback) -- null only when genuinely unknown.
   totalLatencyMs: number | null;
+  // The raw predicted class name (e.g. "BPSK"), separate from `summary`'s
+  // formatted text, so the Inspector can look up a real explanation for
+  // it (operator-typed `class_descriptions`, or a known-term reference)
+  // without re-parsing the summary string. Null for non-classification
+  // interpretations (embedding, not-interpretable).
+  predictedClass: string | null;
+  // Real explanation carried by an operator-typed-once description, or a
+  // real, standard-terminology reference match. Distinguishes the two
+  // provenances honestly instead of blending them silently.
+  classDescription: { text: string; source: 'MODEL_OVERRIDE' | 'KNOWN_TERM' } | null;
+  // Whether bandwidthHz above is a real, operator-declared signal
+  // bandwidth, or a small disclosed FALLBACK marker width -- the
+  // Inspector must show this honestly, never present a fallback marker
+  // as if it were a measured/declared bandwidth.
+  bandwidthIsKnown: boolean;
 }
 
 // One AI Research Plugin LIVE inference result, anchored to the terrain
@@ -121,6 +136,15 @@ export interface AiLiveDetection {
   // client-measured round-trip if the backend didn't report one) -- null
   // only when genuinely unknown, never a placeholder guess.
   totalLatencyMs: number | null;
+  predictedClass: string | null;
+  classDescription: { text: string; source: 'MODEL_OVERRIDE' | 'KNOWN_TERM' } | null;
+  // Whether bandwidthHz is a real, operator-declared signal bandwidth
+  // (RFModelInputFields.expected_signal_bandwidth_hz), or a small,
+  // disclosed FALLBACK marker width used because the exact occupied
+  // bandwidth of what the model classified is genuinely unknown (a
+  // whole-snippet classifier has no per-detection frequency
+  // localization) -- never silently presented as a measurement.
+  bandwidthIsKnown: boolean;
 }
 
 // Typed worker protocol (spec §11).

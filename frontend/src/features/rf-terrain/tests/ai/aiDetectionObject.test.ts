@@ -9,7 +9,10 @@ const detection = (overrides: Partial<AiLiveDetection> = {}): AiLiveDetection =>
   detectedAtUtc: '2026-01-01T00:00:10.000Z',
   centerFrequencyHz: 2_440_000_000,
   bandwidthHz: 2_000_000,
+  bandwidthIsKnown: true,
   summary: 'QPSK (probability=0.870)',
+  predictedClass: 'QPSK',
+  classDescription: null,
   totalLatencyMs: 92,
   ...overrides,
 });
@@ -36,7 +39,19 @@ describe('buildAiDetectionTerrainObject', () => {
       summary: 'QPSK (probability=0.870)',
       detectedAtUtc: '2026-01-01T00:00:10.000Z',
       totalLatencyMs: 92,
+      predictedClass: 'QPSK',
+      classDescription: null,
+      bandwidthIsKnown: true,
     });
+  });
+
+  it('carries the class description and bandwidth-known provenance through to the TerrainObject', () => {
+    const object = buildAiDetectionTerrainObject(detection({
+      classDescription: { text: 'Quadrature Phase Shift Keying', source: 'KNOWN_TERM' },
+      bandwidthIsKnown: false,
+    }));
+    expect(object.aiDetection?.classDescription).toEqual({ text: 'Quadrature Phase Shift Keying', source: 'KNOWN_TERM' });
+    expect(object.aiDetection?.bandwidthIsKnown).toBe(false);
   });
 
   it('never fabricates real segmentation metrics -- geometric fields are honestly zeroed/null', () => {

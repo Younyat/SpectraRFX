@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { AiResearchPluginApiError, AiResearchPluginClient } from '../../ai-research-plugin/api/aiResearchPluginClient';
-import type { InferenceRecord, InputRepresentation, RFModelInputFields, RFModelManifest } from '../../ai-research-plugin/types';
+import type { InferenceRecord, InputRepresentation, RFModelInputFields, RFModelManifest, RFModelOutputFields } from '../../ai-research-plugin/types';
 import type { AiLiveDetection } from '../model/rfTerrainTypes';
 import type { RFTerrainFrequencyInfo } from '../ui/RFTerrainToolbar';
+import { lookupKnownRfTerm } from './knownRfTerms';
 
 const client = new AiResearchPluginClient();
 
@@ -85,6 +86,49 @@ const mergeEffectiveInput = (model: RFModelManifest): RFModelInputFields => ({
   ...Object.fromEntries(Object.entries(model.input_overrides).filter(([, value]) => value !== null)),
 } as RFModelInputFields);
 
+const mergeEffectiveOutput = (model: RFModelManifest): RFModelOutputFields => ({
+  ...model.output_discovered,
+  ...Object.fromEntries(Object.entries(model.output_overrides).filter(([, value]) => value !== null)),
+} as RFModelOutputFields);
+
+// A whole-snippet classifier has no per-detection frequency localization
+// -- it says "this analyzed window looks like class X", not "the signal
+// occupies exactly this many Hz". Rather than pretend otherwise (the real
+// bug this replaces: using the CAPTURE's sample rate, which can span the
+// entire visible terrain), the 3D highlight uses a real, operator-
+// declared signal bandwidth when the model provides one, and otherwise a
+// small, honestly-disclosed marker scaled to a modest fraction of the
+// current visible span -- never the full analysis bandwidth.
+const FALLBACK_MARKER_SPAN_FRACTION = 0.02;
+const FALLBACK_MARKER_MIN_HZ = 50_000;
+
+function resolveDetectionBandwidth(
+  model: RFModelManifest,
+  frequencyInfo: RFTerrainFrequencyInfo | null,
+): { bandwidthHz: number; bandwidthIsKnown: boolean } {
+  const declared = mergeEffectiveInput(model).expected_signal_bandwidth_hz;
+  if (declared != null && declared > 0) {
+    return { bandwidthHz: declared, bandwidthIsKnown: true };
+  }
+  const spanHz = frequencyInfo?.spanHz ?? 0;
+  return {
+    bandwidthHz: Math.max(FALLBACK_MARKER_MIN_HZ, spanHz * FALLBACK_MARKER_SPAN_FRACTION),
+    bandwidthIsKnown: false,
+  };
+}
+
+function resolveClassDescription(
+  model: RFModelManifest,
+  predictedClass: string | null,
+): AiLiveDetection['classDescription'] {
+  if (!predictedClass) return null;
+  const modelDescription = mergeEffectiveOutput(model).class_descriptions?.[predictedClass];
+  if (modelDescription) return { text: modelDescription, source: 'MODEL_OVERRIDE' };
+  const knownTerm = lookupKnownRfTerm(predictedClass);
+  if (knownTerm) return { text: knownTerm, source: 'KNOWN_TERM' };
+  return null;
+}
+
 export function checkFrequencyApplicability(
   model: RFModelManifest | undefined,
   frequencyInfo: RFTerrainFrequencyInfo | null,
@@ -111,6 +155,9 @@ export function checkFrequencyApplicability(
     reason: `This model isn't applicable here -- it expects ~${expectedMHz} MHz (±${toleranceMHz} MHz), but the receiver is currently tuned to ${currentMHz} MHz. Its effect can't be shown at this frequency.`,
   };
 }
+
+const extractPredictedClass = (record: InferenceRecord): string | null =>
+  record.interpretation.kind === 'classification' ? record.interpretation.predicted_class ?? null : null;
 
 const summarizeRecord = (record: InferenceRecord): string => {
   if (record.interpretation.kind === 'classification') {
@@ -230,14 +277,19 @@ export function useAiLiveDetection({ frequencyInfo, onDetection }: UseAiLiveDete
       setLatestError(null);
       setPollCount((prev) => prev + 1);
 
+      const { bandwidthHz, bandwidthIsKnown } = resolveDetectionBandwidth(model, frequencyInfoRef.current);
+      const predictedClass = extractPredictedClass(record);
       const detection: AiLiveDetection = {
         id: `AI-DETECTION-${record.record_id}`,
         modelId,
         modelName: model.model_name,
         detectedAtUtc: record.inference_timestamp_utc,
         centerFrequencyHz: frequencyInfoRef.current?.centerFrequencyHz ?? 0,
-        bandwidthHz: record.compatibility.checks.find((c) => c.field === 'sample_rate_hz')?.capture_value as number ?? frequencyInfoRef.current?.sampleRateHz ?? 0,
+        bandwidthHz,
+        bandwidthIsKnown,
         summary: summarizeRecord(record),
+        predictedClass,
+        classDescription: resolveClassDescription(model, predictedClass),
         totalLatencyMs: record.total_latency_ms ?? clientRoundTripMs,
       };
       setDetections((prev) => [detection, ...prev].slice(0, MAX_DETECTION_HISTORY));

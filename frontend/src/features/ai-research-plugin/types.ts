@@ -28,6 +28,11 @@ export interface RFModelInputFields {
   // at any particular frequency", never "applies everywhere".
   expected_center_frequency_hz: number | null;
   expected_frequency_tolerance_hz: number | null;
+  // The signal's real typical OCCUPIED bandwidth (e.g. ~2 MHz for BLE) --
+  // a different concept from `bandwidth_hz` above (that one is the
+  // capture/analysis bandwidth fed INTO the model). Used only to size the
+  // LIVE detection's 3D highlight; never discovered.
+  expected_signal_bandwidth_hz: number | null;
 }
 
 export interface RFModelPreprocessing {
@@ -43,6 +48,10 @@ export interface RFModelOutputFields {
   tensor_shape: (number | null)[] | null;
   output_name: string | null;
   classes: string[] | null;
+  // Operator-typed-once explanation per class name (e.g. "BPSK" -> "Binary
+  // Phase Shift Keying"). Never discovered -- an ONNX graph carries no
+  // semantic meaning for a class name/index.
+  class_descriptions: Record<string, string> | null;
 }
 
 export interface RFModelProvenance {

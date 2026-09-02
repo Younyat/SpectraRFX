@@ -87,6 +87,25 @@ def test_effective_input_prefers_override_over_discovered_when_both_are_set(regi
     assert updated.effective_input().dtype == "float16"
 
 
+def test_apply_overrides_accepts_signal_bandwidth_and_class_descriptions(registry: ModelRegistry):
+    manifest = registry.import_onnx_model(build_toy_amc_onnx_bytes(), "toy_amc.onnx")
+
+    updated = registry.apply_overrides(
+        manifest.model_id,
+        input_overrides={"expected_center_frequency_hz": 2_440_000_000.0, "expected_signal_bandwidth_hz": 2_000_000.0},
+        output_overrides={
+            "classes": ["BPSK", "QPSK"],
+            "class_descriptions": {"BPSK": "Binary Phase Shift Keying -- 1 bit/symbol", "QPSK": "Quadrature Phase Shift Keying -- 2 bits/symbol"},
+        },
+    )
+
+    assert updated.effective_input().expected_signal_bandwidth_hz == 2_000_000.0
+    assert updated.effective_output().class_descriptions == {
+        "BPSK": "Binary Phase Shift Keying -- 1 bit/symbol",
+        "QPSK": "Quadrature Phase Shift Keying -- 2 bits/symbol",
+    }
+
+
 def test_apply_overrides_on_an_unknown_model_id_fails_closed(registry: ModelRegistry):
     with pytest.raises(ModelImportError):
         registry.apply_overrides("AI-MODEL-does-not-exist", task=RFTask.OTHER)

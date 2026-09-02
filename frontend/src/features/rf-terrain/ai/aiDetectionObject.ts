@@ -48,6 +48,9 @@ export function buildAiDetectionTerrainObject(detection: AiLiveDetection): Terra
       summary: detection.summary,
       detectedAtUtc: detection.detectedAtUtc,
       totalLatencyMs: detection.totalLatencyMs,
+      predictedClass: detection.predictedClass,
+      classDescription: detection.classDescription,
+      bandwidthIsKnown: detection.bandwidthIsKnown,
     },
   };
 }

@@ -122,7 +122,25 @@ export const RFTerrainInspector: React.FC<RFTerrainInspectorProps> = ({ selectio
                 <div className="rounded border p-1.5" style={{ borderColor: '#f97316' }}>
                   {fieldRow('Model', matchedObject.aiDetection.modelName, 'EVIDENCE')}
                   {fieldRow('Result', matchedObject.aiDetection.summary, 'HYPOTHESIS')}
+                  {matchedObject.aiDetection.classDescription && (
+                    <p className="mt-1 text-[10px] app-muted-text">
+                      {matchedObject.aiDetection.classDescription.text}
+                      <span className="ml-1 text-[9px] italic">
+                        ({matchedObject.aiDetection.classDescription.source === 'MODEL_OVERRIDE' ? 'model-specific description' : 'standard term reference'})
+                      </span>
+                    </p>
+                  )}
+                  {!matchedObject.aiDetection.classDescription && matchedObject.aiDetection.predictedClass && (
+                    <p className="mt-1 text-[10px] text-amber-300">
+                      No description set for "{matchedObject.aiDetection.predictedClass}" -- add one via the model's overrides in the FSEI -- AI panel.
+                    </p>
+                  )}
                   {fieldRow('Latency', matchedObject.aiDetection.totalLatencyMs === null ? 'unknown' : `${matchedObject.aiDetection.totalLatencyMs.toFixed(0)} ms`, 'MEASURED')}
+                  {!matchedObject.aiDetection.bandwidthIsKnown && (
+                    <p className="mt-1 text-[10px] app-muted-text">
+                      Frequency box width is an approximate marker, not a measured/declared signal bandwidth -- this model has no `expected_signal_bandwidth_hz` override set.
+                    </p>
+                  )}
                 </div>
               )}
 
@@ -224,6 +242,13 @@ export const RFTerrainInspector: React.FC<RFTerrainInspectorProps> = ({ selectio
                         {fieldRow('Result', matchedObject.aiDetection.summary, 'HYPOTHESIS')}
                         {fieldRow('Detected at', new Date(matchedObject.aiDetection.detectedAtUtc).toLocaleString(), 'MEASURED')}
                         {fieldRow('End-to-end latency', matchedObject.aiDetection.totalLatencyMs === null ? 'unknown' : `${matchedObject.aiDetection.totalLatencyMs.toFixed(0)} ms`, 'MEASURED')}
+                        {matchedObject.aiDetection.predictedClass && (
+                          fieldRow(
+                            'Class meaning',
+                            matchedObject.aiDetection.classDescription?.text ?? 'no description set',
+                            matchedObject.aiDetection.classDescription?.source === 'MODEL_OVERRIDE' ? 'EVIDENCE' : matchedObject.aiDetection.classDescription ? 'DERIVED' : undefined,
+                          )
+                        )}
                         <p className="mt-1 text-[10px] app-muted-text">
                           A prediction from this imported model's own training -- never a confirmed device/protocol identification. See the FSEI -- AI panel for the model's full manifest and compatibility check.
                         </p>

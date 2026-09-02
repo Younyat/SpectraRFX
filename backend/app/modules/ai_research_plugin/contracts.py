@@ -83,6 +83,14 @@ class RFModelInputFields(BaseModel):
     # here") until the operator sets it via an override.
     expected_center_frequency_hz: float | None = None
     expected_frequency_tolerance_hz: float | None = None
+    # The real, typical OCCUPIED bandwidth of the signal type this model
+    # recognizes (e.g. ~2 MHz for BLE, ~20 MHz for 802.11) -- deliberately
+    # a DIFFERENT concept from `bandwidth_hz` above (that one is the
+    # capture/analysis bandwidth fed INTO the model, used for input
+    # compatibility checking). This one is used only to size the LIVE
+    # detection's 3D highlight -- never discovered, since nothing about an
+    # ONNX graph says how wide the signal it classifies actually is.
+    expected_signal_bandwidth_hz: float | None = None
 
 
 class RFModelPreprocessing(BaseModel):
@@ -98,6 +106,14 @@ class RFModelOutputFields(BaseModel):
     tensor_shape: list[int | None] | None = None
     output_name: str | None = None
     classes: list[str] | None = None
+    # Never discovered -- an ONNX graph carries zero semantic information
+    # about what "class 3" means, only class NAMES if the operator typed
+    # them into `classes` above. This is a further, optional, operator-
+    # typed-once explanation per class name (e.g. "BPSK" -> "Binary Phase
+    # Shift Keying -- 1 bit/symbol"), so every future prediction from this
+    # model shows the explanation automatically without retyping it. Keys
+    # not present in `classes` are harmless and ignored by the frontend.
+    class_descriptions: dict[str, str] | None = None
 
 
 class RFModelProvenance(BaseModel):
