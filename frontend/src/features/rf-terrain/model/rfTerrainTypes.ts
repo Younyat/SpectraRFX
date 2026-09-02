@@ -72,6 +72,31 @@ export interface TerrainObject {
   // of the segmented window (i.e. it has not yet ended); false once its
   // last detected row has aged into the past.
   active: boolean;
+  // Absent (undefined) = a real object from the terrain's own segmentation
+  // algorithm -- every existing construction site keeps working untouched.
+  // 'AI_DETECTION' = synthetic, injected from an AI Research Plugin LIVE
+  // result (see ai/aiDetectionObject.ts) -- reuses this SAME type so it is
+  // selectable via the SAME findObjectAtPoint/Inspector pipeline, but its
+  // peakExcessDb/meanExcessDb/terrainVolumeIndex/cellCount/ridgeSlope
+  // fields are NOT measured (always 0/null) and callers (the Inspector)
+  // must branch on `origin` before presenting them as real geometry.
+  origin?: 'AI_DETECTION';
+  aiDetection?: AiDetectionInfo;
+}
+
+// Real info carried by an AI-injected TerrainObject -- everything the
+// model/backend actually reported for this detection, never fabricated.
+export interface AiDetectionInfo {
+  modelId: string;
+  modelName: string;
+  // Short, human-readable summary (predicted class + score, or embedding
+  // dims, or "not automatically interpretable") -- never a confirmed
+  // protocol/device label.
+  summary: string;
+  detectedAtUtc: string;
+  // Real, measured end-to-end latency (backend total_latency_ms, or the
+  // client round-trip fallback) -- null only when genuinely unknown.
+  totalLatencyMs: number | null;
 }
 
 // One AI Research Plugin LIVE inference result, anchored to the terrain

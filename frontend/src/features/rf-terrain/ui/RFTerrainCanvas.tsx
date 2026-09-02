@@ -460,11 +460,25 @@ export const RFTerrainCanvas = forwardRef<RFTerrainCanvasHandle, RFTerrainCanvas
         if (hiDistance < bestHiDistance) { bestHiDistance = hiDistance; colMax = i; }
       }
       if (colMax < colMin) [colMin, colMax] = [colMax, colMin];
+
+      // Real measured peak height across the matched col range -- the cage
+      // sits ON this, so it visually crowns the actual terrain lobe
+      // instead of floating at a fixed, disconnected height (spec: "arriba
+      // o alrededor del lóbulo"). Same toDisplayHeight/scale convention
+      // localMarkerPosition uses for the click reticle above.
+      let peakHeightRaw = -Infinity;
+      for (let col = colMin; col <= colMax; col += 1) {
+        const heightRaw = toDisplayHeight(frontRow.frame.powerLevels[col], frontRow.noiseFloorDb[col], modeRef.current);
+        if (heightRaw > peakHeightRaw) peakHeightRaw = heightRaw;
+      }
+      const baseY = (peakHeightRaw === -Infinity ? 0 : peakHeightRaw) * RF_TERRAIN_HEIGHT_VISUAL_SCALE;
+
       const half = RF_TERRAIN_DEFAULT_FREQUENCY_BINS / 2;
       renderer.upsertAiDetection({
         id: detection.id,
         xMin: colMin - half,
         xMax: colMax - half,
+        baseY,
         meshRow: 0,
         label: detection.summary,
         color: AI_DETECTION_DEFAULT_COLOR,
@@ -560,7 +574,14 @@ export const RFTerrainCanvas = forwardRef<RFTerrainCanvasHandle, RFTerrainCanvas
     const [x, y, z] = localMarkerPosition(row, hit.col, hit.row);
     renderer.setSelectedMarker(x, y, z);
 
-    if (matchedObject) {
+    // An AI-detection object's bounding box is a synthetic, generously-
+    // sized clickable window (see aiDetectionObject.ts), not a real
+    // measured region -- gathering "real excess cells within this box"
+    // for it would just show whatever the terrain's own real data happens
+    // to overlap, which is real but not what the AI actually flagged.
+    // Its own orange cage (AiDetectionOverlay) is the correct visual
+    // marker for it; skip the gold envelope for this object kind.
+    if (matchedObject && matchedObject.origin !== 'AI_DETECTION') {
       const sourceRows = gatherEnvelopeSourceRows(matchedObject);
       const envelope = buildSpectralObjectEnvelope(
         sourceRows, matchedObject.startFrequencyHz, matchedObject.stopFrequencyHz, RF_TERRAIN_SEGMENTATION_GROW_THRESHOLD_DB,

@@ -107,12 +107,24 @@ export const RFTerrainInspector: React.FC<RFTerrainInspectorProps> = ({ selectio
                 <span className="rounded border px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide" style={{ borderColor: HUD_BORDER_COLOR }}>
                   {selection.kind === 'TERRAIN_OBJECT' ? 'Terrain object' : 'Point'}
                 </span>
-                {matchedObject && (
+                {matchedObject?.origin === 'AI_DETECTION' ? (
+                  <span className="rounded border px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-300" style={{ borderColor: '#f97316' }}>
+                    AI detection
+                  </span>
+                ) : matchedObject && (
                   <span className="rounded border px-1.5 py-0.5 text-[9px] uppercase tracking-wide" style={{ borderColor: HUD_BORDER_COLOR }}>
                     {matchedObject.morphology}
                   </span>
                 )}
               </div>
+
+              {matchedObject?.aiDetection && (
+                <div className="rounded border p-1.5" style={{ borderColor: '#f97316' }}>
+                  {fieldRow('Model', matchedObject.aiDetection.modelName, 'EVIDENCE')}
+                  {fieldRow('Result', matchedObject.aiDetection.summary, 'HYPOTHESIS')}
+                  {fieldRow('Latency', matchedObject.aiDetection.totalLatencyMs === null ? 'unknown' : `${matchedObject.aiDetection.totalLatencyMs.toFixed(0)} ms`, 'MEASURED')}
+                </div>
+              )}
 
               {fieldRow('Frequency', `${(selection.frequencyHz / 1e6).toFixed(4)} MHz`, 'MEASURED')}
               {fieldRow('Time', new Date(selection.timestamp).toLocaleTimeString(), 'MEASURED')}
@@ -156,7 +168,14 @@ export const RFTerrainInspector: React.FC<RFTerrainInspectorProps> = ({ selectio
 
                   <div>
                     {sectionTitle('3. Object context')}
-                    {matchedObject ? (
+                    {matchedObject?.origin === 'AI_DETECTION' ? (
+                      <>
+                        {fieldRow('ID', matchedObject.trackId, 'EVIDENCE')}
+                        {fieldRow('Center frequency', `${(matchedObject.centerFrequencyHz / 1e6).toFixed(4)} MHz`, 'EVIDENCE')}
+                        {fieldRow('Analyzed bandwidth', `${(matchedObject.bandwidthHz / 1e3).toFixed(1)} kHz`, 'EVIDENCE')}
+                        {unavailableNotice('No real segmentation geometry (peak/mean excess, TVI, cell count, ridge slope) exists for an AI-injected region -- it is a bounding box around a model result, not a measured terrain shape. See section 5 for the real model output.')}
+                      </>
+                    ) : matchedObject ? (
                       <>
                         {fieldRow('Track ID', matchedObject.trackId, 'DERIVED')}
                         {fieldRow('Morphology', matchedObject.morphology, 'DERIVED')}
@@ -198,7 +217,18 @@ export const RFTerrainInspector: React.FC<RFTerrainInspectorProps> = ({ selectio
 
                   <div>
                     {sectionTitle('5. Intelligent hypothesis')}
-                    {unavailableNotice('Device/protocol identification: UNAVAILABLE -- no RF Intelligence adapter is connected in this build.')}
+                    {matchedObject?.aiDetection ? (
+                      <>
+                        {fieldRow('Model', matchedObject.aiDetection.modelName, 'EVIDENCE')}
+                        {fieldRow('Model ID', matchedObject.aiDetection.modelId, 'EVIDENCE')}
+                        {fieldRow('Result', matchedObject.aiDetection.summary, 'HYPOTHESIS')}
+                        {fieldRow('Detected at', new Date(matchedObject.aiDetection.detectedAtUtc).toLocaleString(), 'MEASURED')}
+                        {fieldRow('End-to-end latency', matchedObject.aiDetection.totalLatencyMs === null ? 'unknown' : `${matchedObject.aiDetection.totalLatencyMs.toFixed(0)} ms`, 'MEASURED')}
+                        <p className="mt-1 text-[10px] app-muted-text">
+                          A prediction from this imported model's own training -- never a confirmed device/protocol identification. See the FSEI -- AI panel for the model's full manifest and compatibility check.
+                        </p>
+                      </>
+                    ) : unavailableNotice('Device/protocol identification: UNAVAILABLE -- no RF Intelligence adapter is connected in this build.')}
                   </div>
 
                   <div>
@@ -223,17 +253,33 @@ export const RFTerrainInspector: React.FC<RFTerrainInspectorProps> = ({ selectio
             <h3 className={`mb-2 ${hudLabelClass}`} style={{ color: HUD_ACCENT_BRIGHT }}>Objects ({objects.length})</h3>
             <div className="space-y-2">
               {objects.map((object) => (
-                <div key={object.id} className="rounded-lg border p-2 text-[11px]" style={{ borderColor: object.active ? '#4ade80' : HUD_BORDER_COLOR }}>
+                <div key={object.id} className="rounded-lg border p-2 text-[11px]" style={{ borderColor: object.origin === 'AI_DETECTION' ? '#f97316' : object.active ? '#4ade80' : HUD_BORDER_COLOR }}>
                   <div className="mb-1 flex items-center justify-between">
                     <span className="font-mono text-[10px] app-muted-text">{object.trackId}</span>
-                    <span className="rounded border px-1 py-0.5 text-[9px] uppercase tracking-wide" style={{ borderColor: HUD_BORDER_COLOR }}>{object.morphology}</span>
+                    <span
+                      className="rounded border px-1 py-0.5 text-[9px] uppercase tracking-wide"
+                      style={{ borderColor: object.origin === 'AI_DETECTION' ? '#f97316' : HUD_BORDER_COLOR, color: object.origin === 'AI_DETECTION' ? '#fdba74' : undefined }}
+                    >
+                      {object.origin === 'AI_DETECTION' ? 'AI detection' : object.morphology}
+                    </span>
                   </div>
-                  {fieldRow('BW', `${(object.bandwidthHz / 1e3).toFixed(1)} kHz`)}
-                  {fieldRow('Duration', `${object.durationSeconds.toFixed(2)} s`)}
-                  {fieldRow('Peak excess', `${object.peakExcessDb.toFixed(1)} dB`)}
-                  {fieldRow('Slope', object.ridgeSlopeHzPerSecond === null ? '—' : `${(object.ridgeSlopeHzPerSecond / 1e3).toFixed(1)} kHz/s`)}
-                  {fieldRow('TVI', object.terrainVolumeIndex.toFixed(2))}
-                  {fieldRow('State', object.active ? 'ACTIVE' : 'ENDED')}
+                  {object.origin === 'AI_DETECTION' && object.aiDetection ? (
+                    <>
+                      {fieldRow('Model', object.aiDetection.modelName)}
+                      {fieldRow('Result', object.aiDetection.summary)}
+                      {fieldRow('Frequency', `${(object.centerFrequencyHz / 1e6).toFixed(4)} MHz`)}
+                      {fieldRow('Latency', object.aiDetection.totalLatencyMs === null ? 'unknown' : `${object.aiDetection.totalLatencyMs.toFixed(0)} ms`)}
+                    </>
+                  ) : (
+                    <>
+                      {fieldRow('BW', `${(object.bandwidthHz / 1e3).toFixed(1)} kHz`)}
+                      {fieldRow('Duration', `${object.durationSeconds.toFixed(2)} s`)}
+                      {fieldRow('Peak excess', `${object.peakExcessDb.toFixed(1)} dB`)}
+                      {fieldRow('Slope', object.ridgeSlopeHzPerSecond === null ? '—' : `${(object.ridgeSlopeHzPerSecond / 1e3).toFixed(1)} kHz/s`)}
+                      {fieldRow('TVI', object.terrainVolumeIndex.toFixed(2))}
+                      {fieldRow('State', object.active ? 'ACTIVE' : 'ENDED')}
+                    </>
+                  )}
                 </div>
               ))}
               {objects.length === 0 && <p className="text-xs app-muted-text">No objects detected yet.</p>}

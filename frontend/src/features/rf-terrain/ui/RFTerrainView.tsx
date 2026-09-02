@@ -20,6 +20,7 @@ import { RFTerrainAiPluginPanel } from './RFTerrainAiPluginPanel';
 import { RUNTIME_CONFIG } from '../../../shared/config/runtime';
 import { useOfflineReconstruction } from '../offline/useOfflineReconstruction';
 import { useAiLiveDetection } from '../ai/useAiLiveDetection';
+import { buildAiDetectionTerrainObject, pruneExpiredAiDetectionObjects } from '../ai/aiDetectionObject';
 import { OFFLINE_RECONSTRUCTION_PROFILE_V1 } from '../engine/offline/reconstructionProfile';
 import type { SourceEvidence } from '../offline/sourceEvidence';
 import { RF_TERRAIN_POLL_INTERVAL_MS, RF_TERRAIN_REWIND_MAX_OFFSET_ROWS } from '../model/rfTerrainConstants';
@@ -86,6 +87,7 @@ export const RFTerrainView: React.FC = () => {
   const [viewOffsetRows, setViewOffsetRows] = useState(0);
   const [selection, setSelection] = useState<TerrainInspectorSelection | null>(null);
   const [objects, setObjects] = useState<TerrainObject[]>([]);
+  const [aiDetectionObjects, setAiDetectionObjects] = useState<TerrainObject[]>([]);
   const [fps, setFps] = useState(0);
   const [contextLost, setContextLost] = useState(false);
   const [frequencyInfo, setFrequencyInfo] = useState<RFTerrainFrequencyInfo | null>(null);
@@ -147,8 +149,39 @@ export const RFTerrainView: React.FC = () => {
   // after OFFLINE RECONSTRUCTION's panel closes.
   const aiLiveDetection = useAiLiveDetection({
     frequencyInfo,
-    onDetection: (detection) => canvasRef.current?.addAiDetection(detection),
+    onDetection: (detection) => {
+      canvasRef.current?.addAiDetection(detection);
+      // Also injected as a real, selectable TerrainObject -- same
+      // click-to-select/Inspector pipeline real segmented objects use
+      // (spec: clicking the detected lobe shows its info in the same
+      // right-hand panel as existing objects). Pruned by real wall-clock
+      // time on every arrival so a long continuous-mode session doesn't
+      // accumulate stale entries.
+      const nowSeconds = Date.now() / 1000;
+      setAiDetectionObjects((previous) => [
+        buildAiDetectionTerrainObject(detection),
+        ...pruneExpiredAiDetectionObjects(previous, nowSeconds),
+      ]);
+    },
   });
+
+  // A continuous-mode session with detections but no NEW one arriving for
+  // a while (e.g. paused, or genuinely nothing detected) would otherwise
+  // leave stale entries selectable/listed until the next detection prunes
+  // them -- a light periodic sweep keeps this honest without it.
+  useEffect(() => {
+    if (aiDetectionObjects.length === 0) return undefined;
+    const interval = window.setInterval(() => {
+      setAiDetectionObjects((previous) => pruneExpiredAiDetectionObjects(previous, Date.now() / 1000));
+    }, 5000);
+    return () => window.clearInterval(interval);
+  }, [aiDetectionObjects.length]);
+
+  // The SAME array real segmentation objects live in, plus any still-live
+  // AI detections -- fed to both the canvas raycaster and the Inspector so
+  // clicking an AI-highlighted lobe resolves through the exact same
+  // findObjectAtPoint() path a real object would.
+  const mergedObjects = useMemo(() => [...objects, ...aiDetectionObjects], [objects, aiDetectionObjects]);
 
   // Once a reconstruction finishes, its (also real, segmented-once)
   // objects become the ones the Inspector/canvas can select -- mirrors
@@ -168,6 +201,7 @@ export const RFTerrainView: React.FC = () => {
     canvasRef.current?.clear();
     setSelection(null);
     setViewOffsetRows(0);
+    setAiDetectionObjects([]);
     if (source === 'LIVE') {
       setObjects([]);
     }
@@ -273,7 +307,7 @@ export const RFTerrainView: React.FC = () => {
           colorSource={colorSource}
           traceSource={traceSource}
           traceScope={traceScope}
-          objects={objects}
+          objects={mergedObjects}
           overlays={overlays}
           maskThresholdDb={maskThresholdDb}
           onSelect={handleSelect}
@@ -362,7 +396,7 @@ export const RFTerrainView: React.FC = () => {
         <RFTerrainLegend mode={mode} colorSource={colorSource} />
         <RFTerrainInspector
           selection={selection}
-          objects={objects}
+          objects={mergedObjects}
           showObjectsList={objectsEnabled}
           collapsed={inspectorCollapsed}
           onToggleCollapsed={() => setInspectorCollapsed((prev) => !prev)}

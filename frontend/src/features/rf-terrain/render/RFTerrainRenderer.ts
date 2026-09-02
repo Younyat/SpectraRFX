@@ -91,7 +91,7 @@ export class RFTerrainRenderer {
 
     // AI Research Plugin LIVE detection highlights (multiple, independently
     // aging boxes -- unlike the single selection reticle/envelope above).
-    this.aiDetectionOverlay = new AiDetectionOverlay();
+    this.aiDetectionOverlay = new AiDetectionOverlay(cols);
     this.terrainMesh.mesh.add(this.aiDetectionOverlay.group);
 
     // Center-frequency cursor (spec §41/§38 "Markers -> vertical plane"):
