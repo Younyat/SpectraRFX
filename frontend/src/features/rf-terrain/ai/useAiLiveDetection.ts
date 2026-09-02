@@ -15,6 +15,12 @@ const client = new AiResearchPluginClient();
 // cadence is max(MIN_POLL_INTERVAL_MS, measured round-trip).
 const MIN_POLL_INTERVAL_MS = 800;
 const MAX_DETECTION_HISTORY = 30;
+// A guaranteed-to-fail request (e.g. a real tensor-rank mismatch) never
+// becomes less guaranteed-to-fail by retrying -- stop hammering the
+// backend/onnxruntime after this many CONSECUTIVE failures instead of
+// looping forever on the same error every MIN_POLL_INTERVAL_MS. Reset to
+// 0 on any success, so one transient SDR hiccup never trips it.
+const MAX_CONSECUTIVE_ERRORS = 3;
 
 export interface FrequencyApplicability {
   applicable: boolean;
@@ -22,6 +28,56 @@ export interface FrequencyApplicability {
   // positive match -- nothing to caveat). Non-empty either as a hard
   // mismatch explanation or an honest "unknown" disclaimer.
   reason: string;
+}
+
+// Real, known tensor rank each implemented adapter (adapters.py) produces
+// -- iq_tensor/raw_iq: [1,2,N] (rank 3), spectrogram: [1,1,F,T] (rank 4),
+// psd: [1,F] (rank 2). `null` = no adapter implemented for it yet
+// (FeatureVectorAdapter is a documented Phase-2 gap, not silently ignored).
+const REPRESENTATION_RANK: Record<InputRepresentation, number | null> = {
+  raw_iq: 3,
+  iq_tensor: 3,
+  spectrogram: 4,
+  psd: 2,
+  features: null,
+  unknown: null,
+};
+
+export interface RepresentationApplicability {
+  compatible: boolean;
+  reason: string;
+}
+
+// A real, PRE-FLIGHT shape check (no network call) -- catches the exact
+// class of failure a real model produced during testing: a model
+// declaring a rank-4 input (e.g. an image-like [None,224,224,3] CNN) run
+// against 'iq_tensor', which always produces rank 3. onnxruntime rejects
+// this deterministically every single time, so retrying in continuous
+// mode is pure waste; this lets the caller refuse BEFORE ever hitting the
+// backend, with a specific reason instead of a raw ONNXRuntimeError
+// string. A model with no declared shape can't be ruled out this way --
+// stays "compatible" (unknown, not confirmed) rather than blocked.
+export function checkRepresentationCompatibility(
+  model: RFModelManifest | undefined,
+  representation: InputRepresentation,
+): RepresentationApplicability {
+  if (!model) return { compatible: false, reason: 'No model selected.' };
+  const input = mergeEffectiveInput(model);
+  const declaredRank = input.tensor_shape?.length ?? null;
+  if (declaredRank === null) return { compatible: true, reason: '' };
+  const producedRank = REPRESENTATION_RANK[representation];
+  if (producedRank === null) {
+    return {
+      compatible: false,
+      reason: `The "${representation}" representation has no adapter implemented in this plugin yet.`,
+    };
+  }
+  if (producedRank === declaredRank) return { compatible: true, reason: '' };
+  const shape = `[${(input.tensor_shape ?? []).map((d) => (d === null ? '?' : d)).join(', ')}]`;
+  return {
+    compatible: false,
+    reason: `This model declares a rank-${declaredRank} input ${shape}, but "${representation}" produces a rank-${producedRank} tensor -- onnxruntime will reject every attempt. None of iq_tensor/spectrogram/psd may be the representation this model actually needs (raw declared shape shown above); check its real preprocessing requirements before running.`,
+  };
 }
 
 const mergeEffectiveInput = (model: RFModelManifest): RFModelInputFields => ({
@@ -83,6 +139,7 @@ export interface UseAiLiveDetectionResult {
   continuousEnabled: boolean;
   setContinuousEnabled: (enabled: boolean) => void;
   applicability: FrequencyApplicability | null;
+  representationApplicability: RepresentationApplicability | null;
   latestRecord: InferenceRecord | null;
   latestError: string | null;
   detections: AiLiveDetection[];
@@ -106,6 +163,7 @@ export function useAiLiveDetection({ frequencyInfo, onDetection }: UseAiLiveDete
   const [liveAvailable, setLiveAvailable] = useState<boolean | null>(null);
   const [continuousEnabled, setContinuousEnabled] = useState(false);
   const [applicability, setApplicability] = useState<FrequencyApplicability | null>(null);
+  const [representationApplicability, setRepresentationApplicability] = useState<RepresentationApplicability | null>(null);
   const [latestRecord, setLatestRecord] = useState<InferenceRecord | null>(null);
   const [latestError, setLatestError] = useState<string | null>(null);
   const [detections, setDetections] = useState<AiLiveDetection[]>([]);
@@ -129,6 +187,7 @@ export function useAiLiveDetection({ frequencyInfo, onDetection }: UseAiLiveDete
 
   const timeoutRef = useRef<number | null>(null);
   const stoppedRef = useRef(true);
+  const consecutiveErrorsRef = useRef(0);
 
   const refreshModels = async () => {
     try {
@@ -148,13 +207,25 @@ export function useAiLiveDetection({ frequencyInfo, onDetection }: UseAiLiveDete
     const model = modelsRef.current.find((m) => m.model_id === modelId);
     const currentApplicability = checkFrequencyApplicability(model, frequencyInfoRef.current);
     setApplicability(currentApplicability);
+    const currentRepresentationApplicability = checkRepresentationCompatibility(model, representationRef.current);
+    setRepresentationApplicability(currentRepresentationApplicability);
     if (!model || !currentApplicability.applicable) return;
+    if (!currentRepresentationApplicability.compatible) {
+      // A guaranteed-to-fail shape mismatch -- never even attempted, and
+      // continuous mode stops outright rather than re-checking (and
+      // re-displaying the same refusal) every MIN_POLL_INTERVAL_MS forever.
+      setLatestError(currentRepresentationApplicability.reason);
+      stoppedRef.current = true;
+      setContinuousEnabled(false);
+      return;
+    }
 
     setBusy(true);
     const clientStartedAt = performance.now();
     try {
       const record = await client.runInferenceLive(modelId, representationRef.current);
       const clientRoundTripMs = performance.now() - clientStartedAt;
+      consecutiveErrorsRef.current = 0;
       setLatestRecord(record);
       setLatestError(null);
       setPollCount((prev) => prev + 1);
@@ -172,7 +243,15 @@ export function useAiLiveDetection({ frequencyInfo, onDetection }: UseAiLiveDete
       setDetections((prev) => [detection, ...prev].slice(0, MAX_DETECTION_HISTORY));
       onDetectionRef.current?.(detection);
     } catch (e) {
-      setLatestError(e instanceof AiResearchPluginApiError ? e.message : String(e));
+      const message = e instanceof AiResearchPluginApiError ? e.message : String(e);
+      consecutiveErrorsRef.current += 1;
+      if (consecutiveErrorsRef.current >= MAX_CONSECUTIVE_ERRORS) {
+        setLatestError(`Stopped after ${consecutiveErrorsRef.current} consecutive failures: ${message}`);
+        stoppedRef.current = true;
+        setContinuousEnabled(false);
+      } else {
+        setLatestError(message);
+      }
     } finally {
       setBusy(false);
     }
@@ -223,6 +302,15 @@ export function useAiLiveDetection({ frequencyInfo, onDetection }: UseAiLiveDete
     // eslint-disable-next-line react-hooks/exhaustive-deps -- frequencyInfoRef.current is read fresh each run; only its centerFrequencyHz should re-trigger this effect
   }, [models, selectedModelId, frequencyInfo?.centerFrequencyHz]);
 
+  // Same immediacy as the frequency check above, for the shape/rank
+  // pre-flight -- the operator sees "this won't work" the moment they pick
+  // an incompatible representation, not only after Start Continuous fires
+  // a doomed first request.
+  useEffect(() => {
+    const model = models.find((m) => m.model_id === selectedModelId);
+    setRepresentationApplicability(checkRepresentationCompatibility(model, representation));
+  }, [models, selectedModelId, representation]);
+
   return {
     models,
     refreshModels,
@@ -234,6 +322,7 @@ export function useAiLiveDetection({ frequencyInfo, onDetection }: UseAiLiveDete
     continuousEnabled,
     setContinuousEnabled,
     applicability,
+    representationApplicability,
     latestRecord,
     latestError,
     detections,

@@ -1,6 +1,6 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { checkFrequencyApplicability, useAiLiveDetection } from '../../ai/useAiLiveDetection';
+import { checkFrequencyApplicability, checkRepresentationCompatibility, useAiLiveDetection } from '../../ai/useAiLiveDetection';
 import type { RFModelInputFields, RFModelManifest } from '../../../ai-research-plugin/types';
 import type { RFTerrainFrequencyInfo } from '../../ui/RFTerrainToolbar';
 
@@ -63,6 +63,37 @@ describe('checkFrequencyApplicability', () => {
       null,
     );
     expect(result).toEqual({ applicable: false, reason: 'Live tuning information is not available yet.' });
+  });
+});
+
+describe('checkRepresentationCompatibility', () => {
+  it('is not compatible with no model selected', () => {
+    expect(checkRepresentationCompatibility(undefined, 'iq_tensor')).toEqual({ compatible: false, reason: 'No model selected.' });
+  });
+
+  it('is compatible (unknown, not blocked) when the model declares no tensor shape', () => {
+    expect(checkRepresentationCompatibility(manifest(), 'iq_tensor')).toEqual({ compatible: true, reason: '' });
+  });
+
+  it('is compatible when the declared rank matches the representation the adapter produces', () => {
+    // iq_tensor -> [1,2,N], rank 3
+    expect(checkRepresentationCompatibility(manifest({ tensor_shape: [1, 2, 4096] }), 'iq_tensor')).toEqual({ compatible: true, reason: '' });
+  });
+
+  it('reproduces the real reported bug: a rank-4 image-like model against iq_tensor (rank 3) is refused with a clear reason', () => {
+    const result = checkRepresentationCompatibility(manifest({ tensor_shape: [null, 224, 224, 3] }), 'iq_tensor');
+    expect(result.compatible).toBe(false);
+    expect(result.reason).toMatch(/rank-4/);
+    expect(result.reason).toMatch(/rank-3/);
+    expect(result.reason).toMatch(/224/);
+  });
+
+  it('spectrogram (rank 4) is compatible with a rank-4 declared model', () => {
+    expect(checkRepresentationCompatibility(manifest({ tensor_shape: [1, 1, 129, 32] }), 'spectrogram')).toEqual({ compatible: true, reason: '' });
+  });
+
+  it('psd (rank 2) is compatible with a rank-2 declared model', () => {
+    expect(checkRepresentationCompatibility(manifest({ tensor_shape: [1, 256] }), 'psd')).toEqual({ compatible: true, reason: '' });
   });
 });
 
@@ -162,5 +193,52 @@ describe('useAiLiveDetection', () => {
 
     expect(result.current.latestError).toMatch(/400/);
     expect(result.current.detections).toHaveLength(0);
+  });
+
+  it('runOnce() refuses a guaranteed shape mismatch without ever calling the backend, and stops continuous mode', async () => {
+    // The exact real bug report: a rank-4 image-like model (combined_model.onnx,
+    // [None,224,224,3]) selected with the default 'iq_tensor' representation
+    // (rank 3) -- previously hammered /inference/live every 800ms forever with
+    // the same guaranteed HTTP 400 ONNXRuntimeError.
+    const models = [manifest({ tensor_shape: [null, 224, 224, 3] })];
+    const fetchImpl = vi.fn((url: string) => {
+      if (url.includes('/models')) return Promise.resolve(jsonResponse(models));
+      if (url.includes('/status')) return Promise.resolve(jsonResponse({ enabled: true, capture_bridge_available: true, live_inference_available: true }));
+      return Promise.resolve(jsonResponse({}));
+    });
+    vi.stubGlobal('fetch', fetchImpl);
+
+    const { result } = renderHook(() => useAiLiveDetection({ frequencyInfo: freq(2_440_000_000) }));
+    await waitFor(() => expect(result.current.models).toHaveLength(1));
+    act(() => result.current.setSelectedModelId('AI-MODEL-1'));
+    act(() => result.current.setContinuousEnabled(true));
+
+    await waitFor(() => expect(result.current.continuousEnabled).toBe(false));
+
+    expect(fetchImpl.mock.calls.some((call) => String(call[0]).includes('/inference/live'))).toBe(false);
+    expect(result.current.latestError).toMatch(/rank-4/);
+    expect(result.current.representationApplicability?.compatible).toBe(false);
+  });
+
+  it('auto-stops continuous mode after 3 consecutive backend failures instead of retrying forever', async () => {
+    const models = [manifest()]; // no declared shape -- passes the pre-flight check, so it really hits the backend
+    const fetchImpl = vi.fn((url: string) => {
+      if (url.includes('/models')) return Promise.resolve(jsonResponse(models));
+      if (url.includes('/status')) return Promise.resolve(jsonResponse({ enabled: true, capture_bridge_available: true, live_inference_available: true }));
+      if (url.includes('/inference/live')) return Promise.resolve(new Response('persistent failure', { status: 400 }));
+      return Promise.resolve(jsonResponse({}));
+    });
+    vi.stubGlobal('fetch', fetchImpl);
+
+    const { result } = renderHook(() => useAiLiveDetection({ frequencyInfo: freq(2_440_000_000) }));
+    await waitFor(() => expect(result.current.models).toHaveLength(1));
+    act(() => result.current.setSelectedModelId('AI-MODEL-1'));
+    act(() => result.current.setContinuousEnabled(true));
+
+    await waitFor(() => expect(result.current.continuousEnabled).toBe(false), { timeout: 10_000 });
+
+    const liveCalls = fetchImpl.mock.calls.filter((call) => String(call[0]).includes('/inference/live'));
+    expect(liveCalls.length).toBe(3);
+    expect(result.current.latestError).toMatch(/Stopped after 3 consecutive failures/);
   });
 });

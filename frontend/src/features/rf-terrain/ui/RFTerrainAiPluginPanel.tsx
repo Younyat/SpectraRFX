@@ -281,11 +281,11 @@ const LivePanel: React.FC<{
 }> = ({ liveDetection, models, liveAvailable }) => {
   const {
     selectedModelId, setSelectedModelId, representation, setRepresentation,
-    continuousEnabled, setContinuousEnabled, applicability, latestRecord, latestError,
+    continuousEnabled, setContinuousEnabled, applicability, representationApplicability, latestRecord, latestError,
     detections, pollCount, busy, runOnce,
   } = liveDetection;
 
-  const canRunLive = selectedModelId !== '' && liveAvailable === true;
+  const canRunLive = selectedModelId !== '' && liveAvailable === true && representationApplicability?.compatible !== false;
   const latest = detections[0];
 
   return (
@@ -319,6 +319,13 @@ const LivePanel: React.FC<{
         <div className="flex items-start gap-1.5 rounded border p-1.5 text-[10px] app-muted-text" style={{ borderColor: HUD_BORDER_COLOR }}>
           <AlertTriangle className="mt-0.5 h-3 w-3 flex-shrink-0 text-amber-300" />
           <p>{applicability.reason}</p>
+        </div>
+      )}
+
+      {representationApplicability && !representationApplicability.compatible && (
+        <div className="flex items-start gap-1.5 rounded border p-1.5 text-[10px] text-red-400" style={{ borderColor: '#f87171' }}>
+          <AlertTriangle className="mt-0.5 h-3 w-3 flex-shrink-0" />
+          <p>{representationApplicability.reason}</p>
         </div>
       )}
 
