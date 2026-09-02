@@ -325,4 +325,60 @@ describe('useAiLiveDetection', () => {
     expect(liveCalls.length).toBe(3);
     expect(result.current.latestError).toMatch(/Stopped after 3 consecutive failures/);
   });
+
+  it('clears a stale error/result from a previous model when switching to a new model', async () => {
+    // Real reported bug: after model A failed and auto-stopped, switching
+    // to model B (also incompatible, so it never even reaches the
+    // backend) still showed model A's leftover error and "Latest
+    // detection" -- reading as if model B had produced them.
+    const modelA = manifest({}, 'AI-MODEL-A');
+    const modelB = manifest({ tensor_shape: [null, 1600] }, 'AI-MODEL-B');
+    const fetchImpl = vi.fn((url: string) => {
+      if (url.includes('/models')) return Promise.resolve(jsonResponse([modelA, modelB]));
+      if (url.includes('/status')) return Promise.resolve(jsonResponse({ enabled: true, capture_bridge_available: true, live_inference_available: true }));
+      if (url.includes('/inference/live')) return Promise.resolve(new Response('persistent failure', { status: 400 }));
+      return Promise.resolve(jsonResponse({}));
+    });
+    vi.stubGlobal('fetch', fetchImpl);
+
+    const { result } = renderHook(() => useAiLiveDetection({ frequencyInfo: freq(2_440_000_000) }));
+    await waitFor(() => expect(result.current.models).toHaveLength(2));
+    act(() => result.current.setSelectedModelId('AI-MODEL-A'));
+    act(() => result.current.setContinuousEnabled(true));
+    await waitFor(() => expect(result.current.continuousEnabled).toBe(false), { timeout: 10_000 });
+    expect(result.current.latestError).toMatch(/Stopped after 3 consecutive failures/);
+
+    // Switch to model B (rank-2, incompatible with the default iq_tensor
+    // representation) -- the stale error from model A must be gone.
+    act(() => result.current.setSelectedModelId('AI-MODEL-B'));
+
+    expect(result.current.latestError).toBeNull();
+    expect(result.current.latestRecord).toBeNull();
+  });
+
+  it('gives a fresh failure budget on each explicit Start -- a retry never inherits the previous streak', async () => {
+    const models = [manifest()];
+    const fetchImpl = vi.fn((url: string) => {
+      if (url.includes('/models')) return Promise.resolve(jsonResponse(models));
+      if (url.includes('/status')) return Promise.resolve(jsonResponse({ enabled: true, capture_bridge_available: true, live_inference_available: true }));
+      if (url.includes('/inference/live')) return Promise.resolve(new Response('persistent failure', { status: 400 }));
+      return Promise.resolve(jsonResponse({}));
+    });
+    vi.stubGlobal('fetch', fetchImpl);
+
+    const { result } = renderHook(() => useAiLiveDetection({ frequencyInfo: freq(2_440_000_000) }));
+    await waitFor(() => expect(result.current.models).toHaveLength(1));
+    act(() => result.current.setSelectedModelId('AI-MODEL-1'));
+
+    act(() => result.current.setContinuousEnabled(true));
+    await waitFor(() => expect(result.current.continuousEnabled).toBe(false), { timeout: 10_000 });
+    expect(result.current.latestError).toMatch(/Stopped after 3 consecutive failures/);
+
+    // Explicitly retry with the SAME model/representation.
+    act(() => result.current.setContinuousEnabled(true));
+    await waitFor(() => expect(result.current.continuousEnabled).toBe(false), { timeout: 10_000 });
+
+    // Still "3", never an accumulated "6" -- the retry got its own fresh budget.
+    expect(result.current.latestError).toMatch(/Stopped after 3 consecutive failures/);
+  });
 });

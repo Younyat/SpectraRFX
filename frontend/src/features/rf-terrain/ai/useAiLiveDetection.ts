@@ -323,6 +323,11 @@ export function useAiLiveDetection({ frequencyInfo, onDetection }: UseAiLiveDete
   useEffect(() => {
     stoppedRef.current = !continuousEnabled;
     if (continuousEnabled) {
+      // A deliberate "Start continuous" click always gets a fresh
+      // MAX_CONSECUTIVE_ERRORS budget -- otherwise a manual retry right
+      // after an auto-stop inherits the old streak and can report e.g.
+      // "Stopped after 4" on its very first new attempt.
+      consecutiveErrorsRef.current = 0;
       scheduleNext(0);
     } else if (timeoutRef.current !== null) {
       window.clearTimeout(timeoutRef.current);
@@ -362,6 +367,21 @@ export function useAiLiveDetection({ frequencyInfo, onDetection }: UseAiLiveDete
     const model = models.find((m) => m.model_id === selectedModelId);
     setRepresentationApplicability(checkRepresentationCompatibility(model, representation));
   }, [models, selectedModelId, representation]);
+
+  // Real bug this fixes: switching to a different (or newly-incompatible)
+  // model/representation left the PREVIOUS model's error and "Latest
+  // detection" summary visible underneath the new applicability warning --
+  // reading as if the new model had produced them. A model/representation
+  // change always starts a clean slate for these two, and for the
+  // consecutive-failure counter (a fresh model deserves a fresh chance,
+  // not to inherit a previous model's failure streak). `detections` (the
+  // running history list) is deliberately left alone -- that is a log,
+  // not a "current status" readout.
+  useEffect(() => {
+    setLatestError(null);
+    setLatestRecord(null);
+    consecutiveErrorsRef.current = 0;
+  }, [selectedModelId, representation]);
 
   return {
     models,
