@@ -9,7 +9,7 @@ export type RFTask =
   | 'modulation_classification' | 'signal_classification' | 'fingerprinting'
   | 'anomaly_detection' | 'emitter_identification' | 'other';
 
-export type InputRepresentation = 'raw_iq' | 'iq_tensor' | 'spectrogram' | 'psd' | 'features' | 'unknown';
+export type InputRepresentation = 'raw_iq' | 'iq_tensor' | 'spectrogram' | 'psd' | 'features' | 'flat_iq' | 'unknown';
 
 export type OutputType = 'class_logits' | 'class_probabilities' | 'embedding' | 'reconstruction' | 'detector' | 'unknown';
 

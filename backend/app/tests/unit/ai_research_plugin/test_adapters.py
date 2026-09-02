@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from app.modules.ai_research_plugin.adapters import adapt, iq_adapter, psd_adapter, spectrogram_adapter
+from app.modules.ai_research_plugin.adapters import adapt, flat_iq_adapter, iq_adapter, psd_adapter, spectrogram_adapter
 from app.modules.ai_research_plugin.contracts import InputRepresentation
 
 SAMPLE_RATE_HZ = 2_000_000.0
@@ -62,6 +62,30 @@ def test_psd_adapter_peak_lines_up_with_the_real_tone_frequency():
     result = psd_adapter(re, im, SAMPLE_RATE_HZ, nperseg=512)
     peak_freq = result.frequency_axis_hz[int(np.argmax(result.tensor[0]))]
     assert abs(peak_freq - tone_freq) < (SAMPLE_RATE_HZ / 512) * 2
+
+
+def test_flat_iq_adapter_shape_is_batch_by_2n():
+    re, im = _tone(50_000)
+    result = flat_iq_adapter(re, im)
+    assert result.tensor.shape == (1, 2 * N)
+    assert result.tensor.dtype == np.float32
+    assert result.representation == InputRepresentation.FLAT_IQ
+
+
+def test_flat_iq_adapter_interleaves_real_and_imag_in_order():
+    # Real MT-PreamCNN documented format: I0, Q0, I1, Q1, ... -- verified
+    # against tiny, hand-checkable arrays rather than the tone fixture.
+    re = np.array([1.0, 2.0, 3.0], dtype=np.float32)
+    im = np.array([10.0, 20.0, 30.0], dtype=np.float32)
+    result = flat_iq_adapter(re, im)
+    np.testing.assert_allclose(result.tensor[0], [1.0, 10.0, 2.0, 20.0, 3.0, 30.0])
+
+
+def test_flat_iq_adapter_is_never_confused_with_channel_first_iq_tensor():
+    re, im = _tone(50_000)
+    flat = flat_iq_adapter(re, im)
+    channel_first = iq_adapter(re, im)
+    assert flat.tensor.shape != channel_first.tensor.shape
 
 
 def test_adapt_dispatches_to_the_matching_adapter():

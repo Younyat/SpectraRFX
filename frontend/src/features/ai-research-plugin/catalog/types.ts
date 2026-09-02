@@ -20,7 +20,7 @@ export type CatalogInputRepresentation =
 export type CatalogEntryKind = 'MODEL' | 'FRAMEWORK_TOOLKIT' | 'DATASET';
 
 export type CatalogStatus =
-  | 'READY' | 'CONVERTIBLE' | 'CONVERSION_REQUIRED' | 'FOUNDATION_FINE_TUNING_REQUIRED'
+  | 'READY' | 'CONVERTIBLE' | 'CONVERSION_REQUIRED' | 'PLATFORM_ADAPTER_REQUIRED' | 'FOUNDATION_FINE_TUNING_REQUIRED'
   | 'RESEARCH_MODEL' | 'DATASET_ONLY' | 'UNSUPPORTED';
 
 export type CatalogOriginalFormat =

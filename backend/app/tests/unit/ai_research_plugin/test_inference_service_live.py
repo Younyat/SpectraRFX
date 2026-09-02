@@ -81,6 +81,16 @@ def test_infer_required_sample_count_falls_back_to_a_documented_default_when_uns
     assert _infer_required_sample_count(manifest) == DEFAULT_LIVE_SAMPLE_COUNT
 
 
+def test_infer_required_sample_count_halves_the_declared_dim_for_flat_iq(registry: ModelRegistry):
+    # FLAT_IQ's declared last dim is 2N (interleaved real/imag) -- the real
+    # MT-PreamCNN shape is [None, 1600] for 800 complex samples.
+    manifest = _import_toy_model(registry)  # real declared last dim is N_SAMPLES
+    manifest = registry.apply_overrides(manifest.model_id, input_overrides={"tensor_shape": [None, 1600]})
+    assert _infer_required_sample_count(manifest, InputRepresentation.FLAT_IQ) == 800
+    # Every other representation's last dim already equals N -- unaffected.
+    assert _infer_required_sample_count(manifest, InputRepresentation.IQ_TENSOR) == 1600
+
+
 def test_run_inference_live_requests_exactly_the_models_required_sample_count(registry: ModelRegistry):
     manifest = _import_toy_model(registry)
     live_bridge = FakeLiveBridge(_tone_snapshot(N_SAMPLES))

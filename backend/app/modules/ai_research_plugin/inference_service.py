@@ -47,16 +47,21 @@ DEFAULT_LIVE_SAMPLE_COUNT = 4096
 MAX_LIVE_SAMPLE_COUNT = 200_000
 
 
-def _infer_required_sample_count(manifest: RFModelManifest) -> int:
+def _infer_required_sample_count(manifest: RFModelManifest, representation: InputRepresentation | None = None) -> int:
     """Derives how many raw samples LIVE inference should request for this
     model, preferring the model's own real, discovered/declared input
     tensor shape (last dimension) over any fixed default -- never an
-    arbitrary caller-chosen duration."""
+    arbitrary caller-chosen duration. FLAT_IQ's last dimension is 2N
+    (interleaved real/imag), so N samples is HALF the declared last dim --
+    every other representation's last dim already equals N."""
     tensor_shape = manifest.effective_input().tensor_shape
     if tensor_shape:
         real_dims = [dim for dim in tensor_shape if dim is not None]
         if real_dims and real_dims[-1] > 0:
-            return min(int(real_dims[-1]), MAX_LIVE_SAMPLE_COUNT)
+            last_dim = int(real_dims[-1])
+            samples = last_dim // 2 if representation == InputRepresentation.FLAT_IQ else last_dim
+            if samples > 0:
+                return min(samples, MAX_LIVE_SAMPLE_COUNT)
     return DEFAULT_LIVE_SAMPLE_COUNT
 
 
@@ -175,7 +180,7 @@ class AiInferenceService:
         if self.live_bridge is None:
             raise InferenceError("LIVE inference is unavailable -- no live SDR bridge was wired up for this backend.")
 
-        sample_count = _infer_required_sample_count(manifest)
+        sample_count = _infer_required_sample_count(manifest, representation)
         run_started_at = time.perf_counter()
         try:
             snapshot = await self.live_bridge.capture_snapshot(sample_count)

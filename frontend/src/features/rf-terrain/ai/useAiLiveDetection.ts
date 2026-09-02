@@ -31,18 +31,31 @@ export interface FrequencyApplicability {
   reason: string;
 }
 
-// Real, known tensor rank each implemented adapter (adapters.py) produces
-// -- iq_tensor/raw_iq: [1,2,N] (rank 3), spectrogram: [1,1,F,T] (rank 4),
-// psd: [1,F] (rank 2). `null` = no adapter implemented for it yet
-// (FeatureVectorAdapter is a documented Phase-2 gap, not silently ignored).
-const REPRESENTATION_RANK: Record<InputRepresentation, number | null> = {
-  raw_iq: 3,
-  iq_tensor: 3,
-  spectrogram: 4,
-  psd: 2,
-  features: null,
-  unknown: null,
+// Real, known SHAPE TEMPLATE each adapter (adapters.py) produces, given
+// the model's own declared last dimension (N samples, or 2N for FLAT_IQ's
+// interleaved vector -- _infer_required_sample_count derives the LIVE
+// snapshot's real sample count from exactly this number, so the produced
+// last dim always equals it by construction). `null` entries are axes
+// this plugin genuinely cannot predict without a model-specific parameter
+// it doesn't expose (spectrogram/psd's FFT window size) -- never guessed.
+// Non-null entries (batch, channel counts) are architecturally FIXED by
+// the adapter and checked exactly: this is what catches a mismatch rank
+// alone would miss -- e.g. a real model declaring a fixed batch of 8
+// ([8,3,224,224]) against spectrogram's real batch=1, channel=1 output
+// ([1,1,F,T]) -- same rank (4), but onnxruntime still rejects it (a real
+// failure this exact check reproduced and now catches before ever
+// touching the backend).
+const SHAPE_TEMPLATES: Partial<Record<InputRepresentation, (declaredLastDim: number) => (number | null)[]>> = {
+  iq_tensor: (n) => [1, 2, n],
+  raw_iq: (n) => [1, 2, n],
+  flat_iq: (n) => [1, n],
+  spectrogram: () => [1, 1, null, null],
+  psd: () => [1, null],
 };
+
+const shapesCompatible = (declared: (number | null)[], produced: (number | null)[]): boolean =>
+  declared.length === produced.length
+  && declared.every((expected, i) => expected === null || produced[i] === null || expected === produced[i]);
 
 export interface RepresentationApplicability {
   compatible: boolean;
@@ -50,34 +63,35 @@ export interface RepresentationApplicability {
 }
 
 // A real, PRE-FLIGHT shape check (no network call) -- catches the exact
-// class of failure a real model produced during testing: a model
-// declaring a rank-4 input (e.g. an image-like [None,224,224,3] CNN) run
-// against 'iq_tensor', which always produces rank 3. onnxruntime rejects
-// this deterministically every single time, so retrying in continuous
-// mode is pure waste; this lets the caller refuse BEFORE ever hitting the
-// backend, with a specific reason instead of a raw ONNXRuntimeError
-// string. A model with no declared shape can't be ruled out this way --
-// stays "compatible" (unknown, not confirmed) rather than blocked.
+// classes of failure real models produced during testing, before ever
+// hitting the backend with a request guaranteed to fail. A model with no
+// declared shape can't be ruled out this way -- stays "compatible"
+// (unknown, not confirmed) rather than blocked.
 export function checkRepresentationCompatibility(
   model: RFModelManifest | undefined,
   representation: InputRepresentation,
 ): RepresentationApplicability {
   if (!model) return { compatible: false, reason: 'No model selected.' };
   const input = mergeEffectiveInput(model);
-  const declaredRank = input.tensor_shape?.length ?? null;
-  if (declaredRank === null) return { compatible: true, reason: '' };
-  const producedRank = REPRESENTATION_RANK[representation];
-  if (producedRank === null) {
+  const declaredShape = input.tensor_shape;
+  if (declaredShape === null || declaredShape === undefined) return { compatible: true, reason: '' };
+
+  const templateFn = SHAPE_TEMPLATES[representation];
+  if (!templateFn) {
     return {
       compatible: false,
       reason: `The "${representation}" representation has no adapter implemented in this plugin yet.`,
     };
   }
-  if (producedRank === declaredRank) return { compatible: true, reason: '' };
-  const shape = `[${(input.tensor_shape ?? []).map((d) => (d === null ? '?' : d)).join(', ')}]`;
+  const declaredLastDim = declaredShape[declaredShape.length - 1];
+  const producedShape = templateFn(declaredLastDim ?? 0);
+  if (shapesCompatible(declaredShape, producedShape)) return { compatible: true, reason: '' };
+
+  const shapeText = `[${declaredShape.map((d) => (d === null ? '?' : d)).join(', ')}]`;
+  const producedText = `[${producedShape.map((d) => (d === null ? '?' : d)).join(', ')}]`;
   return {
     compatible: false,
-    reason: `This model declares a rank-${declaredRank} input ${shape}, but "${representation}" produces a rank-${producedRank} tensor -- onnxruntime will reject every attempt. None of iq_tensor/spectrogram/psd may be the representation this model actually needs (raw declared shape shown above); check its real preprocessing requirements before running.`,
+    reason: `This model declares input ${shapeText}, but "${representation}" produces ${producedText} -- onnxruntime will reject every attempt. None of iq_tensor/flat_iq/spectrogram/psd may be the representation this model actually needs (raw declared shape shown above); check its real preprocessing requirements before running.`,
   };
 }
 

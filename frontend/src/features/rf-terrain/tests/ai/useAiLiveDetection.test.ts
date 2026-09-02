@@ -92,9 +92,30 @@ describe('checkRepresentationCompatibility', () => {
   it('reproduces the real reported bug: a rank-4 image-like model against iq_tensor (rank 3) is refused with a clear reason', () => {
     const result = checkRepresentationCompatibility(manifest({ tensor_shape: [null, 224, 224, 3] }), 'iq_tensor');
     expect(result.compatible).toBe(false);
-    expect(result.reason).toMatch(/rank-4/);
-    expect(result.reason).toMatch(/rank-3/);
     expect(result.reason).toMatch(/224/);
+    expect(result.reason).toMatch(/iq_tensor/);
+  });
+
+  it('reproduces the real reported bug: a fixed batch of 8 mismatches spectrogram\'s real batch=1 output even though the rank matches', () => {
+    // combined_model.onnx's real declared shape ([8,3,224,224]) and
+    // spectrogram's real produced shape ([1,1,F,T]) share rank 4, but
+    // onnxruntime still rejected this live ("Got invalid dimensions...
+    // index 0 Got 1 Expected 8") -- a rank-only check would have missed
+    // this; the fixed axes (batch, channel) must match exactly too.
+    const result = checkRepresentationCompatibility(manifest({ tensor_shape: [8, 3, 224, 224] }), 'spectrogram');
+    expect(result.compatible).toBe(false);
+    expect(result.reason).toMatch(/\[8, 3, 224, 224\]/);
+    expect(result.reason).toMatch(/\[1, 1, \?, \?\]/);
+  });
+
+  it('flat_iq is compatible with a real rank-2 flat-interleaved model declaration (e.g. MT-PreamCNN\'s real [None,1600])', () => {
+    const result = checkRepresentationCompatibility(manifest({ tensor_shape: [null, 1600] }), 'flat_iq');
+    expect(result).toEqual({ compatible: true, reason: '' });
+  });
+
+  it('flat_iq is refused for a rank-3 channel-first declaration -- it never produces that shape', () => {
+    const result = checkRepresentationCompatibility(manifest({ tensor_shape: [1, 2, 4096] }), 'flat_iq');
+    expect(result.compatible).toBe(false);
   });
 
   it('spectrogram (rank 4) is compatible with a rank-4 declared model', () => {
@@ -300,7 +321,7 @@ describe('useAiLiveDetection', () => {
     await waitFor(() => expect(result.current.continuousEnabled).toBe(false));
 
     expect(fetchImpl.mock.calls.some((call) => String(call[0]).includes('/inference/live'))).toBe(false);
-    expect(result.current.latestError).toMatch(/rank-4/);
+    expect(result.current.latestError).toMatch(/224/);
     expect(result.current.representationApplicability?.compatible).toBe(false);
   });
 

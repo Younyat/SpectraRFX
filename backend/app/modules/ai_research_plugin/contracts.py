@@ -50,6 +50,14 @@ class InputRepresentation(str, Enum):
     SPECTROGRAM = "spectrogram"
     PSD = "psd"
     FEATURES = "features"
+    # [batch, 2N] -- N complex I/Q samples flattened into one interleaved
+    # real/imag vector (I0,Q0,I1,Q1,...), never channel-first like
+    # IQ_TENSOR's [batch,2,N]. A real, distinct, deterministic shape family
+    # -- e.g. MT-PreamCNN's real documented [None,1600] input (800 complex
+    # samples). Never a "features" vector (no statistical/cyclostationary
+    # computation happens here, just a reshape) -- kept a separate value
+    # from FEATURES so that gap stays honestly disclosed and unconflated.
+    FLAT_IQ = "flat_iq"
     UNKNOWN = "unknown"
 
 

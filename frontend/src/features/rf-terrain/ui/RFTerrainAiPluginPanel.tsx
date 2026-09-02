@@ -22,7 +22,7 @@ interface RFTerrainAiPluginPanelProps {
 type Source = 'LIVE' | 'OFFLINE';
 
 const client = new AiResearchPluginClient();
-const REPRESENTATIONS: InputRepresentation[] = ['iq_tensor', 'spectrogram', 'psd'];
+const REPRESENTATIONS: InputRepresentation[] = ['iq_tensor', 'flat_iq', 'spectrogram', 'psd'];
 
 const verdictColor: Record<CompatibilityResult['verdict'], string> = {
   COMPATIBLE: '#4ade80',

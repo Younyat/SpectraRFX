@@ -66,9 +66,25 @@ class CatalogEntryKind(str, Enum):
 
 
 class CatalogStatus(str, Enum):
+    # A real artifact that (a) is a genuine, loadable ONNX file AND (b)
+    # declares an input shape that matches one of THIS PLUGIN's actually
+    # implemented representations (iq_tensor/flat_iq/spectrogram/psd)
+    # exactly -- i.e. it will run end-to-end with zero extra work.
+    # Deliberately a STRICTER bar than "the .onnx file loads" alone: this
+    # catalog previously marked entries READY on that weaker basis, and
+    # real testing showed loadable ONNX files whose declared shape still
+    # doesn't match any implemented representation (see
+    # PLATFORM_ADAPTER_REQUIRED below) -- conflating the two was a real,
+    # since-corrected mistake.
     READY = "READY"
     CONVERTIBLE = "CONVERTIBLE"
     CONVERSION_REQUIRED = "CONVERSION_REQUIRED"
+    # Real, loadable ONNX file (confirmed importable), but its declared
+    # input shape does not match iq_tensor/flat_iq/spectrogram/psd -- it
+    # needs a NEW representation adapter in this plugin (matching its real
+    # documented preprocessing), not a framework conversion
+    # (CONVERSION_REQUIRED is a different concept: PyTorch/TF -> ONNX).
+    PLATFORM_ADAPTER_REQUIRED = "PLATFORM_ADAPTER_REQUIRED"
     FOUNDATION_FINE_TUNING_REQUIRED = "FOUNDATION_FINE_TUNING_REQUIRED"
     RESEARCH_MODEL = "RESEARCH_MODEL"
     DATASET_ONLY = "DATASET_ONLY"

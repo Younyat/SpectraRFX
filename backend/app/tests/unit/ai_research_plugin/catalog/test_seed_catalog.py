@@ -23,12 +23,19 @@ def test_dataset_entries_are_never_presented_as_downloadable_models():
 def test_ready_entries_really_have_onnx_available():
     entries = curated_catalog_entries()
     ready_entries = [entry for entry in entries if entry.conversion_status == CatalogStatus.READY]
-    # MT-PreamCNN and CNN-LSTM OTA -- both directly verified in this session
-    # (real file downloaded and imported against the real running backend).
+    # MT-PreamCNN -- directly verified in this session (real file downloaded
+    # and imported against the real running backend), and its real
+    # [None,1600] declared shape exactly matches this plugin's flat_iq
+    # representation. READY is a stricter bar than "the .onnx file loads":
+    # it also requires the declared shape to match one of this plugin's
+    # implemented representations exactly (see PLATFORM_ADAPTER_REQUIRED).
     # BacalhauNet was downgraded from an earlier, unverified READY claim
     # after direct testing showed its graph uses Brevitas/QONNX custom ops
-    # ("Quant") this plugin's onnxruntime does not register.
-    assert len(ready_entries) >= 2
+    # ("Quant") this plugin's onnxruntime does not register. CNN-LSTM OTA
+    # was likewise downgraded after direct testing revealed its real
+    # declared shape ([8,3,224,224], fixed batch, channels-first) does not
+    # match any implemented representation -- it needs a new adapter.
+    assert len(ready_entries) >= 1
     for entry in ready_entries:
         assert entry.onnx_available is True
 
@@ -42,6 +49,18 @@ def test_bacalhaunet_is_not_falsely_marked_ready():
     bacalhaunet = next(entry for entry in entries if entry.id == "CATALOG-BACALHAUNET")
     assert bacalhaunet.conversion_status != CatalogStatus.READY
     assert "Quant" in bacalhaunet.notes
+
+
+def test_cnn_lstm_ota_is_not_falsely_marked_ready():
+    # Regression: this entry was originally (incorrectly) READY with a
+    # guessed input_shape of [None,224,224,3]. Direct live testing against
+    # the real downloaded file (two independent ONNXRuntimeError messages)
+    # showed the real declared shape is a fixed-batch [8,3,224,224], which
+    # matches no representation this plugin implements.
+    entries = curated_catalog_entries()
+    cnn_lstm = next(entry for entry in entries if entry.id == "CATALOG-CNN-LSTM-OTA")
+    assert cnn_lstm.conversion_status == CatalogStatus.PLATFORM_ADAPTER_REQUIRED
+    assert cnn_lstm.input_shape == [8, 3, 224, 224]
 
 
 def test_unverified_entry_is_explicitly_flagged_and_never_marked_ready():

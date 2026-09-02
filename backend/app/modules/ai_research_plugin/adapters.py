@@ -39,6 +39,26 @@ def iq_adapter(re: np.ndarray, im: np.ndarray) -> AdaptedInput:
     )
 
 
+def flat_iq_adapter(re: np.ndarray, im: np.ndarray) -> AdaptedInput:
+    """[1, 2N] -- N complex I/Q samples flattened into one interleaved
+    real/imag vector (I0, Q0, I1, Q1, ...). A real, distinct, deterministic
+    shape family from iq_adapter's channel-first [1,2,N] -- some published
+    models (e.g. MT-PreamCNN, whose real documented input is exactly
+    [None,1600] for 800 complex samples) expect flat-interleaved I/Q, not
+    a channel-first tensor. No feature engineering happens here -- a plain
+    reshape, never confused with a real FeatureVectorAdapter."""
+    interleaved = np.empty(re.size * 2, dtype=np.float32)
+    interleaved[0::2] = re.astype(np.float32)
+    interleaved[1::2] = im.astype(np.float32)
+    tensor = interleaved[np.newaxis, :]
+    return AdaptedInput(
+        representation=InputRepresentation.FLAT_IQ,
+        tensor=tensor,
+        frequency_axis_hz=np.array([]),
+        time_axis_s=np.array([]),
+    )
+
+
 def spectrogram_adapter(
     re: np.ndarray,
     im: np.ndarray,
@@ -93,6 +113,7 @@ def psd_adapter(re: np.ndarray, im: np.ndarray, sample_rate_hz: float, nperseg: 
 ADAPTERS = {
     InputRepresentation.IQ_TENSOR: lambda re, im, fs: iq_adapter(re, im),
     InputRepresentation.RAW_IQ: lambda re, im, fs: iq_adapter(re, im),
+    InputRepresentation.FLAT_IQ: lambda re, im, fs: flat_iq_adapter(re, im),
     InputRepresentation.SPECTROGRAM: lambda re, im, fs: spectrogram_adapter(re, im, fs),
     InputRepresentation.PSD: lambda re, im, fs: psd_adapter(re, im, fs),
 }

@@ -13,7 +13,7 @@ import type {
 const client = new AiResearchPluginClient();
 const card = 'rounded-2xl border border-slate-200 bg-white p-5 shadow-[0_18px_42px_rgba(15,23,42,0.07)]';
 
-const REPRESENTATIONS: InputRepresentation[] = ['iq_tensor', 'spectrogram', 'psd'];
+const REPRESENTATIONS: InputRepresentation[] = ['iq_tensor', 'flat_iq', 'spectrogram', 'psd'];
 const TASKS: RFTask[] = [
   'modulation_classification', 'signal_classification', 'fingerprinting',
   'anomaly_detection', 'emitter_identification', 'other',
