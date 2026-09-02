@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Brain, Compass, RefreshCw, UploadCloud } from 'lucide-react';
+import { AlertTriangle, Brain, CheckCircle2, Compass, PauseCircle, PlayCircle, RefreshCw, UploadCloud } from 'lucide-react';
 import { HudFrame } from './hud/HudFrame';
 import { HUD_ACCENT_BRIGHT, HUD_BORDER_COLOR, HUD_PANEL_BACKGROUND, hudLabelClass } from './hud/hudTheme';
 import { AiResearchPluginApiError, AiResearchPluginClient } from '../../ai-research-plugin/api/aiResearchPluginClient';
 import { RFModelCatalogModal } from '../../ai-research-plugin/catalog/ui/RFModelCatalogModal';
+import type { UseAiLiveDetectionResult } from '../ai/useAiLiveDetection';
 import type {
   AiPluginCaptureSummary,
   CompatibilityResult,
@@ -15,6 +16,7 @@ import type {
 interface RFTerrainAiPluginPanelProps {
   open: boolean;
   onToggleOpen: () => void;
+  liveDetection: UseAiLiveDetectionResult;
 }
 
 type Source = 'LIVE' | 'OFFLINE';
@@ -31,6 +33,8 @@ const verdictColor: Record<CompatibilityResult['verdict'], string> = {
 
 const shapeText = (shape: (number | null)[] | null) => (shape ? `[${shape.map((d) => (d === null ? '?' : d)).join(', ')}]` : 'unknown');
 
+const formatLatency = (ms: number | null): string => (ms === null ? 'unknown' : ms >= 1000 ? `${(ms / 1000).toFixed(2)} s` : `${ms.toFixed(0)} ms`);
+
 // FSEI -- AI Model Inspection: an experimental sibling to the point/object
 // FSEI dossier (Object Details panel, "Forensic Spectral Evidence
 // Inspector") -- same forensic-evidence spirit, but inspecting what an
@@ -38,14 +42,16 @@ const shapeText = (shape: (number | null)[] | null) => (shape ? `[${shape.map((d
 // point. Deliberately a separate panel/button rather than merged into the
 // existing dossier, to avoid disturbing that already-shipped feature; the
 // name is shared on purpose, the surface is not. Talks only to
-// /api/ai-research-plugin/*; never touches RF Terrain's own canvas/engine,
-// and its LIVE path only ever reads a bounded, on-demand raw I/Q snapshot
-// from the SAME live SDR stream Live Monitor/RF Terrain already use --
-// never a second device session.
-export const RFTerrainAiPluginPanel: React.FC<RFTerrainAiPluginPanelProps> = ({ open, onToggleOpen }) => {
-  const [models, setModels] = useState<RFModelManifest[]>([]);
+// /api/ai-research-plugin/*.
+//
+// OFFLINE stays fully one-shot, local state (unchanged). LIVE is driven
+// by `liveDetection` (useAiLiveDetection, owned by RFTerrainView) so its
+// continuous polling loop -- and the 3D detection boxes it feeds --
+// keep running after this panel closes, exactly like OFFLINE
+// RECONSTRUCTION's objects stay visible after that panel closes.
+export const RFTerrainAiPluginPanel: React.FC<RFTerrainAiPluginPanelProps> = ({ open, onToggleOpen, liveDetection }) => {
   const [captures, setCaptures] = useState<AiPluginCaptureSummary[]>([]);
-  const [selectedModelId, setSelectedModelId] = useState('');
+  const [offlineModelId, setOfflineModelId] = useState('');
   const [source, setSource] = useState<Source>('OFFLINE');
   const [captureId, setCaptureId] = useState('');
   const [t0, setT0] = useState(0);
@@ -55,17 +61,15 @@ export const RFTerrainAiPluginPanel: React.FC<RFTerrainAiPluginPanelProps> = ({ 
   const [record, setRecord] = useState<InferenceRecord | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<'idle' | 'importing' | 'checking' | 'running'>('idle');
-  const [liveAvailable, setLiveAvailable] = useState<boolean | null>(null);
   const [catalogOpen, setCatalogOpen] = useState(false);
 
-  const refreshModels = () => client.listModels().then(setModels).catch((e) => setError(String(e)));
+  const { models, refreshModels, liveAvailable } = liveDetection;
   const refreshCaptures = () => client.listCaptures().then(setCaptures).catch((e) => setError(String(e)));
 
   useEffect(() => {
     if (open) {
       refreshModels();
       refreshCaptures();
-      client.getStatus().then((s) => setLiveAvailable(s.live_inference_available)).catch(() => setLiveAvailable(null));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only re-fetch when the panel opens
   }, [open]);
@@ -86,11 +90,11 @@ export const RFTerrainAiPluginPanel: React.FC<RFTerrainAiPluginPanelProps> = ({ 
     runGuarded('importing', async () => {
       const manifest = await client.importModel(file);
       await refreshModels();
-      setSelectedModelId(manifest.model_id);
+      setOfflineModelId(manifest.model_id);
+      liveDetection.setSelectedModelId(manifest.model_id);
     });
 
-  const canRunOffline = selectedModelId !== '' && captureId !== '' && t1 > t0;
-  const canRunLive = selectedModelId !== '' && liveAvailable === true;
+  const canRunOffline = offlineModelId !== '' && captureId !== '' && t1 > t0;
 
   return (
     <div className="pointer-events-none absolute bottom-14 left-3 z-20 flex flex-col items-start gap-2">
@@ -133,14 +137,6 @@ export const RFTerrainAiPluginPanel: React.FC<RFTerrainAiPluginPanelProps> = ({ 
             Discover RF Models
           </button>
 
-          <label className="flex flex-col gap-1 text-[10px] app-muted-text">
-            Model
-            <select value={selectedModelId} onChange={(e) => setSelectedModelId(e.target.value)} className="rounded-md border bg-transparent px-2 py-1 text-xs text-slate-100" style={{ borderColor: 'var(--app-border)' }}>
-              <option value="">{models.length === 0 ? 'No models imported yet' : 'Select…'}</option>
-              {models.map((m) => <option key={m.model_id} value={m.model_id}>{m.model_name} ({m.framework})</option>)}
-            </select>
-          </label>
-
           <div className="flex items-center justify-between">
             <span className="text-[10px] app-muted-text">Source</span>
             <div className="flex overflow-hidden rounded border" style={{ borderColor: HUD_BORDER_COLOR }}>
@@ -158,19 +154,19 @@ export const RFTerrainAiPluginPanel: React.FC<RFTerrainAiPluginPanelProps> = ({ 
           </div>
 
           {source === 'LIVE' && (
-            <div className="rounded border border-dashed p-1.5 text-[10px]" style={{ borderColor: liveAvailable ? HUD_BORDER_COLOR : '#f59e0b' }}>
-              {liveAvailable === false && <p className="text-amber-300">Live SDR bridge unavailable on this backend.</p>}
-              {liveAvailable === null && <p className="app-muted-text">Checking live availability…</p>}
-              {liveAvailable === true && (
-                <p className="app-muted-text">
-                  Captures a bounded raw I/Q snapshot from the SAME live SDR stream Live Monitor already uses (sized to the selected model's own declared input -- never an arbitrary duration).
-                </p>
-              )}
-            </div>
+            <LivePanel liveDetection={liveDetection} models={models} liveAvailable={liveAvailable} />
           )}
 
           {source === 'OFFLINE' && (
             <>
+              <label className="flex flex-col gap-1 text-[10px] app-muted-text">
+                Model
+                <select value={offlineModelId} onChange={(e) => setOfflineModelId(e.target.value)} className="rounded-md border bg-transparent px-2 py-1 text-xs text-slate-100" style={{ borderColor: 'var(--app-border)' }}>
+                  <option value="">{models.length === 0 ? 'No models imported yet' : 'Select…'}</option>
+                  {models.map((m) => <option key={m.model_id} value={m.model_id}>{m.model_name} ({m.framework})</option>)}
+                </select>
+              </label>
+
               <label className="flex flex-col gap-1 text-[10px] app-muted-text">
                 Capture ID
                 <div className="flex gap-1">
@@ -198,73 +194,66 @@ export const RFTerrainAiPluginPanel: React.FC<RFTerrainAiPluginPanelProps> = ({ 
                   <input type="number" step={0.0001} value={t1} onChange={(e) => setT1(Number(e.target.value))} className="rounded-md border bg-transparent px-1.5 py-1 text-xs text-slate-100" style={{ borderColor: 'var(--app-border)' }} />
                 </label>
               </div>
-            </>
-          )}
 
-          <label className="flex flex-col gap-1 text-[10px] app-muted-text">
-            Representation
-            <select value={representation} onChange={(e) => setRepresentation(e.target.value as InputRepresentation)} className="rounded-md border bg-transparent px-1 py-1 text-[11px] text-slate-100" style={{ borderColor: 'var(--app-border)' }}>
-              {REPRESENTATIONS.map((r) => <option key={r} value={r}>{r}</option>)}
-            </select>
-          </label>
+              <label className="flex flex-col gap-1 text-[10px] app-muted-text">
+                Representation
+                <select value={representation} onChange={(e) => setRepresentation(e.target.value as InputRepresentation)} className="rounded-md border bg-transparent px-1 py-1 text-[11px] text-slate-100" style={{ borderColor: 'var(--app-border)' }}>
+                  {REPRESENTATIONS.map((r) => <option key={r} value={r}>{r}</option>)}
+                </select>
+              </label>
 
-          <div className="flex gap-2">
-            {source === 'OFFLINE' && (
-              <button
-                disabled={!canRunOffline || busy !== 'idle'}
-                onClick={() => runGuarded('checking', async () => setCompatibility(await client.checkCompatibility(selectedModelId, captureId, t0, t1, representation)))}
-                className="flex-1 rounded border px-2 py-1 text-[10px] font-semibold uppercase tracking-wide disabled:opacity-40"
-                style={{ borderColor: HUD_BORDER_COLOR }}
-              >
-                {busy === 'checking' ? 'Checking…' : 'Compatibility'}
-              </button>
-            )}
-            <button
-              disabled={(source === 'OFFLINE' ? !canRunOffline : !canRunLive) || busy !== 'idle'}
-              onClick={() => runGuarded('running', async () => {
-                const result = source === 'OFFLINE'
-                  ? await client.runInference(selectedModelId, captureId, t0, t1, representation)
-                  : await client.runInferenceLive(selectedModelId, representation);
-                setRecord(result);
-              })}
-              className="flex-1 rounded border px-2 py-1 text-[10px] font-semibold uppercase tracking-wide disabled:opacity-40"
-              style={{ borderColor: HUD_ACCENT_BRIGHT, color: HUD_ACCENT_BRIGHT }}
-            >
-              {busy === 'running' ? 'Running…' : source === 'LIVE' ? 'Capture live snapshot & run' : 'Run inference'}
-            </button>
-          </div>
-
-          {compatibility && (
-            <div className="rounded border p-1.5 text-[10px]" style={{ borderColor: HUD_BORDER_COLOR }}>
-              <div className="mb-1 flex items-center justify-between">
-                <span className="app-muted-text">Compatibility</span>
-                <span className="font-semibold" style={{ color: verdictColor[compatibility.verdict] }}>{compatibility.verdict}</span>
+              <div className="flex gap-2">
+                <button
+                  disabled={!canRunOffline || busy !== 'idle'}
+                  onClick={() => runGuarded('checking', async () => setCompatibility(await client.checkCompatibility(offlineModelId, captureId, t0, t1, representation)))}
+                  className="flex-1 rounded border px-2 py-1 text-[10px] font-semibold uppercase tracking-wide disabled:opacity-40"
+                  style={{ borderColor: HUD_BORDER_COLOR }}
+                >
+                  {busy === 'checking' ? 'Checking…' : 'Compatibility'}
+                </button>
+                <button
+                  disabled={!canRunOffline || busy !== 'idle'}
+                  onClick={() => runGuarded('running', async () => setRecord(await client.runInference(offlineModelId, captureId, t0, t1, representation)))}
+                  className="flex-1 rounded border px-2 py-1 text-[10px] font-semibold uppercase tracking-wide disabled:opacity-40"
+                  style={{ borderColor: HUD_ACCENT_BRIGHT, color: HUD_ACCENT_BRIGHT }}
+                >
+                  {busy === 'running' ? 'Running…' : 'Run inference'}
+                </button>
               </div>
-              {compatibility.checks.map((c) => (
-                <div key={c.field} className="flex justify-between app-muted-text">
-                  <span>{c.field}</span>
-                  <span>{c.matched === null ? '—' : c.matched ? '✓' : '✕'}</span>
+
+              {compatibility && (
+                <div className="rounded border p-1.5 text-[10px]" style={{ borderColor: HUD_BORDER_COLOR }}>
+                  <div className="mb-1 flex items-center justify-between">
+                    <span className="app-muted-text">Compatibility</span>
+                    <span className="font-semibold" style={{ color: verdictColor[compatibility.verdict] }}>{compatibility.verdict}</span>
+                  </div>
+                  {compatibility.checks.map((c) => (
+                    <div key={c.field} className="flex justify-between app-muted-text">
+                      <span>{c.field}</span>
+                      <span>{c.matched === null ? '—' : c.matched ? '✓' : '✕'}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          )}
-
-          {record && (
-            <div className="rounded border p-1.5 text-[10px]" style={{ borderColor: HUD_BORDER_COLOR }}>
-              <div className="mb-1 flex items-center justify-between app-muted-text">
-                <span>Result</span>
-                <span className="font-mono">{record.capture_id}</span>
-              </div>
-              {record.interpretation.kind === 'classification' ? (
-                <p><strong>{record.interpretation.predicted_class}</strong> ({record.interpretation.score_type}={record.interpretation.score?.toFixed(3)})</p>
-              ) : record.interpretation.kind === 'embedding' ? (
-                <p>embedding, dim={record.interpretation.dimensionality}, ‖z‖={record.interpretation.l2_norm?.toFixed(3)}</p>
-              ) : (
-                <p className="app-muted-text">not automatically interpretable</p>
               )}
-              {record.interpretation.warning && <p className="mt-1 text-amber-400">{record.interpretation.warning}</p>}
-              <p className="mt-1 app-muted-text">shape {shapeText(record.input_tensor_shape)}</p>
-            </div>
+
+              {record && (
+                <div className="rounded border p-1.5 text-[10px]" style={{ borderColor: HUD_BORDER_COLOR }}>
+                  <div className="mb-1 flex items-center justify-between app-muted-text">
+                    <span>Result</span>
+                    <span className="font-mono">{record.capture_id}</span>
+                  </div>
+                  {record.interpretation.kind === 'classification' ? (
+                    <p><strong>{record.interpretation.predicted_class}</strong> ({record.interpretation.score_type}={record.interpretation.score?.toFixed(3)})</p>
+                  ) : record.interpretation.kind === 'embedding' ? (
+                    <p>embedding, dim={record.interpretation.dimensionality}, ‖z‖={record.interpretation.l2_norm?.toFixed(3)}</p>
+                  ) : (
+                    <p className="app-muted-text">not automatically interpretable</p>
+                  )}
+                  {record.interpretation.warning && <p className="mt-1 text-amber-400">{record.interpretation.warning}</p>}
+                  <p className="mt-1 app-muted-text">shape {shapeText(record.input_tensor_shape)} · inference {formatLatency(record.inference_latency_ms)}</p>
+                </div>
+              )}
+            </>
           )}
         </HudFrame>
       )}
@@ -275,9 +264,113 @@ export const RFTerrainAiPluginPanel: React.FC<RFTerrainAiPluginPanelProps> = ({ 
       >
         <Brain className="h-3.5 w-3.5" />
         FSEI -- AI
+        {liveDetection.continuousEnabled && (
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full" style={{ background: liveDetection.applicability?.applicable ? '#4ade80' : '#f59e0b' }} title="Continuous LIVE detection running" />
+        )}
       </button>
 
       {catalogOpen && <RFModelCatalogModal onClose={() => setCatalogOpen(false)} />}
     </div>
+  );
+};
+
+const LivePanel: React.FC<{
+  liveDetection: UseAiLiveDetectionResult;
+  models: RFModelManifest[];
+  liveAvailable: boolean | null;
+}> = ({ liveDetection, models, liveAvailable }) => {
+  const {
+    selectedModelId, setSelectedModelId, representation, setRepresentation,
+    continuousEnabled, setContinuousEnabled, applicability, latestRecord, latestError,
+    detections, pollCount, busy, runOnce,
+  } = liveDetection;
+
+  const canRunLive = selectedModelId !== '' && liveAvailable === true;
+  const latest = detections[0];
+
+  return (
+    <>
+      <label className="flex flex-col gap-1 text-[10px] app-muted-text">
+        Model
+        <select value={selectedModelId} onChange={(e) => setSelectedModelId(e.target.value)} className="rounded-md border bg-transparent px-2 py-1 text-xs text-slate-100" style={{ borderColor: 'var(--app-border)' }}>
+          <option value="">{models.length === 0 ? 'No models imported yet' : 'Select…'}</option>
+          {models.map((m) => <option key={m.model_id} value={m.model_id}>{m.model_name} ({m.framework})</option>)}
+        </select>
+      </label>
+
+      <label className="flex flex-col gap-1 text-[10px] app-muted-text">
+        Representation
+        <select value={representation} onChange={(e) => setRepresentation(e.target.value as InputRepresentation)} className="rounded-md border bg-transparent px-1 py-1 text-[11px] text-slate-100" style={{ borderColor: 'var(--app-border)' }}>
+          {REPRESENTATIONS.map((r) => <option key={r} value={r}>{r}</option>)}
+        </select>
+      </label>
+
+      {liveAvailable === false && (
+        <p className="rounded border border-dashed p-1.5 text-[10px] text-amber-300" style={{ borderColor: '#f59e0b' }}>Live SDR bridge unavailable on this backend.</p>
+      )}
+
+      {applicability && !applicability.applicable && (
+        <div className="flex items-start gap-1.5 rounded border p-1.5 text-[10px] text-amber-300" style={{ borderColor: '#f59e0b' }}>
+          <AlertTriangle className="mt-0.5 h-3 w-3 flex-shrink-0" />
+          <p>{applicability.reason}</p>
+        </div>
+      )}
+      {applicability?.applicable && applicability.reason && (
+        <div className="flex items-start gap-1.5 rounded border p-1.5 text-[10px] app-muted-text" style={{ borderColor: HUD_BORDER_COLOR }}>
+          <AlertTriangle className="mt-0.5 h-3 w-3 flex-shrink-0 text-amber-300" />
+          <p>{applicability.reason}</p>
+        </div>
+      )}
+
+      <div className="flex gap-2">
+        <button
+          disabled={!canRunLive}
+          onClick={() => setContinuousEnabled(!continuousEnabled)}
+          className="flex flex-1 items-center justify-center gap-1.5 rounded border px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wide disabled:opacity-40"
+          style={{
+            borderColor: continuousEnabled ? '#f87171' : HUD_ACCENT_BRIGHT,
+            color: continuousEnabled ? '#f87171' : HUD_ACCENT_BRIGHT,
+          }}
+        >
+          {continuousEnabled ? <PauseCircle className="h-3.5 w-3.5" /> : <PlayCircle className="h-3.5 w-3.5" />}
+          {continuousEnabled ? 'Stop continuous' : 'Start continuous'}
+        </button>
+        <button
+          disabled={!canRunLive || continuousEnabled || busy}
+          onClick={() => runOnce()}
+          className="rounded border px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wide disabled:opacity-40"
+          style={{ borderColor: HUD_BORDER_COLOR }}
+        >
+          Once
+        </button>
+      </div>
+
+      {continuousEnabled && (
+        <p className="text-[9px] app-muted-text">
+          Applying model to the live capture as it streams from the B200 -- polls at least every 0.8s, never overlapping requests. {pollCount} run{pollCount === 1 ? '' : 's'} so far.
+        </p>
+      )}
+
+      {latestError && <p className="text-[10px] text-red-400">{latestError}</p>}
+
+      {latest && (
+        <div className="rounded border p-1.5 text-[10px]" style={{ borderColor: HUD_BORDER_COLOR }}>
+          <div className="mb-1 flex items-center justify-between app-muted-text">
+            <span className="flex items-center gap-1"><CheckCircle2 className="h-3 w-3 text-emerald-400" /> Latest detection</span>
+            <span className="font-mono">{formatLatency(latest.totalLatencyMs)}</span>
+          </div>
+          <p><strong>{latest.summary}</strong></p>
+          <p className="mt-1 app-muted-text">{(latest.centerFrequencyHz / 1e6).toFixed(3)} MHz · {new Date(latest.detectedAtUtc).toLocaleTimeString()}</p>
+        </div>
+      )}
+
+      {latestRecord && (
+        <p className="text-[9px] app-muted-text">
+          {latestRecord.total_latency_ms !== null
+            ? `Real end-to-end latency: ${formatLatency(latestRecord.total_latency_ms)} (capture ${formatLatency(latestRecord.capture_latency_ms)} + inference ${formatLatency(latestRecord.inference_latency_ms)}). ${latestRecord.total_latency_ms > 1000 ? 'Not real-time at this cadence -- treat detections as periodic samples, not continuous coverage.' : ''}`
+            : ''}
+        </p>
+      )}
+    </>
   );
 };

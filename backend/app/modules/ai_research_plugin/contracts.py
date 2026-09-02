@@ -76,6 +76,13 @@ class RFModelInputFields(BaseModel):
     center_frequency_dependency: bool | None = None
     window_samples: int | None = None
     overlap: float | None = None
+    # Never discovered from an ONNX graph -- no inspection of the model
+    # file can know what physical RF frequency it was trained for. Purely
+    # an operator assertion (see LIVE frequency-applicability gating in
+    # compatibility.py), left None ("unknown, not confirmed applicable
+    # here") until the operator sets it via an override.
+    expected_center_frequency_hz: float | None = None
+    expected_frequency_tolerance_hz: float | None = None
 
 
 class RFModelPreprocessing(BaseModel):
@@ -191,6 +198,14 @@ class InferenceRecord(BaseModel):
     interpretation: dict[str, Any]
 
     compatibility: CompatibilityResult
+
+    # Real, measured wall-clock durations (spec-adjacent "latencia de
+    # detección") -- never estimated. capture_latency_ms is null for an
+    # OFFLINE run (there is no "waiting for a live snapshot" step to time);
+    # inference_latency_ms/total_latency_ms are always real when set.
+    capture_latency_ms: float | None = None
+    inference_latency_ms: float | None = None
+    total_latency_ms: float | None = None
 
 
 def utc_now_iso() -> str:

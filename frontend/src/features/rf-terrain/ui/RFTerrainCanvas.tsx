@@ -13,12 +13,13 @@ import {
   RF_TERRAIN_SEGMENTATION_GROW_THRESHOLD_DB,
   RF_TERRAIN_DENSITY_SMOOTHING_RADIUS,
 } from '../model/rfTerrainConstants';
-import type { RFTerrainCameraPreset, RFTerrainMode, TerrainInspectorSelection, TerrainObject, TerrainProcessedRow } from '../model/rfTerrainTypes';
+import type { AiLiveDetection, RFTerrainCameraPreset, RFTerrainMode, TerrainInspectorSelection, TerrainObject, TerrainProcessedRow } from '../model/rfTerrainTypes';
 import { findObjectAtPoint } from '../engine/objectSelection';
 import { buildSpectralObjectEnvelope, EnvelopeSourceRow } from '../engine/spectralObjectEnvelope';
 import { smoothAcrossFrequency } from '../engine/frequencySmoothing';
 import { pickTraceValues, RFTerrainTraceSource } from '../engine/traceSource';
 import { HUD_BORDER_COLOR, HUD_PANEL_BACKGROUND } from './hud/hudTheme';
+import { AI_DETECTION_DEFAULT_COLOR } from '../render/AiDetectionOverlay';
 
 export type { RFTerrainTraceSource } from '../engine/traceSource';
 // Whether switching trace source/mode/colormap only affects newly-arriving
@@ -37,6 +38,9 @@ export interface RFTerrainCanvasHandle {
   exportPng: () => string | null;
   exportCsv: () => string | null;
   unpinSelection: () => void;
+  addAiDetection: (detection: AiLiveDetection) => void;
+  removeAiDetection: (id: string) => void;
+  clearAiDetections: () => void;
 }
 
 // What COLOR encodes, independent of what HEIGHT encodes (mode). Defaults
@@ -428,6 +432,49 @@ export const RFTerrainCanvas = forwardRef<RFTerrainCanvasHandle, RFTerrainCanvas
       const updated = { ...current, pinned: false };
       currentSelectionRef.current = updated;
       onSelect(updated);
+    },
+    // Anchors a LIVE AI detection at the CURRENT front row (meshRow 0) --
+    // a live detection is inherently "just now", not a historical range
+    // lookup against historyRef's timestamps (contrast with
+    // gatherEnvelopeSourceRows above, which locates an already-existing,
+    // already-timestamped TerrainObject). The frequency window is mapped
+    // to real col indices via the same nearest-bin search the frequency
+    // marker uses (line ~349), against the row that is genuinely being
+    // displayed right now.
+    addAiDetection(detection: AiLiveDetection) {
+      const renderer = rendererRef.current;
+      const frontRow = historyRef.current[viewOffsetRef.current];
+      if (!renderer || !frontRow) return;
+      const bins = frontRow.frame.frequencyArray;
+      const halfBandwidth = Math.max(detection.bandwidthHz, 1) / 2;
+      const loHz = detection.centerFrequencyHz - halfBandwidth;
+      const hiHz = detection.centerFrequencyHz + halfBandwidth;
+      let colMin = 0;
+      let colMax = bins.length - 1;
+      let bestLoDistance = Infinity;
+      let bestHiDistance = Infinity;
+      for (let i = 0; i < bins.length; i += 1) {
+        const loDistance = Math.abs(bins[i] - loHz);
+        if (loDistance < bestLoDistance) { bestLoDistance = loDistance; colMin = i; }
+        const hiDistance = Math.abs(bins[i] - hiHz);
+        if (hiDistance < bestHiDistance) { bestHiDistance = hiDistance; colMax = i; }
+      }
+      if (colMax < colMin) [colMin, colMax] = [colMax, colMin];
+      const half = RF_TERRAIN_DEFAULT_FREQUENCY_BINS / 2;
+      renderer.upsertAiDetection({
+        id: detection.id,
+        xMin: colMin - half,
+        xMax: colMax - half,
+        meshRow: 0,
+        label: detection.summary,
+        color: AI_DETECTION_DEFAULT_COLOR,
+      });
+    },
+    removeAiDetection(id: string) {
+      rendererRef.current?.removeAiDetection(id);
+    },
+    clearAiDetections() {
+      rendererRef.current?.clearAiDetections();
     },
   }), [onSelect]);
 

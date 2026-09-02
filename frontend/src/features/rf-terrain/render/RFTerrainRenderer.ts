@@ -6,6 +6,7 @@ import { raycastToGridCell } from './TerrainRaycaster';
 import { TerrainOverlays, TerrainOverlayId } from './TerrainOverlays';
 import { TerrainSelectionOverlay } from './TerrainSelectionOverlay';
 import { SpectralObjectEnvelopeMesh } from './SpectralObjectEnvelope';
+import { AiDetectionOverlay, type AiDetectionBox } from './AiDetectionOverlay';
 import { RF_TERRAIN_MAX_EXCESS_DB, RF_TERRAIN_HEIGHT_VISUAL_SCALE } from '../model/rfTerrainConstants';
 import type { RFTerrainCameraPreset } from '../model/rfTerrainTypes';
 import type { SpectralObjectEnvelope } from '../engine/spectralObjectEnvelope';
@@ -36,6 +37,7 @@ export class RFTerrainRenderer {
   private readonly overlays: TerrainOverlays;
   private readonly selectionOverlay: TerrainSelectionOverlay;
   private readonly envelopeMesh: SpectralObjectEnvelopeMesh;
+  private readonly aiDetectionOverlay: AiDetectionOverlay;
   private readonly raycaster = new THREE.Raycaster();
   private readonly canvas: HTMLCanvasElement;
   private readonly cols: number;
@@ -86,6 +88,11 @@ export class RFTerrainRenderer {
 
     this.envelopeMesh = new SpectralObjectEnvelopeMesh();
     this.terrainMesh.mesh.add(this.envelopeMesh.group);
+
+    // AI Research Plugin LIVE detection highlights (multiple, independently
+    // aging boxes -- unlike the single selection reticle/envelope above).
+    this.aiDetectionOverlay = new AiDetectionOverlay();
+    this.terrainMesh.mesh.add(this.aiDetectionOverlay.group);
 
     // Center-frequency cursor (spec §41/§38 "Markers -> vertical plane"):
     // a bright, unmistakably-different-colored vertical wall marking where
@@ -139,6 +146,7 @@ export class RFTerrainRenderer {
       this.callbacks.onSelectionOutOfView?.();
     }
     this.envelopeMesh.ageByOneRow(this.terrainMesh.rows);
+    this.aiDetectionOverlay.ageByOneRow(this.terrainMesh.rows);
     const now = performance.now();
     const observedInterval = now - this.lastRowTimeMs;
     if (observedInterval > 5 && observedInterval < 5000) {
@@ -178,6 +186,7 @@ export class RFTerrainRenderer {
     this.selectionOverlay.hideSelected();
     this.selectionOverlay.hideHover();
     this.envelopeMesh.hide();
+    this.aiDetectionOverlay.clear();
   }
 
   setSelectedObjectEnvelope(envelope: SpectralObjectEnvelope, cols: number) {
@@ -205,6 +214,21 @@ export class RFTerrainRenderer {
 
   hideHoverMarker() {
     this.selectionOverlay.hideHover();
+  }
+
+  // Adds/updates one AI-detection highlight box. `xMin`/`xMax` are already
+  // in local mesh-space X (same -cols/2-shifted convention as
+  // setSelectedMarker); `meshRow` is 0 for the newest/front row.
+  upsertAiDetection(box: AiDetectionBox) {
+    this.aiDetectionOverlay.upsert(box);
+  }
+
+  removeAiDetection(id: string) {
+    this.aiDetectionOverlay.remove(id);
+  }
+
+  clearAiDetections() {
+    this.aiDetectionOverlay.clear();
   }
 
   setCameraPreset(preset: RFTerrainCameraPreset) {
@@ -318,6 +342,7 @@ export class RFTerrainRenderer {
     this.overlays.dispose();
     this.selectionOverlay.dispose();
     this.envelopeMesh.dispose();
+    this.aiDetectionOverlay.dispose();
     this.frequencyMarker.geometry.dispose();
     (this.frequencyMarker.material as THREE.Material).dispose();
     this.maskPlane.geometry.dispose();

@@ -97,6 +97,19 @@ def test_runs_a_real_onnx_forward_pass_end_to_end_and_persists_a_reproducible_re
     assert persisted.raw_output == record.raw_output
 
 
+def test_offline_run_measures_real_inference_latency_but_no_capture_latency(service: AiInferenceService):
+    manifest = _import_toy_model(service)
+    t0, t1 = _region_seconds(N_SAMPLES)
+
+    record = service.run_inference(manifest.model_id, "BLE-IQ-test", t0, t1, InputRepresentation.IQ_TENSOR)
+
+    assert record.inference_latency_ms is not None and record.inference_latency_ms >= 0
+    # There is no "waiting for a live snapshot" step for a stored capture --
+    # honestly null, never a fabricated number.
+    assert record.capture_latency_ms is None
+    assert record.total_latency_ms is None
+
+
 def test_two_runs_over_the_same_real_region_produce_identical_raw_output(service: AiInferenceService):
     manifest = _import_toy_model(service)
     t0, t1 = _region_seconds(N_SAMPLES)

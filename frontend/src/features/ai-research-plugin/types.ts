@@ -23,6 +23,11 @@ export interface RFModelInputFields {
   center_frequency_dependency: boolean | null;
   window_samples: number | null;
   overlap: number | null;
+  // Operator-asserted only -- never discovered from the ONNX graph itself
+  // (see backend contracts.py). null = "unknown, not confirmed applicable
+  // at any particular frequency", never "applies everywhere".
+  expected_center_frequency_hz: number | null;
+  expected_frequency_tolerance_hz: number | null;
 }
 
 export interface RFModelPreprocessing {
@@ -109,6 +114,12 @@ export interface InferenceRecord {
     warning?: string;
   };
   compatibility: CompatibilityResult;
+
+  // Real, measured wall-clock durations -- see backend contracts.py.
+  // capture_latency_ms is null for an OFFLINE run (no live-snapshot wait).
+  capture_latency_ms: number | null;
+  inference_latency_ms: number | null;
+  total_latency_ms: number | null;
 }
 
 // Real fields from ble_capture_job_manager.list_captures() -- the

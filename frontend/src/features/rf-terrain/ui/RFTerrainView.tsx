@@ -19,6 +19,7 @@ import { RFTerrainOfflineMonitor } from './RFTerrainOfflineMonitor';
 import { RFTerrainAiPluginPanel } from './RFTerrainAiPluginPanel';
 import { RUNTIME_CONFIG } from '../../../shared/config/runtime';
 import { useOfflineReconstruction } from '../offline/useOfflineReconstruction';
+import { useAiLiveDetection } from '../ai/useAiLiveDetection';
 import { OFFLINE_RECONSTRUCTION_PROFILE_V1 } from '../engine/offline/reconstructionProfile';
 import type { SourceEvidence } from '../offline/sourceEvidence';
 import { RF_TERRAIN_POLL_INTERVAL_MS, RF_TERRAIN_REWIND_MAX_OFFSET_ROWS } from '../model/rfTerrainConstants';
@@ -135,6 +136,18 @@ export const RFTerrainView: React.FC = () => {
       setSelection(null);
       setViewOffsetRows(0);
     },
+  });
+
+  // AI Research Plugin continuous LIVE detection (additive): its own
+  // controller, no dependency on offline/LIVE terrain state beyond the
+  // real, currently-tuned frequencyInfo it needs for applicability
+  // gating. Called unconditionally (like offline above) so it keeps
+  // running -- and keeps feeding the 3D overlay -- after the FSEI panel
+  // closes, mirroring exactly how offline.state.objects stays visible
+  // after OFFLINE RECONSTRUCTION's panel closes.
+  const aiLiveDetection = useAiLiveDetection({
+    frequencyInfo,
+    onDetection: (detection) => canvasRef.current?.addAiDetection(detection),
   });
 
   // Once a reconstruction finishes, its (also real, segmented-once)
@@ -337,7 +350,11 @@ export const RFTerrainView: React.FC = () => {
               state={offline.state}
             />
             {RUNTIME_CONFIG.aiResearchPluginEnabled && (
-              <RFTerrainAiPluginPanel open={aiPluginPanelOpen} onToggleOpen={() => setAiPluginPanelOpen((prev) => !prev)} />
+              <RFTerrainAiPluginPanel
+                open={aiPluginPanelOpen}
+                onToggleOpen={() => setAiPluginPanelOpen((prev) => !prev)}
+                liveDetection={aiLiveDetection}
+              />
             )}
           </>
         )}

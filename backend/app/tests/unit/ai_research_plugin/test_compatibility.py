@@ -100,6 +100,44 @@ def test_sample_rate_within_tolerance_counts_as_a_match():
     assert sample_rate_check.matched is True
 
 
+def test_center_frequency_matches_within_tolerance():
+    manifest = _manifest(expected_center_frequency_hz=2_450_000_000.0, expected_frequency_tolerance_hz=1_000_000.0)
+    result = check_compatibility(
+        capture_metadata={"center_frequency_hz": 2_450_500_000.0},  # 0.5 MHz off, within 1 MHz tolerance
+        manifest=manifest,
+        chosen_representation=InputRepresentation.UNKNOWN,
+        adapted_tensor_shape=[1, 2, 4096],
+    )
+    frequency_check = next(c for c in result.checks if c.field == "center_frequency_hz")
+    assert frequency_check.matched is True
+
+
+def test_center_frequency_outside_tolerance_is_a_real_mismatch():
+    manifest = _manifest(expected_center_frequency_hz=915_000_000.0, expected_frequency_tolerance_hz=500_000.0)
+    result = check_compatibility(
+        capture_metadata={"center_frequency_hz": 2_450_000_000.0},  # a completely different band
+        manifest=manifest,
+        chosen_representation=InputRepresentation.UNKNOWN,
+        adapted_tensor_shape=[1, 2, 4096],
+    )
+    frequency_check = next(c for c in result.checks if c.field == "center_frequency_hz")
+    assert frequency_check.matched is False
+    assert result.verdict != CompatibilityVerdict.COMPATIBLE
+
+
+def test_center_frequency_unknown_when_model_does_not_declare_one():
+    manifest = _manifest()  # no expected_center_frequency_hz at all
+    result = check_compatibility(
+        capture_metadata={"center_frequency_hz": 2_450_000_000.0},
+        manifest=manifest,
+        chosen_representation=InputRepresentation.UNKNOWN,
+        adapted_tensor_shape=[1, 2, 4096],
+    )
+    frequency_check = next(c for c in result.checks if c.field == "center_frequency_hz")
+    assert frequency_check.matched is None
+    assert "does not declare an expected center frequency" in frequency_check.note
+
+
 def test_every_check_carries_the_real_capture_and_model_values_for_display():
     manifest = _manifest(representation=InputRepresentation.SPECTROGRAM)
     result = check_compatibility(

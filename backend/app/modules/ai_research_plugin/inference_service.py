@@ -18,6 +18,8 @@ records).
 
 from __future__ import annotations
 
+import time
+
 import numpy as np
 import onnxruntime as ort
 
@@ -129,7 +131,9 @@ class AiInferenceService:
             adapted_tensor_shape=list(adapted.tensor.shape),
         )
 
+        inference_started_at = time.perf_counter()
         raw_output, interpretation = self._run_model(manifest, adapted)
+        inference_latency_ms = (time.perf_counter() - inference_started_at) * 1000.0
 
         record = InferenceRecord(
             record_id=new_record_id(),
@@ -150,6 +154,7 @@ class AiInferenceService:
             raw_output_shape=list(raw_output.shape),
             interpretation=interpretation,
             compatibility=compatibility,
+            inference_latency_ms=inference_latency_ms,
         )
         self.storage.save_record(record)
         return record
@@ -171,10 +176,12 @@ class AiInferenceService:
             raise InferenceError("LIVE inference is unavailable -- no live SDR bridge was wired up for this backend.")
 
         sample_count = _infer_required_sample_count(manifest)
+        run_started_at = time.perf_counter()
         try:
             snapshot = await self.live_bridge.capture_snapshot(sample_count)
         except LiveIqBridgeError as error:
             raise InferenceError(str(error)) from error
+        capture_finished_at = time.perf_counter()
 
         capture_metadata = {
             "sample_rate_sps": snapshot.sample_rate_hz,
@@ -190,7 +197,12 @@ class AiInferenceService:
             adapted_tensor_shape=list(adapted.tensor.shape),
         )
 
+        inference_started_at = time.perf_counter()
         raw_output, interpretation = self._run_model(manifest, adapted)
+        run_finished_at = time.perf_counter()
+        capture_latency_ms = (capture_finished_at - run_started_at) * 1000.0
+        inference_latency_ms = (run_finished_at - inference_started_at) * 1000.0
+        total_latency_ms = (run_finished_at - run_started_at) * 1000.0
 
         record = InferenceRecord(
             record_id=new_record_id(),
@@ -215,6 +227,9 @@ class AiInferenceService:
             raw_output_shape=list(raw_output.shape),
             interpretation=interpretation,
             compatibility=compatibility,
+            capture_latency_ms=capture_latency_ms,
+            inference_latency_ms=inference_latency_ms,
+            total_latency_ms=total_latency_ms,
         )
         self.storage.save_record(record)
         return record

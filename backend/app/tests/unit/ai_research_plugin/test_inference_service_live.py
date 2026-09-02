@@ -137,6 +137,37 @@ def test_run_inference_live_raises_a_clear_error_for_an_unknown_model_id(registr
         _run(service.run_inference_live("AI-MODEL-does-not-exist", InputRepresentation.IQ_TENSOR))
 
 
+def test_run_inference_live_measures_real_latency_fields(registry: ModelRegistry):
+    manifest = _import_toy_model(registry)
+    live_bridge = FakeLiveBridge(_tone_snapshot(N_SAMPLES))
+    service = AiInferenceService(registry=registry, capture_bridge=None, storage=registry.storage, live_bridge=live_bridge)
+
+    record = _run(service.run_inference_live(manifest.model_id, InputRepresentation.IQ_TENSOR))
+
+    assert record.capture_latency_ms is not None and record.capture_latency_ms >= 0
+    assert record.inference_latency_ms is not None and record.inference_latency_ms >= 0
+    assert record.total_latency_ms is not None
+    # total covers at least capture + inference -- never smaller than either part.
+    assert record.total_latency_ms >= record.capture_latency_ms
+    assert record.total_latency_ms >= record.inference_latency_ms
+
+
+def test_run_inference_live_flags_a_real_center_frequency_mismatch(registry: ModelRegistry):
+    manifest = _import_toy_model(registry)
+    registry.apply_overrides(
+        manifest.model_id,
+        input_overrides={"expected_center_frequency_hz": 915_000_000.0, "expected_frequency_tolerance_hz": 500_000.0},
+    )
+    live_bridge = FakeLiveBridge(_tone_snapshot(N_SAMPLES))  # real snapshot center frequency is 2.44 GHz
+    service = AiInferenceService(registry=registry, capture_bridge=None, storage=registry.storage, live_bridge=live_bridge)
+
+    record = _run(service.run_inference_live(manifest.model_id, InputRepresentation.IQ_TENSOR))
+
+    frequency_check = next(c for c in record.compatibility.checks if c.field == "center_frequency_hz")
+    assert frequency_check.matched is False
+    assert frequency_check.capture_value == CENTER_FREQUENCY_HZ
+
+
 def test_run_inference_live_propagates_a_real_bridge_timeout_as_inference_error(registry: ModelRegistry):
     from app.modules.ai_research_plugin.live_bridge import LiveIqBridgeError
 

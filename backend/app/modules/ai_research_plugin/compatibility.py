@@ -95,6 +95,23 @@ def check_compatibility(
         note="" if model_input.dtype else "Model manifest does not declare an expected dtype",
     ))
 
+    capture_center_frequency = capture_metadata.get("center_frequency_hz")
+    frequency_matched = None
+    if model_input.expected_center_frequency_hz is not None and capture_center_frequency is not None:
+        tolerance = model_input.expected_frequency_tolerance_hz or 0.0
+        frequency_matched = abs(capture_center_frequency - model_input.expected_center_frequency_hz) <= tolerance
+    checks.append(CompatibilityCheck(
+        field="center_frequency_hz",
+        capture_value=capture_center_frequency,
+        model_value=model_input.expected_center_frequency_hz,
+        matched=frequency_matched,
+        note=(
+            "" if model_input.expected_center_frequency_hz is not None
+            else "Model manifest does not declare an expected center frequency -- applicability at this "
+                 "frequency is unknown, not confirmed"
+        ),
+    ))
+
     evaluated = [c.matched for c in checks if c.matched is not None]
     if not evaluated:
         verdict = CompatibilityVerdict.UNKNOWN

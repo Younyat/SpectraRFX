@@ -74,6 +74,30 @@ export interface TerrainObject {
   active: boolean;
 }
 
+// One AI Research Plugin LIVE inference result, anchored to the terrain
+// row that was newest AT THE MOMENT the result arrived (a live detection
+// is inherently "just now", not a historical range lookup -- see
+// AiDetectionOverlay.ts). Deliberately NOT a TerrainObject: none of its
+// numeric fields (peakExcessDb, terrainVolumeIndex, cellCount, ...) are
+// measured for an AI-flagged region, so folding it into that type would
+// misrepresent asserted/inferred values as segmentation measurements.
+export interface AiLiveDetection {
+  id: string;
+  modelId: string;
+  modelName: string;
+  detectedAtUtc: string;
+  centerFrequencyHz: number;
+  bandwidthHz: number;
+  // A short, human-readable summary of the interpretation -- never a
+  // confirmed protocol/device label (same discipline as the FSEI-AI panel
+  // itself).
+  summary: string;
+  // Real, measured latency (backend-reported total_latency_ms, or the
+  // client-measured round-trip if the backend didn't report one) -- null
+  // only when genuinely unknown, never a placeholder guess.
+  totalLatencyMs: number | null;
+}
+
 // Typed worker protocol (spec §11).
 export type TerrainWorkerInput =
   | { type: 'RESET'; generation: number; capacity: number }
