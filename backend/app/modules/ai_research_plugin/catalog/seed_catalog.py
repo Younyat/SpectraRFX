@@ -90,10 +90,10 @@ def curated_catalog_entries() -> list[RFModelCatalogEntry]:
             framework="PyTorch (Brevitas, quantization-aware training)",
             original_format=CatalogOriginalFormat.ONNX,
             onnx_available=True,
-            conversion_status=CatalogStatus.READY,
+            conversion_status=CatalogStatus.UNSUPPORTED,
             reported_metrics={"test_accuracy_pct": 56.24, "note": "ITU AI/ML in 5G Challenge submission, co-optimized for low inference cost -- not a general AMC performance benchmark"},
             priority="ALTA",
-            notes="Publishes both bacalhaunet_gold_export.onnx (download_url above, verified HTTP 200 against raw.githubusercontent.com) and bacalhaunet_gold_weights.pth, both at repo root on the main branch. The ~56% accuracy reflects a competition scoring function that also rewards cheap inference, not a ceiling on AMC accuracy in general.",
+            notes="Publishes both bacalhaunet_gold_export.onnx (download_url above, verified HTTP 200 against raw.githubusercontent.com) and bacalhaunet_gold_weights.pth, both at repo root on the main branch. The ~56% accuracy reflects a competition scoring function that also rewards cheap inference, not a ceiling on AMC accuracy in general. CORRECTED after direct testing: the real input tensor IS a clean rank-3 [1,2,1024] (verified via onnx.load against the downloaded file -- matches this plugin's iq_tensor representation exactly), but the graph uses Brevitas/QONNX custom quantization ops (e.g. \"Quant\") that this plugin's standard onnxruntime does not register -- import fails with \"No Op registered for Quant\". Not READY in this plugin without a QONNX-aware execution provider or a re-export through standard ONNX ops; downgraded from an earlier, unverified READY classification.",
         ),
         RFModelCatalogEntry(
             id="CATALOG-CNN-LSTM-OTA",

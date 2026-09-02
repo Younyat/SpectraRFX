@@ -23,9 +23,25 @@ def test_dataset_entries_are_never_presented_as_downloadable_models():
 def test_ready_entries_really_have_onnx_available():
     entries = curated_catalog_entries()
     ready_entries = [entry for entry in entries if entry.conversion_status == CatalogStatus.READY]
-    assert len(ready_entries) >= 3
+    # MT-PreamCNN and CNN-LSTM OTA -- both directly verified in this session
+    # (real file downloaded and imported against the real running backend).
+    # BacalhauNet was downgraded from an earlier, unverified READY claim
+    # after direct testing showed its graph uses Brevitas/QONNX custom ops
+    # ("Quant") this plugin's onnxruntime does not register.
+    assert len(ready_entries) >= 2
     for entry in ready_entries:
         assert entry.onnx_available is True
+
+
+def test_bacalhaunet_is_not_falsely_marked_ready():
+    # Regression: this entry was originally (incorrectly) READY. Direct
+    # testing against the real downloaded file showed it fails to import
+    # (unregistered "Quant" op from Brevitas/QONNX quantization) despite
+    # having a real, correctly-shaped rank-3 [1,2,1024] input.
+    entries = curated_catalog_entries()
+    bacalhaunet = next(entry for entry in entries if entry.id == "CATALOG-BACALHAUNET")
+    assert bacalhaunet.conversion_status != CatalogStatus.READY
+    assert "Quant" in bacalhaunet.notes
 
 
 def test_unverified_entry_is_explicitly_flagged_and_never_marked_ready():
