@@ -1180,6 +1180,41 @@ The platform is not presented as a finished-product claim. Every module
 should continue to state what is implemented, what real evidence supports
 it, what is exploratory, and what remains unavailable.
 
+### SDR hardware demonstrated with the general RF workspace
+
+The general SpectraRFˣ spectrum-visualization workspace is not tied to the
+single receiver used to acquire the BLE-RFFI paper dataset.
+
+The current general RF workspace has been exercised with two UHD-accessible
+SDR configurations: the **Ettus Research USRP B200** and the **NI
+USRP-2932 (Ettus N210 + SBX, Gigabit Ethernet, GPSDO)**.
+
+| Receiver | RF front end / connection | Demonstrated platform use |
+|---|---|---|
+| **Ettus Research USRP B200** | Integrated RF frontend, USB 3.0 | Live Monitor, spectrum, waterfall, real-time trace statistics, RF Terrain 3D, BLE/2.4-GHz observation, and FM-broadcast observation |
+| **NI USRP-2932** | Ettus N210 + SBX daughterboard, Gigabit Ethernet, GPSDO | Live Monitor, spectrum, waterfall, real-time trace statistics, and RF Terrain 3D around 2.402 GHz |
+
+These demonstrations belong to the **general RF capabilities described in
+Part II**. They do not alter the acquisition provenance of the BLE-RFFI
+scientific study in Part I, whose current reported dataset was acquired
+with the USRP B200.
+
+The two receivers also illustrate why SpectraRFˣ separates the visualization
+and analysis layer from a single RF front end.
+
+The B200 and NI USRP-2932/N210 differ in RF frontend, host transport,
+available tuning range and acquisition characteristics. SpectraRFˣ does
+not interpret a similar-looking spectrum from both receivers as proof of
+receiver-invariant measurement behavior. Instead, the demonstrations show
+that the general visualization workflow can be operated with both hardware
+configurations.
+
+> **Scientific boundary.** The NI USRP-2932 demonstrations establish
+> operation of the general Live Monitor and RF Terrain 3D interfaces with
+> that receiver configuration. They do **not** establish that BLE-RFFI
+> models trained from B200 acquisitions transfer unchanged to N210/SBX
+> acquisitions. Receiver transfer remains a separate experimental question.
+
 ### Engineering objectives beyond the paper
 
 - acquire real RF with SDR hardware and retain complex I/Q;
@@ -1217,7 +1252,8 @@ documented failure case:
 [`docs/ble/REAL_TIME_SPECTRUM_DEVICE_VISUALIZATION_AUDIT.md`](docs/ble/REAL_TIME_SPECTRUM_DEVICE_VISUALIZATION_AUDIT.md).
 
 ```text
-B200 live RF (general spectrum subsystem, GNU Radio/uhd_gnuradio)
+UHD SDR live RF (general spectrum subsystem, GNU Radio/uhd_gnuradio)
+(B200 or demonstrated NI USRP-2932/N210 configuration)
      |
      v
 spectrum / waterfall (100 ms poll)
@@ -1229,6 +1265,13 @@ spectrum / waterfall (100 ms poll)
           -> energy-threshold burst (default) or Gate-2A.2-decoded burst (opt-in)
           -> real frequency-positioned confidence band overlay on the same spectrum, ~1500 ms poll
 ```
+
+> **Receiver boundary for BLE-RFFI inference.** Multi-SDR operation
+> described here refers to the general spectrum and visualization
+> workspace. The current BLE-RFFI models and paper evidence were built
+> from B200 acquisitions. Operation of the visualization workspace with an
+> NI USRP-2932 must not be interpreted as validation of a B200-trained
+> fingerprinting model under receiver transfer.
 
 #### RF Intelligence: rule-based hypothesis
 
@@ -1333,18 +1376,131 @@ BLE-RFFI Studio is the platform's primary research workflow. The same
 backend also hosts the general SDR/RF workspace it is built on (see
 [Experimental architecture](#experimental-architecture)).
 
+#### Two complementary views of the same RF observation
+
+Live Monitor and RF Terrain 3D are not intended as competing replacements
+for one another. They expose related RF observations for different
+analytical tasks.
+
+**Live Monitor** is the measurement-oriented view. It retains the familiar
+frequency-domain spectrum together with waterfall history and real-time
+trace statistics, making it suitable for tuning the receiver, locating
+activity in frequency, inspecting magnitude and bandwidth, comparing
+activity against the surrounding noise context, and examining how
+statistical traces evolve.
+
+**RF Terrain 3D** is the structural-exploration view. Successive spectral
+observations are arranged across frequency and time, with magnitude
+contributing the terrain height. This makes temporal persistence,
+intermittent structures, ridges, bursts, drift, hopping behaviour and
+spectral morphology directly inspectable as structures extending through
+time.
+
+The intended workflow is therefore:
+
+`measure -> inspect temporal structure -> return to the measured data -> verify`
+
+| Question | Preferred view |
+|---|---|
+| Where exactly is the activity in frequency? | **Live Monitor** |
+| What magnitude or bandwidth is being observed? | **Live Monitor** |
+| How should center frequency, gain, span or sample rate be adjusted? | **Live Monitor** |
+| When did the activity appear or disappear? | **Waterfall** |
+| What does Max Hold / Min Hold / Average / RMS / EWMA show? | **Live Monitor / Spectrum Tools** |
+| Does an RF structure persist through time? | **RF Terrain 3D** |
+| Does activity form ridges, bursts, islands, drift or hopping morphology? | **RF Terrain 3D** |
+| How does a statistic modify the complete time-frequency surface? | **RF Terrain 3D** |
+| Is a feature noticed in 3D quantitatively supported? | **Underlying spectrum / measured data** |
+
 #### Live Monitor -- `/spectrum`
 
-Real-time RF workspace: SDR connection and stream controls, frequency,
-span, sample-rate, gain, antenna, markers, visualization, the RF
-Intelligence overlay, and the BLE-RFFI live-spectrum inference panel (see
-[Real-time spectrum and device visualization](#real-time-spectrum-and-device-visualization)).
+Live Monitor is the primary measurement-oriented RF workspace. It combines
+the instantaneous spectrum with a synchronized waterfall and receiver
+controls for direct live inspection: SDR connection and stream controls,
+frequency, span, sample-rate, gain, antenna, markers, the RF Intelligence
+overlay, and the BLE-RFFI live-spectrum inference panel (see [Real-time
+spectrum and device
+visualization](#real-time-spectrum-and-device-visualization)).
+
+Beyond the live trace, SpectraRFˣ can derive multiple real-time spectral
+views from incoming FFT frames:
+
+- Live Trace
+- Max Hold
+- Min Hold
+- Power Average
+- RMS Power over FFT frames
+- EWMA
+- Percentiles P50 / P90 / P95 / P99
+- Trace History
+- Density / Persistence
+
+These traces answer different questions about the same observation.
+Live Trace emphasizes the current state; hold traces retain extrema;
+Average, RMS and EWMA summarize temporal behaviour using different
+weighting semantics; percentiles expose the distribution of spectral
+levels; Trace History and Density/Persistence expose repeated or sustained
+activity.
 
 <p align="center">
   <img src="readme_img/live_monitor.png" alt="Live Monitor spectrum" width="980">
 </p>
 
 <p align="center"><em>Live Monitor spectrum.</em></p>
+
+##### NI USRP-2932 — 2.402 GHz BLE CH37
+
+A live demonstration using an **NI USRP-2932
+(Ettus N210 + SBX, Gigabit Ethernet, GPSDO)** centered at **2.402 GHz**
+in the 2.4-GHz ISM band.
+
+The demonstration combines the instantaneous spectrum and waterfall with
+real-time Live Trace, Max Hold, Min Hold, Power Average, RMS, EWMA,
+P50/P90/P95/P99, Trace History, and Density/Persistence.
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=BeXkHLugNvM">
+    <img
+      src="https://img.youtube.com/vi/BeXkHLugNvM/maxresdefault.jpg"
+      alt="Live Monitor — NI USRP-2932 at 2.402 GHz"
+      width="900">
+  </a>
+</p>
+
+<p align="center"><em>
+Click the preview to open the live hardware demonstration on YouTube.
+</em></p>
+
+<p align="center"><em>
+Live Monitor — NI USRP-2932 at 2.402 GHz. Spectrum, waterfall and
+real-time trace/statistical analysis are shown from the general RF
+workspace; this recording is not part of the B200 BLE-RFFI dataset.
+</em></p>
+
+##### Ettus Research USRP B200 — 2.402 GHz BLE CH37
+
+The same Live Monitor workflow operated with an **Ettus Research USRP B200**
+at **2.402 GHz**, allowing the spectrum/waterfall workspace and the same
+real-time trace family to be demonstrated with a second SDR architecture.
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=GjnydsvDCHg">
+    <img
+      src="https://img.youtube.com/vi/GjnydsvDCHg/maxresdefault.jpg"
+      alt="Live Monitor — USRP B200 at 2.402 GHz"
+      width="900">
+  </a>
+</p>
+
+<p align="center"><em>
+Click the preview to open the live hardware demonstration on YouTube.
+</em></p>
+
+<p align="center"><em>
+Live Monitor — USRP B200 at 2.402 GHz. The demonstration provides a
+second hardware example of the same general measurement-oriented
+workspace.
+</em></p>
 
 <details>
 <summary>Waterfall, RF Intelligence overlay, Spectrum Tools, legacy view</summary>
@@ -1383,6 +1539,22 @@ Spectrum Tools definitions and validation checks:
 [`frontend/src/features/spectrum-tools/VALIDATION.md`](frontend/src/features/spectrum-tools/VALIDATION.md).
 
 </details>
+
+### Choosing the observation view
+
+| Live Monitor | RF Terrain 3D |
+|---|---|
+| Measurement-oriented | Structure-oriented |
+| Frequency vs. magnitude | Frequency vs. time vs. magnitude |
+| Spectrum + waterfall | Spectral terrain |
+| Receiver tuning | Temporal/morphological exploration |
+| Live/Max/Min/Average/RMS/EWMA/percentiles | Same statistics can become terrain/reference representations |
+| Precise marker-based inspection | Persistent structures and terrain objects |
+| Best starting point for measurement | Best complementary view for structural exploration |
+
+Neither representation is treated as intrinsically more accurate than the
+other. RF Terrain adds an exploratory representation; quantitative
+interpretation remains tied to the measured spectral data.
 
 #### RF Terrain 3D -- `/rf-terrain`
 
@@ -1519,9 +1691,13 @@ directly visible:
   re-examine the spectral context around a preserved BLE-RFFI example.
 
 What it adds to the platform as a whole: it gives Live Monitor's existing
-Spectrum Tools (Max Hold, Min Hold, Power Average, EWMA, percentiles) a
-second, simultaneous reading as 3D reference ribbons instead of only 2D
-overlays; it reuses the same receiver controller and the same
+Spectrum Tools family — Live Trace, Max Hold, Min Hold, Power Average, RMS
+Power over FFT frames, EWMA, P50/P90/P95/P99, Trace History, and
+Density/Persistence — a second, simultaneous reading as 3D reference
+ribbons or full terrain surfaces instead of only 2D overlays (each
+statistic is only associated with a view where it is actually
+implemented, never claimed for one it is not); it reuses the same
+receiver controller and the same
 frequency-profile presets Live Monitor already uses, so retuning from
 either view stays consistent; and it gives an operator an independent
 visual cross-check of the same live acquisition already exposed by Live
@@ -1557,6 +1733,103 @@ temporal-variability context (C5), report/export with provenance, a BLE
 evidence overlay, and running the analysis engine off the main thread are
 documented gaps, not silent omissions. The legacy Waterfall (`/waterfall`)
 remains available as a fallback view.
+
+The videos below should be read as structural-exploration demonstrations,
+not as a second set of conventional spectrum measurements. They show how
+the same family of live RF observations becomes a time-frequency terrain.
+
+##### RF Terrain 3D — Ettus Research USRP B200 — 2.402 GHz ISM / BLE CH37
+
+This demonstration shows RF Terrain 3D operating with an **Ettus Research
+USRP B200** around **2.402 GHz**, aligned with BLE advertising channel 37.
+
+Rather than presenting only the most recent spectral trace, consecutive
+observations extend through the time axis so short-lived and persistent
+spectral structures can be inspected as terrain morphology.
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=2XryHD8-hwU">
+    <img
+      src="https://img.youtube.com/vi/2XryHD8-hwU/maxresdefault.jpg"
+      alt="RF Terrain 3D — USRP B200 at 2.402 GHz ISM / BLE CH37"
+      width="900">
+  </a>
+</p>
+
+<p align="center"><em>
+Click the preview to open the live hardware demonstration on YouTube.
+</em></p>
+
+##### RF Terrain 3D — NI USRP-2932 (Ettus N210 + SBX, Ethernet, GPSDO) — 2.402 GHz ISM / BLE CH37
+
+The same RF Terrain 3D workflow is demonstrated using an **NI USRP-2932
+(Ettus N210 + SBX)** over Gigabit Ethernet at **2.402 GHz**.
+
+This recording demonstrates that the general terrain visualization path
+can operate with a second UHD-accessible receiver architecture. It does
+not establish measurement equivalence between the B200 and N210 and does
+not extend the B200-trained BLE-RFFI scientific results to this receiver.
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=Vd97b_IT6lQ">
+    <img
+      src="https://img.youtube.com/vi/Vd97b_IT6lQ/maxresdefault.jpg"
+      alt="RF Terrain 3D — NI USRP-2932 at 2.402 GHz ISM / BLE CH37"
+      width="900">
+  </a>
+</p>
+
+<p align="center"><em>
+Click the preview to open the live hardware demonstration on YouTube.
+</em></p>
+
+##### RF Terrain 3D — NI USRP-2932 | 2.402 GHz | Average, RMS and EWMA
+
+RF Terrain can use more than the instantaneous live trace as its visible
+surface. This demonstration shows statistical representations such as
+Power Average, RMS Power and EWMA projected over the evolving
+frequency-time terrain.
+
+This is important because the statistic is no longer only a thin 2D
+reference trace: the time-frequency surface itself can be inspected under
+the selected statistical representation.
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=lfX35Mr8Iqs">
+    <img
+      src="https://img.youtube.com/vi/lfX35Mr8Iqs/maxresdefault.jpg"
+      alt="RF Terrain 3D statistical terrain surfaces: Average, RMS and EWMA"
+      width="900">
+  </a>
+</p>
+
+<p align="center"><em>
+Click the preview to open the live hardware demonstration on YouTube.
+</em></p>
+
+##### RF Terrain 3D — Ettus Research USRP B200 — 89.4 MHz FM Broadcast
+
+A second-band example using the **USRP B200** around **89.4 MHz** in the
+FM broadcast band.
+
+Compared with the burst-oriented activity visible in the 2.4-GHz example,
+a broadcast carrier can form a substantially more persistent terrain
+structure. The example is included to illustrate how different RF
+occupancy patterns produce different time-frequency morphology within the
+same visualization engine.
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=oHI2v5r44MM">
+    <img
+      src="https://img.youtube.com/vi/oHI2v5r44MM/maxresdefault.jpg"
+      alt="RF Terrain 3D — USRP B200 at 89.4 MHz FM Broadcast"
+      width="900">
+  </a>
+</p>
+
+<p align="center"><em>
+Click the preview to open the live hardware demonstration on YouTube.
+</em></p>
 
 #### Capture Lab -- `/capture`
 
