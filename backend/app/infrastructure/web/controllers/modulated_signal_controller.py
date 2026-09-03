@@ -9,7 +9,9 @@ from pathlib import Path
 from app.config.settings import settings as app_settings
 from app.infrastructure.sdr.real_spectrum_stream import real_spectrum_stream
 from app.infrastructure.sdr.rf_safety import (
-    DEFAULT_USRP_B200_LIMITS,
+    active_antenna,
+    active_device_args,
+    current_limits,
     validate_gain,
     validate_sample_rate,
     validate_start_stop,
@@ -92,9 +94,10 @@ class ModulatedSignalController:
 
         center_frequency_hz, bandwidth_hz = validate_start_stop(start_frequency_hz, stop_frequency_hz)
         validate_gain(self._settings.gain.gain_db)
+        limits = current_limits()
         requested_sample_rate_hz = max(
             bandwidth_hz * self._capture_oversample_factor,
-            DEFAULT_USRP_B200_LIMITS.min_sample_rate_hz,
+            limits.min_sample_rate_hz,
         )
         if requested_sample_rate_hz > self._max_capture_sample_rate_hz:
             max_bandwidth_hz = self._max_capture_sample_rate_hz / self._capture_oversample_factor
@@ -109,9 +112,9 @@ class ModulatedSignalController:
             max(
                 float(self._settings.frequency.sample_rate_hz),
                 requested_sample_rate_hz,
-                DEFAULT_USRP_B200_LIMITS.min_sample_rate_hz,
+                limits.min_sample_rate_hz,
             ),
-            min(DEFAULT_USRP_B200_LIMITS.max_sample_rate_hz, self._max_capture_sample_rate_hz),
+            min(limits.max_sample_rate_hz, self._max_capture_sample_rate_hz),
         )
         validate_sample_rate(sample_rate_hz)
         # For immediate mode only: check that the single recording fits within the file-size limit.
@@ -147,8 +150,8 @@ class ModulatedSignalController:
                 "--stop-hz", str(float(stop_frequency_hz)),
                 "--sample-rate", str(sample_rate_hz),
                 "--gain", str(float(self._settings.gain.gain_db)),
-                "--antenna", app_settings.default_device.antenna,
-                "--device-addr", app_settings.default_device.device_args,
+                "--antenna", active_antenna(),
+                "--device-addr", active_device_args(),
                 "--output-dir", str(output_dir),
                 "--base-name", base_name,
                 "--file-format", file_format,
@@ -193,8 +196,8 @@ class ModulatedSignalController:
                 "--duration", str(float(duration_seconds)),
                 "--sample-rate", str(sample_rate_hz),
                 "--gain", str(float(self._settings.gain.gain_db)),
-                "--antenna", app_settings.default_device.antenna,
-                "--device-addr", app_settings.default_device.device_args,
+                "--antenna", active_antenna(),
+                "--device-addr", active_device_args(),
                 "--output-dir", str(output_dir),
                 "--base-name", base_name,
                 "--file-format", file_format,

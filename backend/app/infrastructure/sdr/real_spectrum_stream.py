@@ -15,7 +15,7 @@ import numpy as np
 
 from app.config.settings import settings as app_settings
 from app.infrastructure.ble.capture.ble_live_burst_decoder import live_decode_burst, live_decode_enabled
-from app.infrastructure.sdr.rf_safety import validate_frequency_window, validate_gain
+from app.infrastructure.sdr.rf_safety import active_antenna, active_device_args, validate_frequency_window, validate_gain
 
 # Same well-known BLE primary-advertising channel/frequency mapping
 # duplicated (not imported) across this codebase wherever a small, frozen
@@ -158,9 +158,9 @@ class RealSpectrumStream:
             "--gain",
             str(float(analyzer_settings.gain.gain_db)),
             "--antenna",
-            app_settings.default_device.antenna,
+            active_antenna(),
             "--device-addr",
-            app_settings.default_device.device_args,
+            active_device_args(),
             "--fft-size",
             str(int(analyzer_settings.resolution.fft_size)),
             "--max-fft-size",
@@ -282,9 +282,13 @@ class RealSpectrumStream:
                     self._last_error = line
 
     def _make_config_key(self, analyzer_settings) -> tuple:
+        # Live values, not the frozen app_settings.default_device snapshot --
+        # otherwise this key never changes when a device profile is applied
+        # while a stream is already running, so ensure_started() below never
+        # notices and the worker keeps running against the OLD device.
         return (
-            app_settings.default_device.antenna,
-            app_settings.default_device.device_args,
+            active_antenna(),
+            active_device_args(),
         )
 
     def _make_runtime_key(self, analyzer_settings) -> tuple:

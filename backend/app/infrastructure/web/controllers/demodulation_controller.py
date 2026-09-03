@@ -17,7 +17,9 @@ from app.config.settings import settings as app_settings
 from app.infrastructure.jobs import job_tracker
 from app.infrastructure.sdr.real_spectrum_stream import real_spectrum_stream
 from app.infrastructure.sdr.rf_safety import (
-    DEFAULT_USRP_B200_LIMITS,
+    active_antenna,
+    active_device_args,
+    current_limits,
     validate_gain,
     validate_sample_rate,
     validate_start_stop,
@@ -289,9 +291,9 @@ class DemodulationController:
             "--gain",
             str(float(self._settings.gain.gain_db)),
             "--antenna",
-            app_settings.default_device.antenna,
+            active_antenna(),
             "--device-addr",
-            app_settings.default_device.device_args,
+            active_device_args(),
             "--output-dir",
             str(self._output_dir),
             "--base-name",
@@ -1105,6 +1107,7 @@ class DemodulationController:
 
     def _live_capture_sample_rate_hz(self, mode: str, bandwidth_hz: float) -> float:
         configured_rate = float(self._settings.frequency.sample_rate_hz)
+        limits = current_limits()
         if mode == "wifi_80211":
             if self._wifi_demod_v2_enabled() and self._wifi_worker_available():
                 # The validated V3 worker requires an exact 20 MS/s channelized
@@ -1115,21 +1118,21 @@ class DemodulationController:
                 return 20_000_000.0
             required_rate = max(
                 bandwidth_hz * 1.25,
-                DEFAULT_USRP_B200_LIMITS.min_sample_rate_hz,
+                limits.min_sample_rate_hz,
             )
             sample_rate_hz = min(
                 max(configured_rate, required_rate),
                 30_720_000.0,
-                DEFAULT_USRP_B200_LIMITS.max_sample_rate_hz,
+                limits.max_sample_rate_hz,
             )
         else:
             sample_rate_hz = min(
                 max(
                     configured_rate,
                     bandwidth_hz * 4.0,
-                    DEFAULT_USRP_B200_LIMITS.min_sample_rate_hz,
+                    limits.min_sample_rate_hz,
                 ),
-                DEFAULT_USRP_B200_LIMITS.max_sample_rate_hz,
+                limits.max_sample_rate_hz,
             )
         validate_sample_rate(sample_rate_hz)
         return sample_rate_hz

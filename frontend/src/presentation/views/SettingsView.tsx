@@ -30,6 +30,19 @@ type RuntimeSettingsPayload = {
   status?: string;
 };
 
+type DeviceProfile = {
+  id: string;
+  label: string;
+  description: string;
+  values: Record<string, string | number>;
+};
+
+type DeviceProfilesPayload = {
+  profiles: DeviceProfile[];
+  active_profile_id: string | null;
+  status?: string;
+};
+
 const api = new ApiService();
 
 const limitLabel = (kind: RuntimeSetting['limit_kind']) => {
@@ -56,6 +69,9 @@ export const SettingsView: React.FC = () => {
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const [deviceProfiles, setDeviceProfiles] = useState<DeviceProfilesPayload | null>(null);
+  const [applyingProfileId, setApplyingProfileId] = useState<string | null>(null);
+
   const loadSettings = async () => {
     setLoading(true);
     setError(null);
@@ -71,9 +87,35 @@ export const SettingsView: React.FC = () => {
     }
   };
 
+  const loadDeviceProfiles = async () => {
+    try {
+      setDeviceProfiles(await api.getDeviceProfiles() as DeviceProfilesPayload);
+    } catch (err) {
+      console.error('Failed to load device profiles:', err);
+    }
+  };
+
   useEffect(() => {
     loadSettings();
+    loadDeviceProfiles();
   }, []);
+
+  const applyDeviceProfile = async (profileId: string) => {
+    setApplyingProfileId(profileId);
+    setError(null);
+    setMessage(null);
+    try {
+      await api.applyDeviceProfile(profileId);
+      await Promise.all([loadSettings(), loadDeviceProfiles()]);
+      setMessage('Perfil de dispositivo aplicado. Reinicia el backend para que los workers SDR usen estos valores.');
+    } catch (err: any) {
+      console.error('Failed to apply device profile:', err);
+      const detail = err?.response?.data?.detail;
+      setError(typeof detail === 'string' ? detail : 'No se pudo aplicar el perfil de dispositivo.');
+    } finally {
+      setApplyingProfileId(null);
+    }
+  };
 
   const grouped = useMemo(() => {
     const groups: Record<string, RuntimeSetting[]> = {};
@@ -156,6 +198,40 @@ export const SettingsView: React.FC = () => {
             </button>
           </div>
         </div>
+
+        {deviceProfiles && deviceProfiles.profiles.length > 0 && (
+          <section className="rounded-md border border-gray-200 bg-white">
+            <div className="border-b border-gray-200 px-4 py-3">
+              <h3 className="text-sm font-semibold text-gray-950">Device profiles</h3>
+              <p className="mt-1 text-xs text-gray-600">
+                Applies UHD_DEVICE_ARGS, DEFAULT_ANTENNA and every RF_* limit below in one click -- exactly the same
+                values you could type in by hand, just bundled. Still needs a backend restart afterwards.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 divide-y divide-gray-200 md:grid-cols-2 md:divide-x md:divide-y-0">
+              {deviceProfiles.profiles.map((profile) => {
+                const active = deviceProfiles.active_profile_id === profile.id;
+                return (
+                  <div key={profile.id} className="p-4">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="text-sm font-semibold text-gray-950">{profile.label}</div>
+                      {active && <span className="rounded bg-green-50 px-2 py-1 text-xs font-medium text-green-700">Active</span>}
+                    </div>
+                    <p className="mt-1 text-xs text-gray-600">{profile.description}</p>
+                    <button
+                      type="button"
+                      onClick={() => applyDeviceProfile(profile.id)}
+                      disabled={active || applyingProfileId !== null}
+                      className="mt-3 inline-flex items-center gap-2 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                    >
+                      {applyingProfileId === profile.id ? 'Applying...' : active ? 'Currently active' : 'Use this device'}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
         <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
           <div className="rounded-md border border-gray-200 bg-white p-4">

@@ -160,6 +160,18 @@ export class ApiService {
     return response.data;
   }
 
+  /** Named bundles over the exact same values saveRuntimeSettings() accepts --
+   * switching devices without hand-typing every RF_* number. */
+  async getDeviceProfiles(): Promise<Record<string, any>> {
+    const response = await axios.get(`${this.baseURL}${API_ENDPOINTS.RUNTIME_SETTINGS}/device-profiles`);
+    return response.data;
+  }
+
+  async applyDeviceProfile(profileId: string): Promise<Record<string, any>> {
+    const response = await axios.post(`${this.baseURL}${API_ENDPOINTS.RUNTIME_SETTINGS}/device-profiles/${encodeURIComponent(profileId)}/apply`);
+    return response.data;
+  }
+
   async setDeviceFrequency(frequency: number): Promise<void> {
     await axios.post(`${this.baseURL}${API_ENDPOINTS.DEVICE_SET_FREQUENCY}`, { frequency_hz: frequency });
   }

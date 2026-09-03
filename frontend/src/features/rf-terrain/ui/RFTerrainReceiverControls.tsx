@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Radio } from 'lucide-react';
 import { useSpectrumController } from '../../../presentation/controllers/SpectrumController';
+import { DeviceProfileSelector } from '../../../presentation/components/DeviceProfileSelector';
 import { useAnalyzerSettings, useDeviceStatus } from '../../../app/store/AppStore';
 import { HudFrame } from './hud/HudFrame';
 import { HUD_ACCENT_BRIGHT, HUD_BORDER_COLOR, HUD_GLOW_SHADOW, HUD_PANEL_BACKGROUND, hudLabelClass } from './hud/hudTheme';
@@ -97,6 +98,7 @@ export const RFTerrainReceiverControls: React.FC<RFTerrainReceiverControlsProps>
     <div className="pointer-events-none absolute right-3 top-14 z-20 flex items-start gap-2">
       {open && (
         <HudFrame className="pointer-events-auto w-80 space-y-3 rounded-sm p-3 text-slate-100 shadow-2xl">
+          <DeviceProfileSelector />
           <div className="flex flex-wrap gap-2">
             <ApplyButton busy={busy !== null} onClick={() => run('connect', controller.connectDevice)}>Connect</ApplyButton>
             <ApplyButton busy={busy !== null} onClick={() => run('disconnect', controller.disconnectDevice)}>Disconnect</ApplyButton>

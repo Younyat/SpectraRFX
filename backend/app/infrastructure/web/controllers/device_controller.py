@@ -7,6 +7,8 @@ from datetime import datetime, timezone
 from app.config.settings import settings as app_settings
 from app.infrastructure.sdr.real_spectrum_stream import real_spectrum_stream
 from app.infrastructure.sdr.rf_safety import (
+    active_antenna,
+    active_device_args,
     safety_status,
     validate_center_frequency,
     validate_frequency_window,
@@ -67,9 +69,9 @@ class DeviceController:
             "--gain",
             str(float(self._settings.gain.gain_db)),
             "--antenna",
-            app_settings.default_device.antenna,
+            active_antenna(),
             "--device-addr",
-            app_settings.default_device.device_args,
+            active_device_args(),
             "--output-dir",
             str(output_dir),
             "--base-name",

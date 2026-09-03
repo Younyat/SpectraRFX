@@ -12,7 +12,7 @@ import asyncio
 
 from app.config.settings import settings as app_settings
 from app.infrastructure.sdr.real_spectrum_stream import real_spectrum_stream
-from app.infrastructure.sdr.rf_safety import validate_gain, validate_sample_rate
+from app.infrastructure.sdr.rf_safety import active_antenna, active_device_args, validate_gain, validate_sample_rate
 
 _AUDIO_MODES = {"am", "fm", "nfm", "wfm"}
 _MAX_BUFFER_CHUNKS = 300  # ~2.5 min at 0.5 s chunks
@@ -79,8 +79,8 @@ class LiveDemodulationController:
                 "--mode",           mode,
                 "--sample-rate",    str(float(sample_rate_hz)),
                 "--gain",           str(float(gain_db)),
-                "--antenna",        app_settings.default_device.antenna,
-                "--device-addr",    app_settings.default_device.device_args,
+                "--antenna",        active_antenna(),
+                "--device-addr",    active_device_args(),
                 "--chunk-duration", str(float(chunk_duration)),
             ]
 

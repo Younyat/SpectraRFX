@@ -14,6 +14,7 @@ import type { AnalyzerSettings, RFObjectDetection, RFSceneAnalysis, RFSignalUnde
 import { useSpectrumTools } from '../../features/spectrum-tools/useSpectrumTools';
 import { SpectrumToolsPanel } from '../../features/spectrum-tools/ui/SpectrumToolsPanel';
 import { BleRffiLiveModelPanel } from './ble-rffi-studio/BleRffiLiveModelPanel';
+import { DeviceProfileSelector } from '../components/DeviceProfileSelector';
 
 const hzToMhz = (hz: number) => Number.isFinite(hz) ? hz / 1e6 : 0;
 const mhzToHz = (mhz: string) => Number(mhz) * 1e6;
@@ -1644,6 +1645,7 @@ export const SpectrumView: React.FC = () => {
           style={{ maxHeight: controlsCollapsed ? '0px' : (controlsHeight !== undefined ? `${controlsHeight}px` : '2000px') }}
         >
           <div ref={controlsRef} className="border-b border-slate-800 bg-slate-900 px-4 pb-6 pt-3">
+        <DeviceProfileSelector className="mb-2" />
         <div className="flex flex-wrap items-end gap-3">
           <button
             onClick={handleConnectDisconnect}

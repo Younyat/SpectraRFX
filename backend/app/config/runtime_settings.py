@@ -26,6 +26,17 @@ SETTING_CATALOG: dict[str, dict[str, Any]] = {
         "limit_kind": "software",
         "risk": "high",
     },
+    "RF_SAFETY_DEVICE_NAME": {
+        "section": "Hardware",
+        "tab": "Device, Live Spectrum, Capture Lab, Demodulation",
+        "type": "string",
+        "default": "USRP-B200 from Ettus Research",
+        "description": "Human-readable name of the connected device, shown in /api/device/status's safety_limits and the Settings page.",
+        "impact": "Display only -- never affects what UHD_DEVICE_ARGS actually connects to. Was previously a raw environment variable outside this settings system (a real bug: switching device profiles silently left the old device's name showing).",
+        "restart_required": True,
+        "limit_kind": "software",
+        "risk": "low",
+    },
     "UHD_DEVICE_ARGS": {
         "section": "Hardware",
         "tab": "Device, Live Spectrum, Capture Lab, Demodulation",
@@ -576,6 +587,103 @@ SETTING_CATALOG: dict[str, dict[str, Any]] = {
 }
 
 
+# One-click bundles over the SAME runtime settings above (never a separate
+# mechanism) -- picking a profile is exactly equivalent to hand-typing every
+# one of its values into the Settings page yourself, just without having to
+# know the real numbers. Every RF_* value in the "ni_usrp_2932" profile was
+# read live off the actual connected device (never a datasheet guess):
+# serial F4FA9D, addr=192.168.10.2, via `uhd_usrp_probe` and
+# gnuradio.uhd.usrp_source.get_freq_range()/get_gain_range()/get_samp_rates()
+# on 2026-09-02. Real findings: motherboard is an Ettus N210r4 (NI's 293x
+# family rebrands standard Ettus/UHD-compatible hardware, not the separate
+# RIO/LabVIEW-FPGA product line) with an SBX daughterboard and an internal
+# GPSDO. max_sample_rate_hz is deliberately NOT the DSP's own ceiling (the
+# device offers up to 50e6 -- see get_samp_rates()) -- at UHD's sc16 wire
+# format that is 200 MB/s, which plain Gigabit Ethernet (~112-117 MB/s
+# sustained) cannot carry without dropped packets. 25e6 (25 MS/s, itself one
+# of the device's own real selectable rates) is the largest rate that
+# reliably fits.
+DEVICE_PROFILES: dict[str, dict[str, Any]] = {
+    "usrp_b200": {
+        "label": "USRP B200 (Ettus, USB)",
+        "description": "The default device this platform was built against -- USB 3.0, 70 MHz-6 GHz, up to 61.44 MS/s.",
+        "values": {
+            "RF_SAFETY_DEVICE_NAME": "USRP-B200 from Ettus Research",
+            "UHD_DEVICE_ARGS": "",
+            "DEFAULT_ANTENNA": "RX2",
+            # Real, valid starting point for THIS device -- also pushed into
+            # the already-running AnalyzerSettings when a profile is applied
+            # live (see frontend applyDeviceProfile()), not just used to seed
+            # a future backend startup. Without this, switching from a
+            # device with a narrower range (e.g. the 2932, 380 MHz-4.42 GHz)
+            # back to the B200 would leave whatever frequency was last tuned
+            # -- fine here since B200's range is a superset, but the 2932
+            # profile below genuinely needs this to avoid an immediate
+            # out-of-range rejection.
+            "DEFAULT_CENTER_FREQUENCY_HZ": 89_400_000.0,
+            "DEFAULT_SAMPLE_RATE_HZ": 4_000_000.0,
+            "DEFAULT_GAIN_DB": 20.0,
+            "RF_MIN_CENTER_FREQUENCY_HZ": 70_000_000.0,
+            "RF_MAX_CENTER_FREQUENCY_HZ": 6_000_000_000.0,
+            "RF_MIN_SAMPLE_RATE_HZ": 200_000.0,
+            "RF_MAX_SAMPLE_RATE_HZ": 61_440_000.0,
+            "RF_MAX_SPAN_HZ": 61_440_000.0,
+            "RF_MIN_GAIN_DB": 0.0,
+            "RF_MAX_GAIN_DB": 60.0,
+        },
+    },
+    "ni_usrp_2932": {
+        "label": "NI USRP-2932 (Ettus N210 + SBX, Ethernet, GPSDO)",
+        "description": (
+            "Connected over dedicated Gigabit Ethernet at 192.168.10.2 (serial F4FA9D). "
+            "Wider RF frontend than the B200 (400-4400 MHz real tunable range, internal "
+            "GPSDO for precision timing) but a narrower streaming ceiling (25 MS/s, "
+            "Gigabit-Ethernet-limited -- the B200's USB 3.0 link carries more)."
+        ),
+        "values": {
+            "RF_SAFETY_DEVICE_NAME": "NI USRP-2932 (Ettus N210r4 + SBX, serial F4FA9D)",
+            "UHD_DEVICE_ARGS": "addr=192.168.10.2",
+            "DEFAULT_ANTENNA": "RX2",
+            # 2402 MHz = BLE primary advertising channel 37, real-tested and
+            # confirmed working end-to-end on this exact device (real live
+            # capture, source uhd_gnuradio_live) -- comfortably inside this
+            # profile's 380 MHz-4.42 GHz range, unlike the B200 profile's own
+            # 89.4 MHz default which is NOT.
+            "DEFAULT_CENTER_FREQUENCY_HZ": 2_402_000_000.0,
+            "DEFAULT_SAMPLE_RATE_HZ": 4_000_000.0,
+            "DEFAULT_GAIN_DB": 20.0,
+            "RF_MIN_CENTER_FREQUENCY_HZ": 380_000_000.0,
+            "RF_MAX_CENTER_FREQUENCY_HZ": 4_420_000_000.0,
+            "RF_MIN_SAMPLE_RATE_HZ": 195_312.0,
+            "RF_MAX_SAMPLE_RATE_HZ": 25_000_000.0,
+            "RF_MAX_SPAN_HZ": 25_000_000.0,
+            "RF_MIN_GAIN_DB": 0.0,
+            "RF_MAX_GAIN_DB": 38.0,
+        },
+    },
+}
+
+
+def device_profiles_payload() -> dict[str, Any]:
+    values = merged_runtime_values()
+    active_id = None
+    for profile_id, profile in DEVICE_PROFILES.items():
+        if all(values.get(key) == val for key, val in profile["values"].items()):
+            active_id = profile_id
+            break
+    return {
+        "profiles": [{"id": pid, **{k: v for k, v in p.items()}} for pid, p in DEVICE_PROFILES.items()],
+        "active_profile_id": active_id,
+    }
+
+
+def apply_device_profile(profile_id: str) -> dict[str, Any]:
+    profile = DEVICE_PROFILES.get(profile_id)
+    if profile is None:
+        raise ValueError(f"Unknown device profile: {profile_id}")
+    return save_runtime_values(profile["values"])
+
+
 def load_runtime_values() -> dict[str, Any]:
     if not RUNTIME_SETTINGS_PATH.exists():
         return {}
@@ -629,7 +737,16 @@ def apply_runtime_environment() -> None:
 
 
 def save_runtime_values(values: dict[str, Any]) -> dict[str, Any]:
-    current = merged_runtime_values()
+    # Starts from what was PREVIOUSLY explicitly saved (load_runtime_values),
+    # never the fully-computed merged_runtime_values() snapshot -- a real
+    # bug this replaces: writing the full merge baked every OTHER catalog
+    # key's current env/default value into the file too, permanently
+    # freezing it there. A key nobody has explicitly saved must stay ABSENT
+    # from disk so it keeps falling through to os.environ/its own default at
+    # read time (e.g. a test's monkeypatch.setenv(...) on an untouched key
+    # silently stopped working once an unrelated save had persisted that
+    # key's then-current value).
+    current = load_runtime_values()
     errors: dict[str, str] = {}
     for key, value in values.items():
         if key not in SETTING_CATALOG:

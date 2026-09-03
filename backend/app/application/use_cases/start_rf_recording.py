@@ -6,6 +6,7 @@ from pathlib import Path
 
 from app.config.settings import settings as app_settings
 from app.application.dto.recording_dto import RecordingDTO
+from app.infrastructure.sdr.rf_safety import active_antenna, active_device_args
 
 class StartRFRecordingUseCase:
     def __init__(self, recording_provider=None):
@@ -41,9 +42,9 @@ class StartRFRecordingUseCase:
                 "--gain",
                 str(float(gain_db)),
                 "--antenna",
-                app_settings.default_device.antenna,
+                active_antenna(),
                 "--device-addr",
-                app_settings.default_device.device_args,
+                active_device_args(),
                 "--output-dir",
                 str(output_dir),
                 "--base-name",
