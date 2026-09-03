@@ -2799,6 +2799,42 @@ class StudioRepository:
             "target_device_precision": round(target_precision, 4),
         }
 
+    def get_model_reliability_overview(self) -> list[dict[str, Any]]:
+        """Every bundle this operator has ever exported, real full TEST-split
+        evaluation attached -- unlike list_live_selectable_bundles() (which
+        silently drops anything not APPROVED_FOR_LIVE_PILOT, by design, for
+        the live-activation picker), this is a review surface: an operator
+        asking "do my models actually detect what they claim" needs to see
+        the bad ones too, not just the ones already cleared for live use.
+        Zero new statistics -- every field is read straight from the same
+        evaluation_report.json / dataset_reference.json / model_manifest.json
+        / split_reference.json files list_live_selectable_bundles() already
+        reads, just without the TARGET_VS_BACKGROUND-only collapse into a
+        single false-positive-rate/precision pair."""
+        result = []
+        for manifest in self.list_bundles():
+            bundle_dir = self.bundle_builder.root / manifest.bundle_id
+            label_map = read_json(bundle_dir / "label_map.json")
+            model_manifest = read_json(bundle_dir / "model_manifest.json")
+            dataset_reference = read_json(bundle_dir / "dataset_reference.json")
+            split_reference = read_json(bundle_dir / "split_reference.json")
+            task = split_reference.get("scientific_task")
+            report_path = bundle_dir / "evaluation_report.json"
+            test_evaluation = read_json(report_path).get("TEST") if report_path.is_file() else None
+            result.append({
+                "bundle_id": manifest.bundle_id,
+                "training_run_id": manifest.training_run_id,
+                "approval_status": manifest.approval_status,
+                "created_at": manifest.created_at,
+                "physical_units": dataset_reference.get("physical_units") or [],
+                "task": task,
+                "task_display": TASK_DISPLAY_NAMES.get(task, task),
+                "model_type": model_manifest.get("model_type"),
+                "label_classes": label_map.get("classes", []),
+                "test_evaluation": test_evaluation,
+            })
+        return result
+
     def resolve_bundle_acquisition_reference(self, bundle_id: str) -> dict[str, Any]:
         dataset_reference_path = self.bundle_builder.root / bundle_id / "dataset_reference.json"
         if not dataset_reference_path.is_file():

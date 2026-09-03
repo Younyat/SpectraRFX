@@ -17,6 +17,14 @@ import { RFTerrainInspector } from './RFTerrainInspector';
 import { RFTerrainOfflinePanel, RFTerrainSource } from './RFTerrainOfflinePanel';
 import { RFTerrainOfflineMonitor } from './RFTerrainOfflineMonitor';
 import { RFTerrainAiPluginPanel } from './RFTerrainAiPluginPanel';
+// Reused as-is, not rebuilt: the operator's own BLE-RFFI Studio-trained
+// models (.pt/.joblib -- never ONNX, see bundle_builder.py's _save_model)
+// have no path into RFTerrainAiPluginPanel (ONNX-only, by design -- see
+// that panel's own docstring) and are never meant to. This is the exact
+// same "Live Monitor" widget already used on the Spectrum view (own
+// toggle, own state, own polling of the ble-rffi-studio API), just also
+// mounted here so it is available while looking at RF Terrain 3D too.
+import { BleRffiLiveModelPanel } from '../../../presentation/views/ble-rffi-studio/BleRffiLiveModelPanel';
 import { RUNTIME_CONFIG } from '../../../shared/config/runtime';
 import { useOfflineReconstruction } from '../offline/useOfflineReconstruction';
 import { useAiLiveDetection } from '../ai/useAiLiveDetection';
@@ -157,10 +165,14 @@ export const RFTerrainView: React.FC = () => {
       // right-hand panel as existing objects). Pruned by real wall-clock
       // time on every arrival so a long continuous-mode session doesn't
       // accumulate stale entries.
+      // One live-updated entry per model (detection.id is now stable per
+      // model, not per record) -- replace its previous entry rather than
+      // accumulating one per poll, so continuous mode shows the model's
+      // CURRENT detected zone, never a growing trail of near-duplicates.
       const nowSeconds = Date.now() / 1000;
       setAiDetectionObjects((previous) => [
         buildAiDetectionTerrainObject(detection),
-        ...pruneExpiredAiDetectionObjects(previous, nowSeconds),
+        ...pruneExpiredAiDetectionObjects(previous, nowSeconds).filter((o) => o.id !== detection.id),
       ]);
     },
   });
@@ -317,6 +329,8 @@ export const RFTerrainView: React.FC = () => {
         />
 
         <RFTerrainHudBadges frequencyInfo={frequencyInfo} lastFrameTimestamp={diagnostics.lastFrameTimestamp} selection={selection} />
+
+        <BleRffiLiveModelPanel centerFrequencyHz={frequencyInfo?.centerFrequencyHz ?? 0} sampleRateHz={frequencyInfo?.sampleRateHz ?? 0} />
 
         {/* Always visible while reconstructing, independent of whether the
             Menu/Offline panel happens to be open -- precise time/progress

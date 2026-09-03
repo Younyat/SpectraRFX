@@ -146,6 +146,15 @@ class RFModelManifest(BaseModel):
     model_sha256: str
     imported_at_utc: str
 
+    # The real, absolute path this .onnx was found at on the operator's own
+    # machine, set only when imported via import_from_folder() (a bulk local
+    # directory scan) -- null for a model imported one at a time through the
+    # browser file picker. Never inferred or guessed: this is what lets the
+    # UI separate "my real local models" from whatever else got imported
+    # along the way (a demo/test file picked one at a time), without relying
+    # on any assumption about what the operator meant by either.
+    local_source_path: str | None = None
+
     task: RFTask = RFTask.OTHER
 
     input_discovered: RFModelInputFields = Field(default_factory=RFModelInputFields)
@@ -172,6 +181,25 @@ def _merge_override(discovered: BaseModel, overrides: BaseModel, model_cls: type
 
 def new_model_id() -> str:
     return f"AI-MODEL-{uuid.uuid4().hex[:12]}"
+
+
+class FolderImportFailure(BaseModel):
+    filename: str
+    error: str
+
+
+class FolderImportResult(BaseModel):
+    """Real outcome of scanning one local directory for .onnx files --
+    every file in the folder is accounted for in exactly one of the three
+    lists below, never silently dropped."""
+
+    folder_path: str
+    imported: list[RFModelManifest]
+    # Already registered under this exact model_sha256 (from any prior
+    # import, folder-scan or one-at-a-time) -- skipped, never re-imported
+    # as a duplicate entry.
+    skipped_duplicate: list[str]
+    failed: list[FolderImportFailure]
 
 
 class CompatibilityVerdict(str, Enum):

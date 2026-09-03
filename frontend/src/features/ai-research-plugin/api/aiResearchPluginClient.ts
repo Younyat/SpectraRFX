@@ -8,6 +8,7 @@
 import type {
   AiPluginCaptureSummary,
   CompatibilityResult,
+  FolderImportResult,
   InferenceRecord,
   InputRepresentation,
   RFModelManifest,
@@ -47,6 +48,21 @@ export class AiResearchPluginClient {
     if (modelName) formData.append('model_name', modelName);
     const response = await fetch(`${this.baseUrl}/api/ai-research-plugin/models/import`, { method: 'POST', body: formData });
     return this.parseOrThrow<RFModelManifest>(response);
+  }
+
+  /** Bulk-imports every .onnx file found directly in one real local folder
+   * on the operator's own machine (non-recursive) -- the direct-local-
+   * import path, as opposed to importModel()'s one-file-at-a-time browser
+   * picker. Each imported model is tagged with local_source_path so the UI
+   * can keep this group visually separate from anything imported one file
+   * at a time. */
+  async importFromFolder(folderPath: string): Promise<FolderImportResult> {
+    const response = await fetch(`${this.baseUrl}/api/ai-research-plugin/models/import-from-folder`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ folder_path: folderPath }),
+    });
+    return this.parseOrThrow<FolderImportResult>(response);
   }
 
   async listModels(): Promise<RFModelManifest[]> {

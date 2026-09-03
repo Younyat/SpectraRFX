@@ -27,6 +27,10 @@ from app.modules.ai_research_plugin.inference_service import AiInferenceService,
 from app.modules.ai_research_plugin.model_registry import ModelImportError, ModelRegistry
 
 
+class FolderImportRequestBody(BaseModel):
+    folder_path: str
+
+
 class ManifestOverrideBody(BaseModel):
     task: RFTask | None = None
     input_overrides: dict[str, Any] = Field(default_factory=dict)
@@ -83,6 +87,13 @@ def build_ai_research_plugin_router(
         except ModelImportError as error:
             raise HTTPException(400, str(error)) from error
         return manifest
+
+    @router.post("/models/import-from-folder")
+    def import_models_from_folder(body: FolderImportRequestBody):
+        try:
+            return registry.import_from_folder(body.folder_path)
+        except ModelImportError as error:
+            raise HTTPException(400, str(error)) from error
 
     @router.get("/models")
     def list_models():

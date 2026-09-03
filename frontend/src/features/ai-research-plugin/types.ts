@@ -70,6 +70,11 @@ export interface RFModelManifest {
   model_file: string;
   model_sha256: string;
   imported_at_utc: string;
+  // The real, absolute path this .onnx was found at on the operator's own
+  // machine -- set only when imported via importFromFolder() (a bulk local
+  // directory scan), null for a model imported one at a time through the
+  // file picker. See backend RFModelManifest's own field docstring.
+  local_source_path: string | null;
   task: RFTask;
   input_discovered: RFModelInputFields;
   input_overrides: RFModelInputFields;
@@ -77,6 +82,21 @@ export interface RFModelManifest {
   output_discovered: RFModelOutputFields;
   output_overrides: RFModelOutputFields;
   provenance: RFModelProvenance;
+}
+
+export interface FolderImportFailure {
+  filename: string;
+  error: string;
+}
+
+// Real outcome of scanning one local directory for .onnx files -- every
+// file found is accounted for in exactly one of the three lists, never
+// silently dropped. See backend contracts.FolderImportResult.
+export interface FolderImportResult {
+  folder_path: string;
+  imported: RFModelManifest[];
+  skipped_duplicate: string[];
+  failed: FolderImportFailure[];
 }
 
 export type CompatibilityVerdict = 'COMPATIBLE' | 'PARTIALLY_COMPATIBLE' | 'INCOMPATIBLE' | 'UNKNOWN';

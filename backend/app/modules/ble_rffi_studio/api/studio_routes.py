@@ -546,6 +546,15 @@ def build_ble_rffi_studio_router(repository, job_manager) -> APIRouter:
     def bundles():
         return call(lambda: dump_list(repository.list_bundles()))
 
+    # Deliberately a distinct route from /live-monitor/models: that one
+    # silently drops anything not APPROVED_FOR_LIVE_PILOT (by design, it's
+    # an activation picker); this is a review surface over every bundle
+    # ever exported, real full TEST-split evaluation attached, so an
+    # operator can see the bad ones too.
+    @router.get("/models/reliability-overview")
+    def model_reliability_overview():
+        return call(repository.get_model_reliability_overview)
+
     @router.get("/bundles/{bundle_id}")
     def get_bundle(bundle_id: str):
         def fn():

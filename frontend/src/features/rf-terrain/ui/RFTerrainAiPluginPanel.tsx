@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { AlertTriangle, Brain, CheckCircle2, Compass, PauseCircle, PlayCircle, RefreshCw, UploadCloud } from 'lucide-react';
 import { HudFrame } from './hud/HudFrame';
-import { HUD_ACCENT_BRIGHT, HUD_BORDER_COLOR, HUD_PANEL_BACKGROUND, hudLabelClass } from './hud/hudTheme';
+import { HUD_ACCENT_BRIGHT, HUD_BORDER_COLOR, HUD_PANEL_BACKGROUND, HUD_SOLID_INPUT_BACKGROUND, hudLabelClass } from './hud/hudTheme';
 import { AiResearchPluginApiError, AiResearchPluginClient } from '../../ai-research-plugin/api/aiResearchPluginClient';
 import { RFModelCatalogModal } from '../../ai-research-plugin/catalog/ui/RFModelCatalogModal';
 import type { UseAiLiveDetectionResult } from '../ai/useAiLiveDetection';
 import type {
   AiPluginCaptureSummary,
   CompatibilityResult,
+  FolderImportResult,
   InferenceRecord,
   InputRepresentation,
   RFModelManifest,
@@ -32,6 +33,31 @@ const verdictColor: Record<CompatibilityResult['verdict'], string> = {
 };
 
 const shapeText = (shape: (number | null)[] | null) => (shape ? `[${shape.map((d) => (d === null ? '?' : d)).join(', ')}]` : 'unknown');
+
+// Never mixed flat in one list: a model with a real local_source_path came
+// from a bulk local-folder import (importFromFolder), everything else was
+// imported one file at a time through the browser picker -- two genuinely
+// different provenances the operator asked to keep visually separate.
+const ModelOptions: React.FC<{ models: RFModelManifest[] }> = ({ models }) => {
+  const fromFolder = models.filter((m) => m.local_source_path);
+  const individually = models.filter((m) => !m.local_source_path);
+  return (
+    <>
+      {fromFolder.length > 0 && (
+        <optgroup label="Local folder">
+          {fromFolder.map((m) => <option key={m.model_id} value={m.model_id}>{m.model_name} ({m.framework})</option>)}
+        </optgroup>
+      )}
+      {individually.length > 0 && (
+        <optgroup label="Imported individually">
+          {individually.map((m) => <option key={m.model_id} value={m.model_id}>{m.model_name} ({m.framework})</option>)}
+        </optgroup>
+      )}
+    </>
+  );
+};
+
+const selectStyle: React.CSSProperties = { borderColor: 'var(--app-border)', backgroundColor: HUD_SOLID_INPUT_BACKGROUND };
 
 const formatLatency = (ms: number | null): string => (ms === null ? 'unknown' : ms >= 1000 ? `${(ms / 1000).toFixed(2)} s` : `${ms.toFixed(0)} ms`);
 
@@ -60,8 +86,10 @@ export const RFTerrainAiPluginPanel: React.FC<RFTerrainAiPluginPanelProps> = ({ 
   const [compatibility, setCompatibility] = useState<CompatibilityResult | null>(null);
   const [record, setRecord] = useState<InferenceRecord | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState<'idle' | 'importing' | 'checking' | 'running'>('idle');
+  const [busy, setBusy] = useState<'idle' | 'importing' | 'importingFolder' | 'checking' | 'running'>('idle');
   const [catalogOpen, setCatalogOpen] = useState(false);
+  const [folderPath, setFolderPath] = useState('');
+  const [folderImportResult, setFolderImportResult] = useState<FolderImportResult | null>(null);
 
   const { models, refreshModels, liveAvailable } = liveDetection;
   const refreshCaptures = () => client.listCaptures().then(setCaptures).catch((e) => setError(String(e)));
@@ -92,6 +120,13 @@ export const RFTerrainAiPluginPanel: React.FC<RFTerrainAiPluginPanelProps> = ({ 
       await refreshModels();
       setOfflineModelId(manifest.model_id);
       liveDetection.setSelectedModelId(manifest.model_id);
+    });
+
+  const handleImportFolder = () =>
+    runGuarded('importingFolder', async () => {
+      const result = await client.importFromFolder(folderPath);
+      setFolderImportResult(result);
+      await refreshModels();
     });
 
   const canRunOffline = offlineModelId !== '' && captureId !== '' && t1 > t0;
@@ -128,6 +163,37 @@ export const RFTerrainAiPluginPanel: React.FC<RFTerrainAiPluginPanelProps> = ({ 
             />
           </label>
 
+          <div className="flex flex-col gap-1 rounded border p-1.5" style={{ borderColor: HUD_BORDER_COLOR }}>
+            <span className="text-[9px] app-muted-text">Import every .onnx in a local folder (kept separate from models imported one at a time)</span>
+            <div className="flex gap-1">
+              <input
+                value={folderPath}
+                onChange={(e) => setFolderPath(e.target.value)}
+                placeholder="C:\path\to\my\models"
+                className="flex-1 rounded-md border bg-transparent px-2 py-1 text-[10px] text-slate-100"
+                style={{ borderColor: 'var(--app-border)' }}
+              />
+              <button
+                onClick={handleImportFolder}
+                disabled={folderPath.trim() === '' || busy !== 'idle'}
+                className="rounded border px-2 py-1 text-[10px] font-semibold uppercase tracking-wide disabled:opacity-40"
+                style={{ borderColor: HUD_BORDER_COLOR }}
+              >
+                {busy === 'importingFolder' ? 'Scanning…' : 'Import folder'}
+              </button>
+            </div>
+            {folderImportResult && (
+              <div className="text-[9px] app-muted-text">
+                {folderImportResult.imported.length} imported
+                {folderImportResult.skipped_duplicate.length > 0 && `, ${folderImportResult.skipped_duplicate.length} already registered`}
+                {folderImportResult.failed.length > 0 && (
+                  <span className="text-red-400">, {folderImportResult.failed.length} failed ({folderImportResult.failed.map((f) => f.filename).join(', ')})</span>
+                )}
+                {folderImportResult.imported.length === 0 && folderImportResult.skipped_duplicate.length === 0 && folderImportResult.failed.length === 0 && 'no .onnx files found in that folder'}
+              </div>
+            )}
+          </div>
+
           <button
             onClick={() => setCatalogOpen(true)}
             className="flex items-center justify-center gap-2 rounded border px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wide"
@@ -161,9 +227,9 @@ export const RFTerrainAiPluginPanel: React.FC<RFTerrainAiPluginPanelProps> = ({ 
             <>
               <label className="flex flex-col gap-1 text-[10px] app-muted-text">
                 Model
-                <select value={offlineModelId} onChange={(e) => setOfflineModelId(e.target.value)} className="rounded-md border bg-transparent px-2 py-1 text-xs text-slate-100" style={{ borderColor: 'var(--app-border)' }}>
+                <select value={offlineModelId} onChange={(e) => setOfflineModelId(e.target.value)} className="rounded-md border px-2 py-1 text-xs text-slate-100" style={selectStyle}>
                   <option value="">{models.length === 0 ? 'No models imported yet' : 'Select…'}</option>
-                  {models.map((m) => <option key={m.model_id} value={m.model_id}>{m.model_name} ({m.framework})</option>)}
+                  <ModelOptions models={models} />
                 </select>
               </label>
 
@@ -197,7 +263,7 @@ export const RFTerrainAiPluginPanel: React.FC<RFTerrainAiPluginPanelProps> = ({ 
 
               <label className="flex flex-col gap-1 text-[10px] app-muted-text">
                 Representation
-                <select value={representation} onChange={(e) => setRepresentation(e.target.value as InputRepresentation)} className="rounded-md border bg-transparent px-1 py-1 text-[11px] text-slate-100" style={{ borderColor: 'var(--app-border)' }}>
+                <select value={representation} onChange={(e) => setRepresentation(e.target.value as InputRepresentation)} className="rounded-md border px-1 py-1 text-[11px] text-slate-100" style={selectStyle}>
                   {REPRESENTATIONS.map((r) => <option key={r} value={r}>{r}</option>)}
                 </select>
               </label>
@@ -292,15 +358,15 @@ const LivePanel: React.FC<{
     <>
       <label className="flex flex-col gap-1 text-[10px] app-muted-text">
         Model
-        <select value={selectedModelId} onChange={(e) => setSelectedModelId(e.target.value)} className="rounded-md border bg-transparent px-2 py-1 text-xs text-slate-100" style={{ borderColor: 'var(--app-border)' }}>
+        <select value={selectedModelId} onChange={(e) => setSelectedModelId(e.target.value)} className="rounded-md border px-2 py-1 text-xs text-slate-100" style={selectStyle}>
           <option value="">{models.length === 0 ? 'No models imported yet' : 'Select…'}</option>
-          {models.map((m) => <option key={m.model_id} value={m.model_id}>{m.model_name} ({m.framework})</option>)}
+          <ModelOptions models={models} />
         </select>
       </label>
 
       <label className="flex flex-col gap-1 text-[10px] app-muted-text">
         Representation
-        <select value={representation} onChange={(e) => setRepresentation(e.target.value as InputRepresentation)} className="rounded-md border bg-transparent px-1 py-1 text-[11px] text-slate-100" style={{ borderColor: 'var(--app-border)' }}>
+        <select value={representation} onChange={(e) => setRepresentation(e.target.value as InputRepresentation)} className="rounded-md border px-1 py-1 text-[11px] text-slate-100" style={selectStyle}>
           {REPRESENTATIONS.map((r) => <option key={r} value={r}>{r}</option>)}
         </select>
       </label>

@@ -294,7 +294,16 @@ export function useAiLiveDetection({ frequencyInfo, onDetection }: UseAiLiveDete
       const { bandwidthHz, bandwidthIsKnown } = resolveDetectionBandwidth(model, frequencyInfoRef.current);
       const predictedClass = extractPredictedClass(record);
       const detection: AiLiveDetection = {
-        id: `AI-DETECTION-${record.record_id}`,
+        // Stable PER MODEL, deliberately not per record_id: continuous mode
+        // polls faster than the terrain scrolls, and a fresh id every poll
+        // made addAiDetection() spawn a brand-new 3D cage each time instead
+        // of moving the existing one -- a real bug (reported: "la ventana
+        // de detección ocupa todo el span"), it was many overlapping thin
+        // boxes and labels tiling across the view, not one wide box. One
+        // slot per model here means RFTerrainCanvas.addAiDetection() and
+        // the aiDetectionObjects merge below both update the same box/
+        // object in place.
+        id: `AI-DETECTION-${modelId}`,
         modelId,
         modelName: model.model_name,
         detectedAtUtc: record.inference_timestamp_utc,

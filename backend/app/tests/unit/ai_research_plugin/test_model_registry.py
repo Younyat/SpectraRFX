@@ -131,3 +131,57 @@ def test_delete_removes_both_the_model_file_and_the_manifest(registry: ModelRegi
 
     assert not model_path.exists()
     assert registry.get(manifest.model_id) is None
+
+
+def test_import_from_folder_imports_every_real_onnx_file_it_finds(registry: ModelRegistry, tmp_path: Path):
+    local_folder = tmp_path / "my_local_models"
+    local_folder.mkdir()
+    (local_folder / "model_a.onnx").write_bytes(build_toy_amc_onnx_bytes(n_samples=64))
+    (local_folder / "model_b.onnx").write_bytes(build_toy_amc_onnx_bytes(n_samples=128))
+    (local_folder / "notes.txt").write_text("not a model")
+
+    result = registry.import_from_folder(str(local_folder))
+
+    assert len(result.imported) == 2
+    assert {m.model_file for m in result.imported} == {"model_a.onnx", "model_b.onnx"}
+    assert result.skipped_duplicate == []
+    assert result.failed == []
+    # Real provenance -- exactly where each file was found, so the UI can
+    # separate these from anything imported one file at a time.
+    assert all(m.local_source_path is not None and m.local_source_path.endswith(m.model_file) for m in result.imported)
+    assert len(registry.list_models()) == 2
+
+
+def test_import_from_folder_skips_a_model_already_registered_by_content(registry: ModelRegistry, tmp_path: Path):
+    already_imported = registry.import_onnx_model(build_toy_amc_onnx_bytes(n_samples=64), "toy_amc.onnx")
+
+    local_folder = tmp_path / "my_local_models"
+    local_folder.mkdir()
+    # Same real bytes, different filename -- dedupe is by content hash, not name.
+    (local_folder / "duplicate_copy.onnx").write_bytes(build_toy_amc_onnx_bytes(n_samples=64))
+    (local_folder / "genuinely_new.onnx").write_bytes(build_toy_amc_onnx_bytes(n_samples=128))
+
+    result = registry.import_from_folder(str(local_folder))
+
+    assert result.skipped_duplicate == ["duplicate_copy.onnx"]
+    assert [m.model_file for m in result.imported] == ["genuinely_new.onnx"]
+    assert len(registry.list_models()) == 2  # already_imported + genuinely_new, duplicate_copy never became a third entry
+    assert already_imported.local_source_path is None  # imported one-at-a-time, never retroactively tagged
+
+
+def test_import_from_folder_reports_an_invalid_onnx_file_without_failing_the_whole_scan(registry: ModelRegistry, tmp_path: Path):
+    local_folder = tmp_path / "my_local_models"
+    local_folder.mkdir()
+    (local_folder / "corrupt.onnx").write_bytes(build_invalid_onnx_bytes())
+    (local_folder / "good.onnx").write_bytes(build_toy_amc_onnx_bytes())
+
+    result = registry.import_from_folder(str(local_folder))
+
+    assert [m.model_file for m in result.imported] == ["good.onnx"]
+    assert len(result.failed) == 1
+    assert result.failed[0].filename == "corrupt.onnx"
+
+
+def test_import_from_folder_rejects_a_path_that_is_not_a_real_directory(registry: ModelRegistry, tmp_path: Path):
+    with pytest.raises(ModelImportError):
+        registry.import_from_folder(str(tmp_path / "does_not_exist"))

@@ -26,6 +26,7 @@ const manifest = (
   model_file: 'toy.onnx',
   model_sha256: 'a'.repeat(64),
   imported_at_utc: '2026-01-01T00:00:00Z',
+  local_source_path: null,
   task: 'other',
   input_discovered: emptyInput,
   input_overrides: { ...emptyInput, ...inputOverrides },
@@ -216,6 +217,42 @@ describe('useAiLiveDetection', () => {
       text: expect.stringContaining('Quadrature Phase Shift Keying'),
       source: 'KNOWN_TERM',
     });
+  });
+
+  it('gives every detection from the same model the same id, so the 3D cage/TerrainObject updates in place instead of accumulating one per poll', async () => {
+    const onDetection = vi.fn();
+    const models = [manifest()];
+    let nextRecordId = 1;
+    const inferenceRecordFor = (recordId: string) => ({
+      record_id: recordId, model_id: 'AI-MODEL-1', model_sha256: 'a'.repeat(64), model_manifest_snapshot: models[0],
+      capture_id: 'LIVE', capture_data_sha256: 'hash', selected_time_seconds: [0, 0.002], selected_frequency_hz: null,
+      input_transformation: 'iq_tensor', input_tensor_shape: [1, 2, 4096], input_dtype: 'float32', normalization_applied: 'none',
+      inference_timestamp_utc: '2026-01-01T00:00:01Z', software_backend: 'onnxruntime==1.18.0',
+      raw_output: [0.1, 0.9], raw_output_shape: [1, 2],
+      interpretation: { kind: 'classification', predicted_class: 'QPSK', score: 0.9, score_type: 'probability' },
+      compatibility: { verdict: 'UNKNOWN', checks: [] },
+      capture_latency_ms: 12, inference_latency_ms: 8, total_latency_ms: 20,
+    });
+    const fetchImpl = vi.fn((url: string) => {
+      if (url.includes('/models')) return Promise.resolve(jsonResponse(models));
+      if (url.includes('/status')) return Promise.resolve(jsonResponse({ enabled: true, capture_bridge_available: true, live_inference_available: true }));
+      if (url.includes('/inference/live')) return Promise.resolve(jsonResponse(inferenceRecordFor(`AI-INFER-${nextRecordId++}`)));
+      return Promise.resolve(jsonResponse({}));
+    });
+    vi.stubGlobal('fetch', fetchImpl);
+
+    const { result } = renderHook(() => useAiLiveDetection({ frequencyInfo: freq(2_440_000_000), onDetection }));
+    await waitFor(() => expect(result.current.models).toHaveLength(1));
+    act(() => result.current.setSelectedModelId('AI-MODEL-1'));
+
+    await act(async () => { await result.current.runOnce(); });
+    await act(async () => { await result.current.runOnce(); });
+
+    expect(onDetection).toHaveBeenCalledTimes(2);
+    const [firstDetection] = onDetection.mock.calls[0];
+    const [secondDetection] = onDetection.mock.calls[1];
+    expect(firstDetection.id).toBe('AI-DETECTION-AI-MODEL-1');
+    expect(secondDetection.id).toBe(firstDetection.id);
   });
 
   it('uses the model\'s real declared signal bandwidth for the detection box, never the capture sample rate', async () => {

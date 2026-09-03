@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import type * as THREE from 'three';
 import { AiDetectionOverlay } from '../render/AiDetectionOverlay';
 
 const box = (id: string, overrides: Partial<{ xMin: number; xMax: number; meshRow: number; baseY: number; label: string }> = {}) => ({
@@ -47,6 +48,14 @@ describe('AiDetectionOverlay', () => {
     const cage = overlay.group.children[0];
     const sprite = cage.children.find((child) => (child as unknown as { isSprite?: boolean }).isSprite);
     expect(sprite).toBeDefined();
+  });
+
+  it('places the label BELOW the cage, not above it -- so a tall peak never pushes it into the fixed FREQUENCY/TIME/POWER HUD badges near the top of the screen', () => {
+    const overlay = new AiDetectionOverlay(64);
+    overlay.upsert(box('a'));
+    const cage = overlay.group.children[0];
+    const sprite = cage.children.find((child) => (child as unknown as { isSprite?: boolean }).isSprite) as THREE.Sprite;
+    expect(sprite.position.y).toBeLessThan(0);
   });
 
   it('multiple simultaneous detections are independent (unlike the single-marker selection reticle)', () => {

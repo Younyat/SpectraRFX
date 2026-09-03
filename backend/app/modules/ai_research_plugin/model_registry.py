@@ -20,6 +20,8 @@ import hashlib
 from pathlib import Path
 
 from app.modules.ai_research_plugin.contracts import (
+    FolderImportFailure,
+    FolderImportResult,
     ModelFramework,
     RFModelInputFields,
     RFModelManifest,
@@ -44,7 +46,7 @@ class ModelRegistry:
     def __init__(self, storage: AiPluginStorage) -> None:
         self.storage = storage
 
-    def import_onnx_model(self, file_bytes: bytes, filename: str, model_name: str | None = None) -> RFModelManifest:
+    def import_onnx_model(self, file_bytes: bytes, filename: str, model_name: str | None = None, local_source_path: str | None = None) -> RFModelManifest:
         model_id = new_model_id()
         model_path = self.storage.model_file_path(model_id, filename)
         model_path.write_bytes(file_bytes)  # a copy in the plugin's own storage -- the caller's original file/upload is untouched
@@ -80,12 +82,48 @@ class ModelRegistry:
             model_file=filename,
             model_sha256=hashlib.sha256(file_bytes).hexdigest(),
             imported_at_utc=utc_now_iso(),
+            local_source_path=local_source_path,
             task=RFTask.OTHER,
             input_discovered=input_discovered,
             output_discovered=output_discovered,
         )
         self.storage.save_manifest(manifest)
         return manifest
+
+    def import_from_folder(self, folder_path: str) -> FolderImportResult:
+        """Scans one real local directory (non-recursive -- a subfolder is
+        the operator's own organizational choice, never assumed to also
+        hold models) for .onnx files and imports every one not already
+        registered under the same model_sha256. This is the direct-local-
+        import path: unlike import_onnx_model() (one file at a time,
+        through a browser file picker), this reads straight from the
+        operator's own filesystem and records exactly where each model was
+        found (RFModelManifest.local_source_path) -- what lets the UI show
+        "my local models" as a distinct group from anything imported one
+        file at a time."""
+        folder = Path(folder_path).expanduser()
+        if not folder.is_dir():
+            raise ModelImportError(f"Not a real, existing directory: {folder_path}")
+
+        existing_hashes = {m.model_sha256 for m in self.list_models()}
+        imported: list[RFModelManifest] = []
+        skipped_duplicate: list[str] = []
+        failed: list[FolderImportFailure] = []
+
+        for onnx_path in sorted(folder.glob("*.onnx")):
+            file_bytes = onnx_path.read_bytes()
+            sha256 = hashlib.sha256(file_bytes).hexdigest()
+            if sha256 in existing_hashes:
+                skipped_duplicate.append(onnx_path.name)
+                continue
+            try:
+                manifest = self.import_onnx_model(file_bytes, onnx_path.name, local_source_path=str(onnx_path.resolve()))
+                imported.append(manifest)
+                existing_hashes.add(sha256)
+            except ModelImportError as error:
+                failed.append(FolderImportFailure(filename=onnx_path.name, error=str(error)))
+
+        return FolderImportResult(folder_path=str(folder.resolve()), imported=imported, skipped_duplicate=skipped_duplicate, failed=failed)
 
     def get(self, model_id: str) -> RFModelManifest | None:
         return self.storage.load_manifest(model_id)

@@ -5,14 +5,20 @@ import * as THREE from 'three';
 // (a single point reticle) or SpectralObjectEnvelopeMesh (a real per-cell
 // excess surface, which an AI bounding box has no measured equivalent of).
 // This is a wireframe cage spanning the detection's REAL col-range
-// (frequency window) x row-range (time window), so multiple simultaneous,
-// independently-aging detections can be shown at once -- something neither
-// existing overlay supports (both are effectively singletons). Sits with
-// its base AT the terrain's own real measured peak height for that
-// frequency/time (caller-supplied, see RFTerrainCanvas.addAiDetection) so
-// it visually crowns the actual lobe instead of floating at a fixed,
-// disconnected height, with a billboarded text label above it so the
-// model's result is legible without needing to click.
+// (frequency window), keyed by `box.id` (one live-updated slot per
+// MODEL, not per poll/record -- see useAiLiveDetection's id comment) so a
+// continuous session moves ONE cage as new detections arrive instead of
+// leaving a trail of overlapping ones (real bug, reported: it read as the
+// highlight "occupying the whole span"). The Map keyed by id still lets
+// several DIFFERENT models be highlighted at once, if the UI ever allows
+// running more than one concurrently. Sits with its base AT the terrain's
+// own real measured peak height for that frequency/time (caller-supplied,
+// see RFTerrainCanvas.addAiDetection) so it visually crowns the actual
+// lobe instead of floating at a fixed, disconnected height, with a
+// billboarded text label BELOW it (near the terrain surface, not
+// stacked above a possibly-tall peak) so it never renders behind the
+// fixed-position FREQUENCY/TIME/POWER HUD badges near the top of the
+// viewport.
 //
 // Same "child of terrainMesh.mesh, aged one row per pushRow()" discipline
 // as every other overlay here, so it inherits the terrain's own smooth
@@ -91,8 +97,16 @@ class DetectionCage {
     this.group.add(this.edges);
     this.group.renderOrder = 2;
 
+    // Below the cage (near its base), not above it: a cage sits on the
+    // real terrain peak, which can already be tall (peaks reach up to
+    // RF_TERRAIN_MAX_EXCESS_DB * RF_TERRAIN_HEIGHT_VISUAL_SCALE = 160 local
+    // units) -- a label stacked ABOVE it could project into the same
+    // screen region as the fixed-position FREQUENCY/TIME/POWER HUD badges
+    // and render hidden behind them (reported: "el mensaje de detección
+    // está por detrás de las frecuencias y potencias"). Anchoring below
+    // keeps it near the terrain surface regardless of peak height.
     this.labelSprite = createLabelSprite(box.label, box.color, labelWidth, labelHeight);
-    this.labelSprite.position.set(0, boxHeight / 2 + labelHeight / 2 + labelHeight * 0.15, 0);
+    this.labelSprite.position.set(0, -(boxHeight / 2 + labelHeight / 2 + labelHeight * 0.15), 0);
     this.group.add(this.labelSprite);
 
     this.place(box);

@@ -12,6 +12,7 @@ import {
   StudioInferenceDecision,
   StudioJob,
   StudioLegacyCaptureListing,
+  StudioModelReliabilityEntry,
   StudioPhysicalUnit,
   StudioQualityReport,
   StudioSplitManifest,
@@ -64,6 +65,88 @@ function statusPillClass(status: string): string {
 }
 function Pill({ value }: { value: string }) {
   return <span className={`rounded-full border px-2 py-0.5 text-xs ${statusPillClass(value)}`}>{value}</span>;
+}
+
+// At-a-glance heuristic only, NOT a scientific verdict -- the real numbers
+// (accuracy/balanced_accuracy/precision/recall per class, straight from the
+// bundle's own evaluation_report.json TEST split) are always shown alongside
+// it so the operator judges from the real evidence, not the badge.
+function reliabilityFlag(entry: StudioModelReliabilityEntry): { label: string; className: string } {
+  const test = entry.test_evaluation;
+  if (!test || test.balanced_accuracy == null) return { label: 'SIN EVALUAR', className: 'border-slate-700 bg-slate-800 text-slate-300' };
+  const nClasses = Math.max(entry.label_classes.length, Object.keys(test.recall_per_class || {}).length, 2);
+  const chanceLevel = 1 / nClasses;
+  const supportByClass: Record<string, number> = {};
+  for (const row of Object.values(test.confusion_matrix || {})) {
+    for (const [predicted, count] of Object.entries(row)) supportByClass[predicted] = (supportByClass[predicted] || 0) + count;
+  }
+  const trueSupportByClass: Record<string, number> = {};
+  for (const [trueClass, row] of Object.entries(test.confusion_matrix || {})) {
+    trueSupportByClass[trueClass] = Object.values(row).reduce((a, b) => a + b, 0);
+  }
+  const hasBlindSpot = Object.entries(test.recall_per_class || {}).some(([cls, recall]) => (trueSupportByClass[cls] || 0) > 0 && recall === 0);
+  if (test.balanced_accuracy < chanceLevel * 1.15) return { label: 'NO FIABLE (cerca del azar)', className: 'border-rose-500/40 bg-rose-500/10 text-rose-200' };
+  if (hasBlindSpot) return { label: 'REVISAR (nunca acierta una clase)', className: 'border-rose-500/40 bg-rose-500/10 text-rose-200' };
+  if (test.balanced_accuracy >= 0.85) return { label: 'FIABLE', className: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200' };
+  return { label: 'MODERADO', className: 'border-amber-500/40 bg-amber-500/10 text-amber-200' };
+}
+
+function ModelReliabilityOverview({ entries }: { entries: StudioModelReliabilityEntry[] }) {
+  if (entries.length === 0) return <div className="text-xs text-slate-500">Sin bundles exportados todavia.</div>;
+  const groups = new Map<string, StudioModelReliabilityEntry[]>();
+  for (const entry of entries) {
+    const key = entry.physical_units.length > 0 ? entry.physical_units.join(', ') : 'Sin dispositivo asociado';
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key)!.push(entry);
+  }
+  const sortedGroups = [...groups.entries()].sort(([a], [b]) => a.localeCompare(b));
+  for (const [, group] of sortedGroups) {
+    group.sort((a, b) => (a.test_evaluation?.balanced_accuracy ?? -1) - (b.test_evaluation?.balanced_accuracy ?? -1));
+  }
+  return (
+    <div className="space-y-4">
+      {sortedGroups.map(([deviceLabel, group]) => (
+        <div key={deviceLabel} className="space-y-1">
+          <div className="text-xs font-semibold text-slate-300">{deviceLabel}</div>
+          <table className="w-full text-left text-xs">
+            <thead className="text-slate-400">
+              <tr>
+                <th className="p-1">model_type</th><th className="p-1">tarea</th><th className="p-1">estado</th>
+                <th className="p-1">TEST n</th><th className="p-1">accuracy</th><th className="p-1">balanced_accuracy</th>
+                <th className="p-1">precision/recall por clase</th><th className="p-1">al vuelo</th>
+              </tr>
+            </thead>
+            <tbody>
+              {group.map((entry) => {
+                const test = entry.test_evaluation;
+                const flag = reliabilityFlag(entry);
+                return (
+                  <tr key={entry.bundle_id} className="border-t border-slate-800 align-top">
+                    <td className="p-1 font-mono">{entry.model_type ?? '-'}</td>
+                    <td className="p-1">{entry.task_display ?? entry.task ?? '-'}</td>
+                    <td className="p-1"><Pill value={entry.approval_status} /></td>
+                    <td className="p-1">{test?.n_examples ?? '-'}</td>
+                    <td className="p-1">{test?.accuracy != null ? test.accuracy.toFixed(3) : '-'}</td>
+                    <td className="p-1">{test?.balanced_accuracy != null ? test.balanced_accuracy.toFixed(3) : '-'}</td>
+                    <td className="p-1">
+                      {test ? (
+                        <div className="space-y-0.5">
+                          {Object.keys(test.precision_per_class || {}).map((cls) => (
+                            <div key={cls} className="font-mono">{cls}: P={test.precision_per_class[cls]?.toFixed(2)} R={test.recall_per_class?.[cls]?.toFixed(2)}</div>
+                          ))}
+                        </div>
+                      ) : '-'}
+                    </td>
+                    <td className="p-1"><span className={`rounded-full border px-2 py-0.5 text-xs ${flag.className}`}>{flag.label}</span></td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export default function BleRffiStudioDashboard() {
@@ -135,6 +218,9 @@ export default function BleRffiStudioDashboard() {
   const [inferenceCaptureId, setInferenceCaptureId] = useState('');
   const [inferenceDecisions, setInferenceDecisions] = useState<StudioInferenceDecision[] | null>(null);
 
+  // K. Mis modelos -- fiabilidad real (todos los dispositivos, todos los bundles)
+  const [modelReliability, setModelReliability] = useState<StudioModelReliabilityEntry[]>([]);
+
   const selectedModel = useMemo(() => MODEL_TYPES.find((m) => m.value === modelType) ?? MODEL_TYPES[0], [modelType]);
 
   // The backend is a live network boundary: a transient 404/500 (e.g. mid
@@ -145,9 +231,9 @@ export default function BleRffiStudioDashboard() {
   }
 
   const refreshAll = async () => {
-    const [legacyRes, unitsRes, bindingsRes, capturesRes, datasetsRes, runsRes, bundlesRes, autoTrainRes] = await Promise.all([
+    const [legacyRes, unitsRes, bindingsRes, capturesRes, datasetsRes, runsRes, bundlesRes, autoTrainRes, reliabilityRes] = await Promise.all([
       api.legacyCaptures(), api.physicalUnits(), api.addressBindings(), api.captures(), api.datasets(), api.trainingRuns(), api.bundles(),
-      api.autoTrainCandidates(),
+      api.autoTrainCandidates(), api.modelReliabilityOverview(),
     ]);
     setLegacy(legacyRes);
     setUnits(asArray(unitsRes));
@@ -157,6 +243,7 @@ export default function BleRffiStudioDashboard() {
     setTrainingRuns(asArray(runsRes));
     setBundles(asArray(bundlesRes));
     setAutoTrainCandidates(asArray(autoTrainRes));
+    setModelReliability(asArray(reliabilityRes));
   };
 
   const [backendUnavailable, setBackendUnavailable] = useState(false);
@@ -674,6 +761,17 @@ export default function BleRffiStudioDashboard() {
             </table>
           </div>
         )}
+      </Panel>
+
+      {/* K. My models -- real reliability, every device, every bundle ever
+          exported (never just APPROVED_FOR_LIVE_PILOT -- an operator asking
+          "does it really detect what it claims" needs to see the bad ones
+          too, see StudioRepository.get_model_reliability_overview()). */}
+      <Panel
+        title="K. Mis modelos -- fiabilidad real (todos los dispositivos)"
+        action={<button className={secondaryButtonClass} disabled={!!busy || backendUnavailable} onClick={() => run('reliability', async () => { setModelReliability(asArray(await api.modelReliabilityOverview())); })}><RefreshCw className="h-4 w-4" />Actualizar</button>}
+      >
+        <ModelReliabilityOverview entries={modelReliability} />
       </Panel>
     </div>
   );

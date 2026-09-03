@@ -43,6 +43,25 @@ export interface StudioLiveSelectableBundle {
    * StudioRepository._bundle_reliability_summary(). */
   reliability: { false_positive_rate_on_background: number; target_device_precision: number } | null;
 }
+// Unlike StudioLiveSelectableBundle (which silently drops anything not
+// APPROVED_FOR_LIVE_PILOT -- by design, it's an activation picker), this is
+// every bundle ever exported, real full TEST-split evaluation attached, so
+// "does my model really detect what it claims" can be answered for the bad
+// ones too, not just the ones already cleared for live use.
+export interface StudioModelReliabilityEntry {
+  bundle_id: string;
+  training_run_id: string;
+  approval_status: StudioBundleManifest['approval_status'];
+  created_at: string;
+  physical_units: string[];
+  task: string | null;
+  task_display: string | null;
+  model_type: string | null;
+  label_classes: string[];
+  /** null when this bundle has no TEST evaluation yet (DRAFT, or a
+   * non-recommended candidate never opted into evaluateOnTestOptIn). */
+  test_evaluation: StudioSplitEvaluationReport | null;
+}
 export interface StudioLiveCheckResult {
   predicted_class?: string | null;
   identified_device?: string | null;
@@ -552,6 +571,11 @@ export class BleRffiStudioApiService {
     return (await axios.post<StudioExportResult>(`${this.root}/training-runs/${encodeURIComponent(trainingRunId)}/export`, body)).data;
   }
   async bundles() { return (await axios.get<StudioBundleManifest[]>(`${this.root}/bundles`)).data; }
+  /** Every bundle ever exported, real full TEST-split evaluation attached --
+   * for a "review all my models" surface, not the live-activation picker
+   * (liveSelectableModels(), which silently drops anything not
+   * APPROVED_FOR_LIVE_PILOT). */
+  async modelReliabilityOverview() { return (await axios.get<StudioModelReliabilityEntry[]>(`${this.root}/models/reliability-overview`)).data; }
   async getBundle(id: string) { return (await axios.get<StudioBundleManifest>(`${this.root}/bundles/${encodeURIComponent(id)}`)).data; }
   async approveBundle(id: string) { return (await axios.post<StudioBundleManifest>(`${this.root}/bundles/${encodeURIComponent(id)}/approve`)).data; }
   /** Deletes an exported model bundle -- the deployable artifact Live
